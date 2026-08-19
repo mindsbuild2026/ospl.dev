@@ -1,0 +1,149 @@
+--
+-- Sample lookup data
+--
+
+insert into authors(id, user_id, handle, name, avatar_url, bio, website, github, verified, reputation)
+values
+  ('a1111111-1111-1111-1111-111111111111','01111111-1111-1111-1111-111111111111','promptmaster','Prompt Master','https://example.com/avatar1.png','AI prompt engineer and community curator','https://prompthub.example.com','https://github.com/promptmaster', true, 1280);
+
+
+insert into categories(id, slug, name, description, icon_name, is_trending, seo_h1, meta_title, meta_description, sort_order)
+values
+  ('c1111111-1111-1111-1111-111111111111','productivity','Productivity','Prompts for productivity, workflows, and planning.','rocket_launch', true, 'Productivity Prompts','Productivity PromptHub','High-impact productivity prompts for AI workflows.', 10),
+  ('c2222222-2222-2222-2222-222222222222','development','Development','Developer focused prompts for coding, review, and architecture.','code', false, 'Developer Prompts','Development PromptHub','Technical prompts for programming and architecture.', 20);
+
+insert into subcategories(id, category_id, slug, name, description, sort_order)
+values
+  ('e1111111-1111-1111-1111-111111111111','c1111111-1111-1111-1111-111111111111','planning','Planning','Planning and productivity workflows for knowledge work.', 10),
+  ('e2222222-2222-2222-2222-222222222222','c2222222-2222-2222-2222-222222222222','code-review','Code Review','Review and improve software code with AI.', 10);
+
+
+
+insert into prompt_types(id, slug, name, description)
+values
+  ('b1111111-1111-1111-1111-111111111111','review','Review','Analyze and improve user-provided content.'),
+  ('b2222222-2222-2222-2222-222222222222','generation','Generation','Create new structured output from instructions.');
+
+
+insert into ai_platforms(id, slug, name, description, sort_order)
+values
+  ('d1111111-1111-1111-1111-111111111111','chatgpt','ChatGPT','OpenAI ChatGPT', 10),
+  ('d2222222-2222-2222-2222-222222222222','claude','Claude','Anthropic Claude', 20);
+
+
+
+insert into tags(id, name, description, usage_count)
+values
+  ('f1111111-1111-1111-1111-111111111111','React','React prompts and code review', 182),
+  ('f2222222-2222-2222-2222-222222222222','Productivity','Productivity workflows and task management', 240),
+  ('f3333333-3333-3333-3333-333333333333','Copywriting','Marketing and SEO copy prompts', 120);
+
+
+
+insert into collections(id, slug, name, description, icon_name, category_id)
+values
+  ('c0111111-1111-1111-1111-111111111111','launch-growth','Launch Growth','Growth and launch-ready prompts for creators.','rocket_launch','c1111111-1111-1111-1111-111111111111');
+
+
+insert into industries(id, slug, name, description)
+values
+  ('01111111-1111-1111-1111-111111111111','saas','SaaS','Software-as-a-Service business prompts.'),
+  ('02222222-2222-2222-2222-222222222222','education','Education','Teaching and learning prompts.');
+
+insert into prompt_techniques(id, slug, name, description)
+values
+  ('0eca1111-1111-1111-1111-111111111111','chain-of-thought','Chain of Thought','Explicit reasoning step-by-step prompts.'),
+  ('0eca2222-2222-2222-2222-222222222222','role-play','Role Play','Prompt the model with an expert persona.');
+
+--
+-- Sample prompt data
+--
+
+insert into prompts(
+  id, slug, title, short_description, description,
+  category_id, subcategory_id, author_id, author_user_id, prompt_type_id,
+  difficulty, license_type, commercial_use, attribution_required,
+  featured, verified, community_validated, current_version,
+  meta_title, meta_description, seo_keywords,
+  moderation_status, created_at, updated_at
+) values (
+  'ab111111-1111-1111-1111-111111111111','review-react-architecture','Senior React Architecture Reviewer',
+  'Review React component code for performance, accessibility, and TypeScript quality.',
+  'Act as an expert React architect. Review component code for performance bottlenecks, accessibility issues, and structural improvements based on React best practices.',
+  'c2222222-2222-2222-2222-222222222222','e2222222-2222-2222-2222-222222222222',
+  'a1111111-1111-1111-1111-111111111111','01111111-1111-1111-1111-111111111111','b1111111-1111-1111-1111-111111111111',
+  'Advanced','MIT', true, true, true,
+    true, true, false, '2.1.0',
+  'React architecture review prompt for production-ready apps.', -- Removed duplicate title string expression
+  array['React','TypeScript','Code Review'],
+  'approved', now() - interval '14 days', now() - interval '2 days'
+);
+
+insert into prompt_metrics(prompt_id, views, copies, likes, bookmarks, shares, comments, downloads, rating_count, rating_average, has_proof, success_rate, tested_models, trending_score, weekly_growth, popularity_rank, updated_at)
+values (
+  'ab111111-1111-1111-1111-111111111111', 12512, 4120, 82, 501, 14, 46, 33,
+  288, 4.80, true, 92.50, array['gpt-4','claude-3'], 84.3, 12.5, 7, now() - interval '2 days'
+);
+
+insert into prompt_tags(prompt_id, tag_id)
+values
+  ('ab111111-1111-1111-1111-111111111111','f1111111-1111-1111-1111-111111111111'),
+  ('ab111111-1111-1111-1111-111111111111','f3333333-3333-3333-3333-333333333333');
+
+insert into prompt_ai_platforms(prompt_id, ai_platform_id)
+values
+  ('ab111111-1111-1111-1111-111111111111','d1111111-1111-1111-1111-111111111111'),
+  ('ab111111-1111-1111-1111-111111111111','d2222222-2222-2222-2222-222222222222');
+
+insert into prompt_collections(prompt_id, collection_id)
+values
+  ('ab111111-1111-1111-1111-111111111111','c0111111-1111-1111-1111-111111111111');
+
+insert into prompt_variables(prompt_id, name, label, required, description, sort_order)
+values
+  ('ab111111-1111-1111-1111-111111111111','code','Code', true,'Component source code to review.', 10),
+  ('ab111111-1111-1111-1111-111111111111','focus','Focus Area', false,'Specific architecture or accessibility concerns.', 20);
+
+insert into prompt_examples(prompt_id, title, input, output, sort_order)
+values
+  ('ab111111-1111-1111-1111-111111111111','Review UX component','<React code snippet>','Comments on props, performance, and accessibility.', 10);
+
+insert into prompt_test_cases(prompt_id, name, input, expected_result, tested_model, sort_order)
+values
+  ('ab111111-1111-1111-1111-111111111111','Basic React component','<Button code>','It should identify unnecessary re-renders and memoization candidates.','gpt-4', 10);
+
+insert into prompt_proof_items(prompt_id, type, title, url, thumbnail_url, description, duration_seconds, sort_order)
+values
+  ('ab111111-1111-1111-1111-111111111111','image','Screenshot Proof','https://example.com/proof/react-review.png','https://example.com/thumb1.png','Example output from a React review prompt.', null, 10);
+
+insert into prompt_usage_instructions(prompt_id, instruction, sort_order)
+values
+  ('ab111111-1111-1111-1111-111111111111','Paste the component code into the code input.', 10);
+
+insert into prompt_recommended_models(prompt_id, name, provider, sort_order)
+values
+  ('ab111111-1111-1111-1111-111111111111','GPT-4','OpenAI', 10),
+  ('ab111111-1111-1111-1111-111111111111','Claude 3','Anthropic', 20);
+
+insert into prompt_industries(prompt_id, industry_id)
+values
+  ('ab111111-1111-1111-1111-111111111111','01111111-1111-1111-1111-111111111111');
+
+insert into prompt_techniques_map(prompt_id, technique_id)
+values
+  ('ab111111-1111-1111-1111-111111111111','0eca1111-1111-1111-1111-111111111111');
+
+insert into prompt_version_history(prompt_id, version, released_at, changes, sort_order)
+values
+  ('ab111111-1111-1111-1111-111111111111','2.0.0', now() - interval '30 days', array['Improved accessibility guidance','Added TypeScript review instructions'], 10),
+  ('ab111111-1111-1111-1111-111111111111','2.1.0', now() - interval '14 days', array['Updated examples','Added proof screenshot'], 20);
+
+insert into prompt_reviews(prompt_id, user_id, rating, title, comment, approved)
+values
+  ('ab111111-1111-1111-1111-111111111111','02222222-2222-2222-2222-222222222222', 5, 'Excellent review prompt','Gave detailed feedback and highlighted real issues.', true),
+  ('ab111111-1111-1111-1111-111111111111','03333333-3333-3333-3333-333333333333', 4, 'Very useful','Saved time reviewing React components.', true);
+
+insert into prompt_events(prompt_id, event_type, event_metadata, created_at)
+values
+  ('ab111111-1111-1111-1111-111111111111','view', null, now() - interval '4 hours'),
+  ('ab111111-1111-1111-1111-111111111111','bookmark', jsonb_build_object('delta', 1), now() - interval '3 hours');

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "f8e2b3c4-1d5f-4a98-afe2-3b4e5c6d7e8f",
+    "slug": "chain-of-thought",
+    "name": "Chain of Thought",
+    "description": "Step-by-step reasoning prompts."
+  },
+  {
+    "id": "799c1e2f-3b6d-4f8a-9a5c-0d2e1f3a4b5c",
+    "slug": "zero-shot",
+    "name": "Zero-shot",
+    "description": "Direct prompt examples without prior context."
+  },
+  {
+    "id": "a4b5c6d7-8e9f-4a2b-b3c4-d5e6f7a8b9c0",
+    "slug": "few-shot",
+    "name": "Few-shot",
+    "description": "Prompts with examples to guide the model."
+  },
+  {
+    "id": "1e2d3c4b-5a6f-4b8c-9d0e-f1a2b3c4d5e6",
+    "slug": "context-rich",
+    "name": "Context-rich",
+    "description": "Provide background information for more accurate outputs."
+  }
+]

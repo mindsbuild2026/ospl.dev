@@ -1,0 +1,26 @@
+[
+  {
+    "id": "3b2f5c9e-1e7a-4cdf-ae2c-8d553c9f1b22",
+    "slug": "text-generation",
+    "name": "Text Generation",
+    "description": "General text generation prompts."
+  },
+  {
+    "id": "5c1b1f7e-9be0-4f6d-8d06-84e5af3f5a2e",
+    "slug": "classification",
+    "name": "Classification",
+    "description": "Categorization and tagging prompts."
+  },
+  {
+    "id": "1d4b2f3c-17f1-4d48-a3f4-b9e181def65a",
+    "slug": "summarization",
+    "name": "Summarization",
+    "description": "Summarize documents, notes, and articles."
+  },
+  {
+    "id": "a8f1d3e4-6b2c-4d50-8ad2-6b7e1f2e4c9d",
+    "slug": "translation",
+    "name": "Translation",
+    "description": "Translate text between languages."
+  }
+]

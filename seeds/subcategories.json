@@ -1,0 +1,1282 @@
+[
+  {
+    "id": "fe47205c-9bfd-463f-a44d-c49aa6afcd0c",
+    "category_id": "97c5e27a-8f85-4521-88f5-442ef5ea631a",
+    "slug": "advertising-copy",
+    "name": "Advertising Copy",
+    "description": "Advertising Copy prompts for marketing & sales.",
+    "sort_order": 101
+  },
+  {
+    "id": "342eefee-08f9-40a2-a70c-8de9bf632a1f",
+    "category_id": "97c5e27a-8f85-4521-88f5-442ef5ea631a",
+    "slug": "seo-content",
+    "name": "SEO Content",
+    "description": "SEO Content prompts for marketing & sales.",
+    "sort_order": 102
+  },
+  {
+    "id": "582c8de6-2464-4c2e-a3a0-9319774f5db2",
+    "category_id": "97c5e27a-8f85-4521-88f5-442ef5ea631a",
+    "slug": "email-marketing",
+    "name": "Email Marketing",
+    "description": "Email Marketing prompts for marketing & sales.",
+    "sort_order": 103
+  },
+  {
+    "id": "6814d597-cd36-4fad-8741-722dde18d6a8",
+    "category_id": "97c5e27a-8f85-4521-88f5-442ef5ea631a",
+    "slug": "sales-outreach",
+    "name": "Sales Outreach",
+    "description": "Sales Outreach prompts for marketing & sales.",
+    "sort_order": 104
+  },
+  {
+    "id": "946f094f-0edb-49f1-a519-0d840bbf1125",
+    "category_id": "97c5e27a-8f85-4521-88f5-442ef5ea631a",
+    "slug": "lead-generation",
+    "name": "Lead Generation",
+    "description": "Lead Generation prompts for marketing & sales.",
+    "sort_order": 105
+  },
+  {
+    "id": "8acb3351-c8e5-41cc-b2ad-e832d44b7547",
+    "category_id": "97c5e27a-8f85-4521-88f5-442ef5ea631a",
+    "slug": "landing-pages",
+    "name": "Landing Pages",
+    "description": "Landing Pages prompts for marketing & sales.",
+    "sort_order": 106
+  },
+  {
+    "id": "8b2e5cea-dad6-43fb-ac63-7d1b3da7d6ee",
+    "category_id": "97c5e27a-8f85-4521-88f5-442ef5ea631a",
+    "slug": "product-marketing",
+    "name": "Product Marketing",
+    "description": "Product Marketing prompts for marketing & sales.",
+    "sort_order": 107
+  },
+  {
+    "id": "3a459307-d0f8-4f8a-8ef1-d9a258230407",
+    "category_id": "97c5e27a-8f85-4521-88f5-442ef5ea631a",
+    "slug": "brand-strategy",
+    "name": "Brand Strategy",
+    "description": "Brand Strategy prompts for marketing & sales.",
+    "sort_order": 108
+  },
+  {
+    "id": "5c07fb00-7640-4043-a262-a9271652aafa",
+    "category_id": "3f8b1c4e-9d2a-4a7b-8f1e-2c3d4e5f6a7b",
+    "slug": "meeting-summaries",
+    "name": "Meeting Summaries",
+    "description": "Meeting Summaries prompts for business operations.",
+    "sort_order": 201
+  },
+  {
+    "id": "e50b57bb-b984-45d9-ac88-6af2e810ac27",
+    "category_id": "3f8b1c4e-9d2a-4a7b-8f1e-2c3d4e5f6a7b",
+    "slug": "sop-creation",
+    "name": "SOP Creation",
+    "description": "SOP Creation prompts for business operations.",
+    "sort_order": 202
+  },
+  {
+    "id": "5bc4a147-6b40-4353-939d-61c97025b960",
+    "category_id": "3f8b1c4e-9d2a-4a7b-8f1e-2c3d4e5f6a7b",
+    "slug": "business-reports",
+    "name": "Business Reports",
+    "description": "Business Reports prompts for business operations.",
+    "sort_order": 203
+  },
+  {
+    "id": "74b93b51-5638-43ce-943a-dc1f99e77df1",
+    "category_id": "3f8b1c4e-9d2a-4a7b-8f1e-2c3d4e5f6a7b",
+    "slug": "process-documentation",
+    "name": "Process Documentation",
+    "description": "Process Documentation prompts for business operations.",
+    "sort_order": 204
+  },
+  {
+    "id": "c1d96ca5-cadf-4d53-a1a9-ab70e5131efb",
+    "category_id": "3f8b1c4e-9d2a-4a7b-8f1e-2c3d4e5f6a7b",
+    "slug": "internal-communications",
+    "name": "Internal Communications",
+    "description": "Internal Communications prompts for business operations.",
+    "sort_order": 205
+  },
+  {
+    "id": "f1646f1f-7341-4de3-aa32-935a8b8b5f17",
+    "category_id": "3f8b1c4e-9d2a-4a7b-8f1e-2c3d4e5f6a7b",
+    "slug": "workflow-automation",
+    "name": "Workflow Automation",
+    "description": "Workflow Automation prompts for business operations.",
+    "sort_order": 206
+  },
+  {
+    "id": "9fbfe1e2-905c-40ef-a984-3af7f98220e6",
+    "category_id": "3f8b1c4e-9d2a-4a7b-8f1e-2c3d4e5f6a7b",
+    "slug": "project-management",
+    "name": "Project Management",
+    "description": "Project Management prompts for business operations.",
+    "sort_order": 207
+  },
+  {
+    "id": "7f222a9d-12c6-43ae-9337-7768b345d244",
+    "category_id": "3f8b1c4e-9d2a-4a7b-8f1e-2c3d4e5f6a7b",
+    "slug": "knowledge-management",
+    "name": "Knowledge Management",
+    "description": "Knowledge Management prompts for business operations.",
+    "sort_order": 208
+  },
+  {
+    "id": "7bb98a72-4d7d-4a63-97a1-ee6d7c8cb2c9",
+    "category_id": "2f1a0f2d-7d18-4c8d-a4a5-16a8f8b9c1d1",
+    "slug": "code-generation",
+    "name": "Code Generation",
+    "description": "Code Generation prompts for software development.",
+    "sort_order": 301
+  },
+  {
+    "id": "403bf16b-7144-4453-9a8c-96885e99c4cb",
+    "category_id": "2f1a0f2d-7d18-4c8d-a4a5-16a8f8b9c1d1",
+    "slug": "code-review",
+    "name": "Code Review",
+    "description": "Code Review prompts for software development.",
+    "sort_order": 302
+  },
+  {
+    "id": "36c52fb1-1bc7-47e9-804d-819e294c099f",
+    "category_id": "2f1a0f2d-7d18-4c8d-a4a5-16a8f8b9c1d1",
+    "slug": "debugging",
+    "name": "Debugging",
+    "description": "Debugging prompts for software development.",
+    "sort_order": 303
+  },
+  {
+    "id": "20191103-4630-4dc5-af88-7d03b0893b10",
+    "category_id": "2f1a0f2d-7d18-4c8d-a4a5-16a8f8b9c1d1",
+    "slug": "refactoring",
+    "name": "Refactoring",
+    "description": "Refactoring prompts for software development.",
+    "sort_order": 304
+  },
+  {
+    "id": "7ca20e08-444c-453e-b2bb-b9257018922b",
+    "category_id": "2f1a0f2d-7d18-4c8d-a4a5-16a8f8b9c1d1",
+    "slug": "api-development",
+    "name": "API Development",
+    "description": "API Development prompts for software development.",
+    "sort_order": 305
+  },
+  {
+    "id": "8dd47add-4bf2-459e-9dfa-54c9f8fa0fee",
+    "category_id": "2f1a0f2d-7d18-4c8d-a4a5-16a8f8b9c1d1",
+    "slug": "database-design",
+    "name": "Database Design",
+    "description": "Database Design prompts for software development.",
+    "sort_order": 306
+  },
+  {
+    "id": "a7bb2dd3-aa1d-4e14-b734-3d9464803411",
+    "category_id": "2f1a0f2d-7d18-4c8d-a4a5-16a8f8b9c1d1",
+    "slug": "frontend-development",
+    "name": "Frontend Development",
+    "description": "Frontend Development prompts for software development.",
+    "sort_order": 307
+  },
+  {
+    "id": "b2765aef-0068-4542-be30-40636d71cca6",
+    "category_id": "2f1a0f2d-7d18-4c8d-a4a5-16a8f8b9c1d1",
+    "slug": "backend-development",
+    "name": "Backend Development",
+    "description": "Backend Development prompts for software development.",
+    "sort_order": 308
+  },
+  {
+    "id": "b66f848d-a623-4de6-b183-cdda59334260",
+    "category_id": "8f9a3f3d-6c4b-45e8-a0c4-bfd5d6e0c5e2",
+    "slug": "blog-posts",
+    "name": "Blog Posts",
+    "description": "Blog Posts prompts for content writing.",
+    "sort_order": 401
+  },
+  {
+    "id": "c09aff4c-afe5-4dea-be04-291f3ee96889",
+    "category_id": "8f9a3f3d-6c4b-45e8-a0c4-bfd5d6e0c5e2",
+    "slug": "articles",
+    "name": "Articles",
+    "description": "Articles prompts for content writing.",
+    "sort_order": 402
+  },
+  {
+    "id": "1311bea7-8252-47a5-bef4-eb0f0acc06cc",
+    "category_id": "8f9a3f3d-6c4b-45e8-a0c4-bfd5d6e0c5e2",
+    "slug": "newsletters",
+    "name": "Newsletters",
+    "description": "Newsletters prompts for content writing.",
+    "sort_order": 403
+  },
+  {
+    "id": "409885f3-b193-4236-8a41-5c3812d80c6c",
+    "category_id": "8f9a3f3d-6c4b-45e8-a0c4-bfd5d6e0c5e2",
+    "slug": "website-copy",
+    "name": "Website Copy",
+    "description": "Website Copy prompts for content writing.",
+    "sort_order": 404
+  },
+  {
+    "id": "f451f8c4-71fd-41a3-b529-82ac0e2d12b3",
+    "category_id": "8f9a3f3d-6c4b-45e8-a0c4-bfd5d6e0c5e2",
+    "slug": "technical-writing",
+    "name": "Technical Writing",
+    "description": "Technical Writing prompts for content writing.",
+    "sort_order": 405
+  },
+  {
+    "id": "1a5305b9-767c-4b11-af6c-7df1b56b23a6",
+    "category_id": "8f9a3f3d-6c4b-45e8-a0c4-bfd5d6e0c5e2",
+    "slug": "product-descriptions",
+    "name": "Product Descriptions",
+    "description": "Product Descriptions prompts for content writing.",
+    "sort_order": 406
+  },
+  {
+    "id": "b3a5ea85-d7cb-44a0-8043-952b470079d1",
+    "category_id": "8f9a3f3d-6c4b-45e8-a0c4-bfd5d6e0c5e2",
+    "slug": "case-studies",
+    "name": "Case Studies",
+    "description": "Case Studies prompts for content writing.",
+    "sort_order": 407
+  },
+  {
+    "id": "b8d56cc2-7cde-4559-b818-63270530155a",
+    "category_id": "8f9a3f3d-6c4b-45e8-a0c4-bfd5d6e0c5e2",
+    "slug": "whitepapers",
+    "name": "Whitepapers",
+    "description": "Whitepapers prompts for content writing.",
+    "sort_order": 408
+  },
+  {
+    "id": "28d37874-fe6a-48f0-b25b-b534a89856d9",
+    "category_id": "6a2e4d55-3f7c-43b1-8b2e-3b5e4a2d8f4f",
+    "slug": "instagram-content",
+    "name": "Instagram Content",
+    "description": "Instagram Content prompts for social media.",
+    "sort_order": 501
+  },
+  {
+    "id": "7372b612-fec1-4eb1-960f-631fe1ef9955",
+    "category_id": "6a2e4d55-3f7c-43b1-8b2e-3b5e4a2d8f4f",
+    "slug": "linkedin-posts",
+    "name": "LinkedIn Posts",
+    "description": "LinkedIn Posts prompts for social media.",
+    "sort_order": 502
+  },
+  {
+    "id": "f01cfd30-1a2a-4e7a-82fc-e0924bab5e76",
+    "category_id": "6a2e4d55-3f7c-43b1-8b2e-3b5e4a2d8f4f",
+    "slug": "x-twitter-posts",
+    "name": "X/Twitter Posts",
+    "description": "X/Twitter Posts prompts for social media.",
+    "sort_order": 503
+  },
+  {
+    "id": "c7be8fd9-0e93-4fad-a38d-7cb562484088",
+    "category_id": "6a2e4d55-3f7c-43b1-8b2e-3b5e4a2d8f4f",
+    "slug": "tiktok-scripts",
+    "name": "TikTok Scripts",
+    "description": "TikTok Scripts prompts for social media.",
+    "sort_order": 504
+  },
+  {
+    "id": "4dd2423a-9c38-4cef-be03-0f68d977c721",
+    "category_id": "6a2e4d55-3f7c-43b1-8b2e-3b5e4a2d8f4f",
+    "slug": "content-calendars",
+    "name": "Content Calendars",
+    "description": "Content Calendars prompts for social media.",
+    "sort_order": 505
+  },
+  {
+    "id": "1e866118-15fe-472f-b769-9e83037908ef",
+    "category_id": "6a2e4d55-3f7c-43b1-8b2e-3b5e4a2d8f4f",
+    "slug": "influencer-campaigns",
+    "name": "Influencer Campaigns",
+    "description": "Influencer Campaigns prompts for social media.",
+    "sort_order": 506
+  },
+  {
+    "id": "ce7b4a4d-9c94-421c-8856-2203a5d5be80",
+    "category_id": "6a2e4d55-3f7c-43b1-8b2e-3b5e4a2d8f4f",
+    "slug": "community-management",
+    "name": "Community Management",
+    "description": "Community Management prompts for social media.",
+    "sort_order": 507
+  },
+  {
+    "id": "366c5010-2a52-4c06-8c47-fc52078f0b27",
+    "category_id": "6a2e4d55-3f7c-43b1-8b2e-3b5e4a2d8f4f",
+    "slug": "viral-content-ideas",
+    "name": "Viral Content Ideas",
+    "description": "Viral Content Ideas prompts for social media.",
+    "sort_order": 508
+  },
+  {
+    "id": "ada09686-d66a-4f0b-9e0a-c1425fb59fcf",
+    "category_id": "4f2d8c3b-9a1f-4c5e-a4d2-7f3b2e8c5d1a",
+    "slug": "lesson-plans",
+    "name": "Lesson Plans",
+    "description": "Lesson Plans prompts for education & learning.",
+    "sort_order": 601
+  },
+  {
+    "id": "21269b03-0e05-4027-8a24-2add7666545b",
+    "category_id": "4f2d8c3b-9a1f-4c5e-a4d2-7f3b2e8c5d1a",
+    "slug": "quizzes",
+    "name": "Quizzes",
+    "description": "Quizzes prompts for education & learning.",
+    "sort_order": 602
+  },
+  {
+    "id": "4151ed3f-d363-462a-b233-ada74ad0c114",
+    "category_id": "4f2d8c3b-9a1f-4c5e-a4d2-7f3b2e8c5d1a",
+    "slug": "study-guides",
+    "name": "Study Guides",
+    "description": "Study Guides prompts for education & learning.",
+    "sort_order": 603
+  },
+  {
+    "id": "ee2b7e7d-bb42-4f6c-be94-8301c115c712",
+    "category_id": "4f2d8c3b-9a1f-4c5e-a4d2-7f3b2e8c5d1a",
+    "slug": "tutoring",
+    "name": "Tutoring",
+    "description": "Tutoring prompts for education & learning.",
+    "sort_order": 604
+  },
+  {
+    "id": "bc93876d-ff59-49b5-b407-20d6a25736a8",
+    "category_id": "4f2d8c3b-9a1f-4c5e-a4d2-7f3b2e8c5d1a",
+    "slug": "curriculum-design",
+    "name": "Curriculum Design",
+    "description": "Curriculum Design prompts for education & learning.",
+    "sort_order": 605
+  },
+  {
+    "id": "d6c5e29d-8241-42df-8a2e-5b5fc8bec031",
+    "category_id": "4f2d8c3b-9a1f-4c5e-a4d2-7f3b2e8c5d1a",
+    "slug": "educational-content",
+    "name": "Educational Content",
+    "description": "Educational Content prompts for education & learning.",
+    "sort_order": 606
+  },
+  {
+    "id": "160d2677-af00-4e48-8b45-15c71e4dc423",
+    "category_id": "4f2d8c3b-9a1f-4c5e-a4d2-7f3b2e8c5d1a",
+    "slug": "flashcards",
+    "name": "Flashcards",
+    "description": "Flashcards prompts for education & learning.",
+    "sort_order": 607
+  },
+  {
+    "id": "309407ba-30de-42b8-bdc0-5193da404ed3",
+    "category_id": "4f2d8c3b-9a1f-4c5e-a4d2-7f3b2e8c5d1a",
+    "slug": "exam-preparation",
+    "name": "Exam Preparation",
+    "description": "Exam Preparation prompts for education & learning.",
+    "sort_order": 608
+  },
+  {
+    "id": "0c5cedcf-62fc-4b6c-bf63-cb49d524b115",
+    "category_id": "5b4c7d8e-2f1a-4e5d-9a3c-8f1d2e4b5c6d",
+    "slug": "market-research",
+    "name": "Market Research",
+    "description": "Market Research prompts for research & analysis.",
+    "sort_order": 701
+  },
+  {
+    "id": "8eec4276-3560-4bac-9ede-e21d5dfeeafe",
+    "category_id": "5b4c7d8e-2f1a-4e5d-9a3c-8f1d2e4b5c6d",
+    "slug": "competitor-analysis",
+    "name": "Competitor Analysis",
+    "description": "Competitor Analysis prompts for research & analysis.",
+    "sort_order": 702
+  },
+  {
+    "id": "991308ea-6d15-4dd2-a4c2-aae8f0250445",
+    "category_id": "5b4c7d8e-2f1a-4e5d-9a3c-8f1d2e4b5c6d",
+    "slug": "industry-reports",
+    "name": "Industry Reports",
+    "description": "Industry Reports prompts for research & analysis.",
+    "sort_order": 703
+  },
+  {
+    "id": "c7da3b59-384c-4c7a-a546-80a158d18312",
+    "category_id": "5b4c7d8e-2f1a-4e5d-9a3c-8f1d2e4b5c6d",
+    "slug": "data-analysis",
+    "name": "Data Analysis",
+    "description": "Data Analysis prompts for research & analysis.",
+    "sort_order": 704
+  },
+  {
+    "id": "c7f7aeb1-1bf9-48d4-b0c6-2e1abd31f53c",
+    "category_id": "5b4c7d8e-2f1a-4e5d-9a3c-8f1d2e4b5c6d",
+    "slug": "trend-research",
+    "name": "Trend Research",
+    "description": "Trend Research prompts for research & analysis.",
+    "sort_order": 705
+  },
+  {
+    "id": "dd80e0d3-ae57-4054-8bb8-5fa0e6aed0c8",
+    "category_id": "5b4c7d8e-2f1a-4e5d-9a3c-8f1d2e4b5c6d",
+    "slug": "user-research",
+    "name": "User Research",
+    "description": "User Research prompts for research & analysis.",
+    "sort_order": 706
+  },
+  {
+    "id": "f5bcfa0a-ed23-4e50-9aeb-13101264d98d",
+    "category_id": "5b4c7d8e-2f1a-4e5d-9a3c-8f1d2e4b5c6d",
+    "slug": "survey-analysis",
+    "name": "Survey Analysis",
+    "description": "Survey Analysis prompts for research & analysis.",
+    "sort_order": 707
+  },
+  {
+    "id": "d4500df6-fa16-4d98-9330-2d16cc6a2a8b",
+    "category_id": "5b4c7d8e-2f1a-4e5d-9a3c-8f1d2e4b5c6d",
+    "slug": "literature-reviews",
+    "name": "Literature Reviews",
+    "description": "Literature Reviews prompts for research & analysis.",
+    "sort_order": 708
+  },
+  {
+    "id": "99388d2c-f75a-4d0b-893c-689e0dd37024",
+    "category_id": "7d3e1f5a-6b4c-4a2d-9c7e-1f3a5b7d9c2e",
+    "slug": "faq-generation",
+    "name": "FAQ Generation",
+    "description": "FAQ Generation prompts for customer support.",
+    "sort_order": 801
+  },
+  {
+    "id": "e3569ffa-67a8-4af7-8207-f8bd39bf5595",
+    "category_id": "7d3e1f5a-6b4c-4a2d-9c7e-1f3a5b7d9c2e",
+    "slug": "ticket-responses",
+    "name": "Ticket Responses",
+    "description": "Ticket Responses prompts for customer support.",
+    "sort_order": 802
+  },
+  {
+    "id": "2221cd0a-1eb3-45b1-bd26-71907c73a881",
+    "category_id": "7d3e1f5a-6b4c-4a2d-9c7e-1f3a5b7d9c2e",
+    "slug": "chat-support",
+    "name": "Chat Support",
+    "description": "Chat Support prompts for customer support.",
+    "sort_order": 803
+  },
+  {
+    "id": "1280783a-61af-4dd8-b81c-195170b7c14f",
+    "category_id": "7d3e1f5a-6b4c-4a2d-9c7e-1f3a5b7d9c2e",
+    "slug": "knowledge-base-articles",
+    "name": "Knowledge Base Articles",
+    "description": "Knowledge Base Articles prompts for customer support.",
+    "sort_order": 804
+  },
+  {
+    "id": "7f311ff0-830f-4215-8241-da062a550ada",
+    "category_id": "7d3e1f5a-6b4c-4a2d-9c7e-1f3a5b7d9c2e",
+    "slug": "customer-onboarding",
+    "name": "Customer Onboarding",
+    "description": "Customer Onboarding prompts for customer support.",
+    "sort_order": 805
+  },
+  {
+    "id": "c0503a7c-edfb-477c-89c1-c0e125a413cc",
+    "category_id": "7d3e1f5a-6b4c-4a2d-9c7e-1f3a5b7d9c2e",
+    "slug": "escalation-handling",
+    "name": "Escalation Handling",
+    "description": "Escalation Handling prompts for customer support.",
+    "sort_order": 806
+  },
+  {
+    "id": "d740ec4f-38f4-4748-b33c-76bf33f3b3e3",
+    "category_id": "7d3e1f5a-6b4c-4a2d-9c7e-1f3a5b7d9c2e",
+    "slug": "service-scripts",
+    "name": "Service Scripts",
+    "description": "Service Scripts prompts for customer support.",
+    "sort_order": 807
+  },
+  {
+    "id": "8405f815-65fd-47e4-b40e-adc1041ac359",
+    "category_id": "7d3e1f5a-6b4c-4a2d-9c7e-1f3a5b7d9c2e",
+    "slug": "feedback-analysis",
+    "name": "Feedback Analysis",
+    "description": "Feedback Analysis prompts for customer support.",
+    "sort_order": 808
+  },
+  {
+    "id": "725d6232-e4e2-4165-a03d-6038f7bb34ea",
+    "category_id": "1c7d5e3f-4b2a-4d6c-8f9a-2b5e7d3f1c8a",
+    "slug": "task-planning",
+    "name": "Task Planning",
+    "description": "Task Planning prompts for productivity.",
+    "sort_order": 901
+  },
+  {
+    "id": "2be0b1c5-2e5d-442c-9f20-f843f4a478f2",
+    "category_id": "1c7d5e3f-4b2a-4d6c-8f9a-2b5e7d3f1c8a",
+    "slug": "time-management",
+    "name": "Time Management",
+    "description": "Time Management prompts for productivity.",
+    "sort_order": 902
+  },
+  {
+    "id": "bcd92e73-1b6b-4df3-8672-e825b548bc2b",
+    "category_id": "1c7d5e3f-4b2a-4d6c-8f9a-2b5e7d3f1c8a",
+    "slug": "goal-setting",
+    "name": "Goal Setting",
+    "description": "Goal Setting prompts for productivity.",
+    "sort_order": 903
+  },
+  {
+    "id": "0c0402fb-60b9-4864-bcf1-a4cac4d4f6b3",
+    "category_id": "1c7d5e3f-4b2a-4d6c-8f9a-2b5e7d3f1c8a",
+    "slug": "note-taking",
+    "name": "Note Taking",
+    "description": "Note Taking prompts for productivity.",
+    "sort_order": 904
+  },
+  {
+    "id": "f476d41b-1e35-4902-94d2-ea873dc9fa22",
+    "category_id": "1c7d5e3f-4b2a-4d6c-8f9a-2b5e7d3f1c8a",
+    "slug": "daily-planning",
+    "name": "Daily Planning",
+    "description": "Daily Planning prompts for productivity.",
+    "sort_order": 905
+  },
+  {
+    "id": "ac514ca4-9f70-4c75-9079-310c84bbc664",
+    "category_id": "1c7d5e3f-4b2a-4d6c-8f9a-2b5e7d3f1c8a",
+    "slug": "personal-knowledge-management",
+    "name": "Personal Knowledge Management",
+    "description": "Personal Knowledge Management prompts for productivity.",
+    "sort_order": 906
+  },
+  {
+    "id": "b7226cad-630d-441b-89e6-f234fafd74e3",
+    "category_id": "1c7d5e3f-4b2a-4d6c-8f9a-2b5e7d3f1c8a",
+    "slug": "meeting-notes",
+    "name": "Meeting Notes",
+    "description": "Meeting Notes prompts for productivity.",
+    "sort_order": 907
+  },
+  {
+    "id": "bb751ccd-0cbb-43d3-af02-4251cc35fa40",
+    "category_id": "1c7d5e3f-4b2a-4d6c-8f9a-2b5e7d3f1c8a",
+    "slug": "productivity-systems",
+    "name": "Productivity Systems",
+    "description": "Productivity Systems prompts for productivity.",
+    "sort_order": 908
+  },
+  {
+    "id": "ecca97b9-13fa-43cb-a9b3-78349bbab86f",
+    "category_id": "9a4c7d2e-5f3b-4e1a-8d6c-7f2a5b4e3d1c",
+    "slug": "ui-design",
+    "name": "UI Design",
+    "description": "UI Design prompts for design & creativity.",
+    "sort_order": 1001
+  },
+  {
+    "id": "f2a82ab1-7f36-4ced-8cd8-42679badb1cd",
+    "category_id": "9a4c7d2e-5f3b-4e1a-8d6c-7f2a5b4e3d1c",
+    "slug": "ux-research",
+    "name": "UX Research",
+    "description": "UX Research prompts for design & creativity.",
+    "sort_order": 1002
+  },
+  {
+    "id": "54ff8024-0e33-4e49-a25e-17be4dbe5b29",
+    "category_id": "9a4c7d2e-5f3b-4e1a-8d6c-7f2a5b4e3d1c",
+    "slug": "branding",
+    "name": "Branding",
+    "description": "Branding prompts for design & creativity.",
+    "sort_order": 1003
+  },
+  {
+    "id": "6a60dd1a-8064-4651-84c0-c387ce4a223f",
+    "category_id": "9a4c7d2e-5f3b-4e1a-8d6c-7f2a5b4e3d1c",
+    "slug": "logo-concepts",
+    "name": "Logo Concepts",
+    "description": "Logo Concepts prompts for design & creativity.",
+    "sort_order": 1004
+  },
+  {
+    "id": "aea2d097-3ec8-46d4-aa15-68426e9d74db",
+    "category_id": "9a4c7d2e-5f3b-4e1a-8d6c-7f2a5b4e3d1c",
+    "slug": "graphic-design",
+    "name": "Graphic Design",
+    "description": "Graphic Design prompts for design & creativity.",
+    "sort_order": 1005
+  },
+  {
+    "id": "a1c27a37-8ee6-4f9a-817e-f60c110e270e",
+    "category_id": "9a4c7d2e-5f3b-4e1a-8d6c-7f2a5b4e3d1c",
+    "slug": "creative-ideation",
+    "name": "Creative Ideation",
+    "description": "Creative Ideation prompts for design & creativity.",
+    "sort_order": 1006
+  },
+  {
+    "id": "4c0f7d5f-ac0d-4b17-b345-9762c8e0ddfb",
+    "category_id": "9a4c7d2e-5f3b-4e1a-8d6c-7f2a5b4e3d1c",
+    "slug": "design-systems",
+    "name": "Design Systems",
+    "description": "Design Systems prompts for design & creativity.",
+    "sort_order": 1007
+  },
+  {
+    "id": "5506196c-b5be-4d14-afe6-86a173ba83c2",
+    "category_id": "9a4c7d2e-5f3b-4e1a-8d6c-7f2a5b4e3d1c",
+    "slug": "color-palettes",
+    "name": "Color Palettes",
+    "description": "Color Palettes prompts for design & creativity.",
+    "sort_order": 1008
+  },
+  {
+    "id": "f17fe5f5-5d1c-45e2-9789-9dd981abfc74",
+    "category_id": "3e5a7d9c-2b4f-4c1d-8a6e-5f7d3b2a1c9e",
+    "slug": "youtube-scripts",
+    "name": "YouTube Scripts",
+    "description": "YouTube Scripts prompts for video & youtube.",
+    "sort_order": 1101
+  },
+  {
+    "id": "f4cc0cb0-aad0-4ef9-9c0d-9068bc9028d8",
+    "category_id": "3e5a7d9c-2b4f-4c1d-8a6e-5f7d3b2a1c9e",
+    "slug": "youtube-shorts",
+    "name": "YouTube Shorts",
+    "description": "YouTube Shorts prompts for video & youtube.",
+    "sort_order": 1102
+  },
+  {
+    "id": "718146f6-bd65-4a99-af7a-af4650c106e3",
+    "category_id": "3e5a7d9c-2b4f-4c1d-8a6e-5f7d3b2a1c9e",
+    "slug": "video-hooks",
+    "name": "Video Hooks",
+    "description": "Video Hooks prompts for video & youtube.",
+    "sort_order": 1103
+  },
+  {
+    "id": "f6d31233-9365-4926-a793-97b5db50117f",
+    "category_id": "3e5a7d9c-2b4f-4c1d-8a6e-5f7d3b2a1c9e",
+    "slug": "thumbnail-ideas",
+    "name": "Thumbnail Ideas",
+    "description": "Thumbnail Ideas prompts for video & youtube.",
+    "sort_order": 1104
+  },
+  {
+    "id": "29802d40-a86a-439d-8f60-f806a4d3aeaa",
+    "category_id": "3e5a7d9c-2b4f-4c1d-8a6e-5f7d3b2a1c9e",
+    "slug": "video-seo",
+    "name": "Video SEO",
+    "description": "Video SEO prompts for video & youtube.",
+    "sort_order": 1105
+  },
+  {
+    "id": "dbc1c773-7804-4b9a-a46e-350e47b3c491",
+    "category_id": "3e5a7d9c-2b4f-4c1d-8a6e-5f7d3b2a1c9e",
+    "slug": "podcast-scripts",
+    "name": "Podcast Scripts",
+    "description": "Podcast Scripts prompts for video & youtube.",
+    "sort_order": 1106
+  },
+  {
+    "id": "e323ad19-3309-414e-89b4-1c5de8b08cbb",
+    "category_id": "3e5a7d9c-2b4f-4c1d-8a6e-5f7d3b2a1c9e",
+    "slug": "storytelling",
+    "name": "Storytelling",
+    "description": "Storytelling prompts for video & youtube.",
+    "sort_order": 1107
+  },
+  {
+    "id": "72419033-d524-4bce-8deb-ac1cde9b7281",
+    "category_id": "3e5a7d9c-2b4f-4c1d-8a6e-5f7d3b2a1c9e",
+    "slug": "reels-content",
+    "name": "Reels Content",
+    "description": "Reels Content prompts for video & youtube.",
+    "sort_order": 1108
+  },
+  {
+    "id": "d6fea4ac-9972-4535-89fe-efdb66d0a478",
+    "category_id": "2d4f6a8c-1b3e-4d7a-9c5f-6a8d2b4e1c7f",
+    "slug": "resume-writing",
+    "name": "Resume Writing",
+    "description": "Resume Writing prompts for career & recruiting.",
+    "sort_order": 1201
+  },
+  {
+    "id": "1cb9cc5c-bb43-42ee-ac96-89f60d5a51bb",
+    "category_id": "2d4f6a8c-1b3e-4d7a-9c5f-6a8d2b4e1c7f",
+    "slug": "cover-letters",
+    "name": "Cover Letters",
+    "description": "Cover Letters prompts for career & recruiting.",
+    "sort_order": 1202
+  },
+  {
+    "id": "f17cadb5-422e-4cff-902a-a661f4a1965c",
+    "category_id": "2d4f6a8c-1b3e-4d7a-9c5f-6a8d2b4e1c7f",
+    "slug": "interview-preparation",
+    "name": "Interview Preparation",
+    "description": "Interview Preparation prompts for career & recruiting.",
+    "sort_order": 1203
+  },
+  {
+    "id": "dcf36215-5f3c-4545-9197-0d1412e60485",
+    "category_id": "2d4f6a8c-1b3e-4d7a-9c5f-6a8d2b4e1c7f",
+    "slug": "job-descriptions",
+    "name": "Job Descriptions",
+    "description": "Job Descriptions prompts for career & recruiting.",
+    "sort_order": 1204
+  },
+  {
+    "id": "65564baa-3a9b-45aa-ab0b-d3e5b247044e",
+    "category_id": "2d4f6a8c-1b3e-4d7a-9c5f-6a8d2b4e1c7f",
+    "slug": "candidate-screening",
+    "name": "Candidate Screening",
+    "description": "Candidate Screening prompts for career & recruiting.",
+    "sort_order": 1205
+  },
+  {
+    "id": "9530859f-48f4-43dc-9d4a-2e94854169fa",
+    "category_id": "2d4f6a8c-1b3e-4d7a-9c5f-6a8d2b4e1c7f",
+    "slug": "career-coaching",
+    "name": "Career Coaching",
+    "description": "Career Coaching prompts for career & recruiting.",
+    "sort_order": 1206
+  },
+  {
+    "id": "b0f4e7c6-7ff7-42e1-9179-816051624c06",
+    "category_id": "2d4f6a8c-1b3e-4d7a-9c5f-6a8d2b4e1c7f",
+    "slug": "linkedin-optimization",
+    "name": "LinkedIn Optimization",
+    "description": "LinkedIn Optimization prompts for career & recruiting.",
+    "sort_order": 1207
+  },
+  {
+    "id": "60a67ac5-4d58-4f29-8388-d311d7498461",
+    "category_id": "2d4f6a8c-1b3e-4d7a-9c5f-6a8d2b4e1c7f",
+    "slug": "hiring-workflows",
+    "name": "Hiring Workflows",
+    "description": "Hiring Workflows prompts for career & recruiting.",
+    "sort_order": 1208
+  },
+  {
+    "id": "70282fcb-b540-48f8-a809-65c7b27aa475",
+    "category_id": "6e8c1d3f-4a5b-4c7d-9e2f-1d3c5b7a9e4f",
+    "slug": "budget-planning",
+    "name": "Budget Planning",
+    "description": "Budget Planning prompts for finance & investing.",
+    "sort_order": 1301
+  },
+  {
+    "id": "431adc97-bef7-4a93-b710-fd67c570a174",
+    "category_id": "6e8c1d3f-4a5b-4c7d-9e2f-1d3c5b7a9e4f",
+    "slug": "investment-analysis",
+    "name": "Investment Analysis",
+    "description": "Investment Analysis prompts for finance & investing.",
+    "sort_order": 1302
+  },
+  {
+    "id": "a9058545-5bc1-4661-b16d-3f3820805ed1",
+    "category_id": "6e8c1d3f-4a5b-4c7d-9e2f-1d3c5b7a9e4f",
+    "slug": "financial-reports",
+    "name": "Financial Reports",
+    "description": "Financial Reports prompts for finance & investing.",
+    "sort_order": 1303
+  },
+  {
+    "id": "39d43f6c-5005-4d88-9acd-c2c81d4aa2a5",
+    "category_id": "6e8c1d3f-4a5b-4c7d-9e2f-1d3c5b7a9e4f",
+    "slug": "stock-research",
+    "name": "Stock Research",
+    "description": "Stock Research prompts for finance & investing.",
+    "sort_order": 1304
+  },
+  {
+    "id": "b075b424-9aa6-403a-b5c5-4f7c1915adfb",
+    "category_id": "6e8c1d3f-4a5b-4c7d-9e2f-1d3c5b7a9e4f",
+    "slug": "risk-assessment",
+    "name": "Risk Assessment",
+    "description": "Risk Assessment prompts for finance & investing.",
+    "sort_order": 1305
+  },
+  {
+    "id": "b3292e04-7b92-49c8-9c3d-56a288e64b8f",
+    "category_id": "6e8c1d3f-4a5b-4c7d-9e2f-1d3c5b7a9e4f",
+    "slug": "financial-forecasting",
+    "name": "Financial Forecasting",
+    "description": "Financial Forecasting prompts for finance & investing.",
+    "sort_order": 1306
+  },
+  {
+    "id": "3371a6b1-a468-4848-b882-a43d5ba80bec",
+    "category_id": "6e8c1d3f-4a5b-4c7d-9e2f-1d3c5b7a9e4f",
+    "slug": "personal-finance",
+    "name": "Personal Finance",
+    "description": "Personal Finance prompts for finance & investing.",
+    "sort_order": 1307
+  },
+  {
+    "id": "0ff9a6a2-adcb-4d67-8eb0-7ca304071b34",
+    "category_id": "6e8c1d3f-4a5b-4c7d-9e2f-1d3c5b7a9e4f",
+    "slug": "business-finance",
+    "name": "Business Finance",
+    "description": "Business Finance prompts for finance & investing.",
+    "sort_order": 1308
+  },
+  {
+    "id": "9d864cd2-78bc-4dc5-89ef-d3393dd46594",
+    "category_id": "5d7a9c2e-3b1f-4e6d-8c4a-7d2f5b1e3c9a",
+    "slug": "clinical-documentation",
+    "name": "Clinical Documentation",
+    "description": "Clinical Documentation prompts for healthcare.",
+    "sort_order": 1401
+  },
+  {
+    "id": "797bf12c-8bdc-4aeb-b4a8-375bdd4e76a0",
+    "category_id": "5d7a9c2e-3b1f-4e6d-8c4a-7d2f5b1e3c9a",
+    "slug": "patient-communication",
+    "name": "Patient Communication",
+    "description": "Patient Communication prompts for healthcare.",
+    "sort_order": 1402
+  },
+  {
+    "id": "52841772-b59b-43a3-9f8d-be61fe0a10a0",
+    "category_id": "5d7a9c2e-3b1f-4e6d-8c4a-7d2f5b1e3c9a",
+    "slug": "medical-research",
+    "name": "Medical Research",
+    "description": "Medical Research prompts for healthcare.",
+    "sort_order": 1403
+  },
+  {
+    "id": "8de4f625-c58e-4ab0-ba16-6998f3c155d2",
+    "category_id": "5d7a9c2e-3b1f-4e6d-8c4a-7d2f5b1e3c9a",
+    "slug": "healthcare-administration",
+    "name": "Healthcare Administration",
+    "description": "Healthcare Administration prompts for healthcare.",
+    "sort_order": 1404
+  },
+  {
+    "id": "2ccfa17f-5793-4a95-b0ec-2ce34e562745",
+    "category_id": "5d7a9c2e-3b1f-4e6d-8c4a-7d2f5b1e3c9a",
+    "slug": "medical-education",
+    "name": "Medical Education",
+    "description": "Medical Education prompts for healthcare.",
+    "sort_order": 1405
+  },
+  {
+    "id": "a4278e96-c410-4f79-badc-4238c3f377fc",
+    "category_id": "5d7a9c2e-3b1f-4e6d-8c4a-7d2f5b1e3c9a",
+    "slug": "compliance-documentation",
+    "name": "Compliance Documentation",
+    "description": "Compliance Documentation prompts for healthcare.",
+    "sort_order": 1406
+  },
+  {
+    "id": "dd1ccc5b-2bbd-4f90-a284-03c0afd2d8ca",
+    "category_id": "5d7a9c2e-3b1f-4e6d-8c4a-7d2f5b1e3c9a",
+    "slug": "treatment-planning",
+    "name": "Treatment Planning",
+    "description": "Treatment Planning prompts for healthcare.",
+    "sort_order": 1407
+  },
+  {
+    "id": "3ac711de-3ccc-4eb2-b043-b9e2a0d30e22",
+    "category_id": "5d7a9c2e-3b1f-4e6d-8c4a-7d2f5b1e3c9a",
+    "slug": "health-coaching",
+    "name": "Health Coaching",
+    "description": "Health Coaching prompts for healthcare.",
+    "sort_order": 1408
+  },
+  {
+    "id": "fdff179e-467e-4ff9-89c0-93d6fb525a5f",
+    "category_id": "8c2f4a6d-1e3b-4d7c-9a5f-2c4e6d8b1a3f",
+    "slug": "contract-drafting",
+    "name": "Contract Drafting",
+    "description": "Contract Drafting prompts for legal.",
+    "sort_order": 1501
+  },
+  {
+    "id": "88a67a4e-f3f1-4b70-98da-45df8d1fabcd",
+    "category_id": "8c2f4a6d-1e3b-4d7c-9a5f-2c4e6d8b1a3f",
+    "slug": "legal-research",
+    "name": "Legal Research",
+    "description": "Legal Research prompts for legal.",
+    "sort_order": 1502
+  },
+  {
+    "id": "eab12946-e96e-4f80-9dc7-8dd0e0d88995",
+    "category_id": "8c2f4a6d-1e3b-4d7c-9a5f-2c4e6d8b1a3f",
+    "slug": "compliance",
+    "name": "Compliance",
+    "description": "Compliance prompts for legal.",
+    "sort_order": 1503
+  },
+  {
+    "id": "0a011ff3-9031-47da-b594-a8bd55ac8e6a",
+    "category_id": "8c2f4a6d-1e3b-4d7c-9a5f-2c4e6d8b1a3f",
+    "slug": "policy-writing",
+    "name": "Policy Writing",
+    "description": "Policy Writing prompts for legal.",
+    "sort_order": 1504
+  },
+  {
+    "id": "6626944d-a0ec-44d6-b31e-d40bd2ca0a56",
+    "category_id": "8c2f4a6d-1e3b-4d7c-9a5f-2c4e6d8b1a3f",
+    "slug": "risk-assessment",
+    "name": "Risk Assessment",
+    "description": "Risk Assessment prompts for legal.",
+    "sort_order": 1505
+  },
+  {
+    "id": "577f4ba9-2866-4940-8448-9b8a72fdb778",
+    "category_id": "8c2f4a6d-1e3b-4d7c-9a5f-2c4e6d8b1a3f",
+    "slug": "case-summaries",
+    "name": "Case Summaries",
+    "description": "Case Summaries prompts for legal.",
+    "sort_order": 1506
+  },
+  {
+    "id": "46cfdbce-6bcd-4c56-8c3a-716dbcfbb677",
+    "category_id": "8c2f4a6d-1e3b-4d7c-9a5f-2c4e6d8b1a3f",
+    "slug": "regulatory-analysis",
+    "name": "Regulatory Analysis",
+    "description": "Regulatory Analysis prompts for legal.",
+    "sort_order": 1507
+  },
+  {
+    "id": "5128832c-0ab2-4ede-ae9a-3674b6473408",
+    "category_id": "8c2f4a6d-1e3b-4d7c-9a5f-2c4e6d8b1a3f",
+    "slug": "legal-documentation",
+    "name": "Legal Documentation",
+    "description": "Legal Documentation prompts for legal.",
+    "sort_order": 1508
+  },
+  {
+    "id": "643bc995-8f22-482c-b745-7b4ce1425ff9",
+    "category_id": "4a6d8c1f-2b3e-4d5a-9f7c-6a1d3e5b7c9f",
+    "slug": "product-descriptions",
+    "name": "Product Descriptions",
+    "description": "Product Descriptions prompts for e-commerce.",
+    "sort_order": 1601
+  },
+  {
+    "id": "662c2f31-6fb0-4681-85b5-a3a22af56c56",
+    "category_id": "4a6d8c1f-2b3e-4d5a-9f7c-6a1d3e5b7c9f",
+    "slug": "marketplace-listings",
+    "name": "Marketplace Listings",
+    "description": "Marketplace Listings prompts for e-commerce.",
+    "sort_order": 1602
+  },
+  {
+    "id": "efc4b673-b950-46bd-b09a-b0e58af6ebd7",
+    "category_id": "4a6d8c1f-2b3e-4d5a-9f7c-6a1d3e5b7c9f",
+    "slug": "conversion-optimization",
+    "name": "Conversion Optimization",
+    "description": "Conversion Optimization prompts for e-commerce.",
+    "sort_order": 1603
+  },
+  {
+    "id": "499e9940-248a-4585-9ece-b77c1bb7eaac",
+    "category_id": "4a6d8c1f-2b3e-4d5a-9f7c-6a1d3e5b7c9f",
+    "slug": "customer-retention",
+    "name": "Customer Retention",
+    "description": "Customer Retention prompts for e-commerce.",
+    "sort_order": 1604
+  },
+  {
+    "id": "3d9b8b7c-3048-4b32-820c-5a582572f729",
+    "category_id": "4a6d8c1f-2b3e-4d5a-9f7c-6a1d3e5b7c9f",
+    "slug": "email-campaigns",
+    "name": "Email Campaigns",
+    "description": "Email Campaigns prompts for e-commerce.",
+    "sort_order": 1605
+  },
+  {
+    "id": "edc6711c-5aed-4480-ac80-15273cf61531",
+    "category_id": "4a6d8c1f-2b3e-4d5a-9f7c-6a1d3e5b7c9f",
+    "slug": "product-research",
+    "name": "Product Research",
+    "description": "Product Research prompts for e-commerce.",
+    "sort_order": 1606
+  },
+  {
+    "id": "53f133f0-dabf-4c0c-b7dd-c467cc12b60e",
+    "category_id": "4a6d8c1f-2b3e-4d5a-9f7c-6a1d3e5b7c9f",
+    "slug": "pricing-strategy",
+    "name": "Pricing Strategy",
+    "description": "Pricing Strategy prompts for e-commerce.",
+    "sort_order": 1607
+  },
+  {
+    "id": "eb1e8440-268f-444c-ad68-6e465efd3ed7",
+    "category_id": "4a6d8c1f-2b3e-4d5a-9f7c-6a1d3e5b7c9f",
+    "slug": "store-management",
+    "name": "Store Management",
+    "description": "Store Management prompts for e-commerce.",
+    "sort_order": 1608
+  },
+  {
+    "id": "6f4a49ac-dc7c-4d69-8476-ef093550b758",
+    "category_id": "7b9d1e3f-4c5a-4d8e-9a2f-3e5b7c1d4a6f",
+    "slug": "employee-onboarding",
+    "name": "Employee Onboarding",
+    "description": "Employee Onboarding prompts for human resources.",
+    "sort_order": 1701
+  },
+  {
+    "id": "4da94c43-4cc0-4e0a-b208-0f5b7e4e562c",
+    "category_id": "7b9d1e3f-4c5a-4d8e-9a2f-3e5b7c1d4a6f",
+    "slug": "performance-reviews",
+    "name": "Performance Reviews",
+    "description": "Performance Reviews prompts for human resources.",
+    "sort_order": 1702
+  },
+  {
+    "id": "57c31ada-00d3-4efa-b6e3-ba6dbd5000e6",
+    "category_id": "7b9d1e3f-4c5a-4d8e-9a2f-3e5b7c1d4a6f",
+    "slug": "hr-policies",
+    "name": "HR Policies",
+    "description": "HR Policies prompts for human resources.",
+    "sort_order": 1703
+  },
+  {
+    "id": "8e5a4bdd-5b70-4349-866d-2e0b276e0c54",
+    "category_id": "7b9d1e3f-4c5a-4d8e-9a2f-3e5b7c1d4a6f",
+    "slug": "internal-communications",
+    "name": "Internal Communications",
+    "description": "Internal Communications prompts for human resources.",
+    "sort_order": 1704
+  },
+  {
+    "id": "ae40ee99-bc61-4875-972d-1248a7576bfa",
+    "category_id": "7b9d1e3f-4c5a-4d8e-9a2f-3e5b7c1d4a6f",
+    "slug": "training-programs",
+    "name": "Training Programs",
+    "description": "Training Programs prompts for human resources.",
+    "sort_order": 1705
+  },
+  {
+    "id": "a61af588-7ae6-40ae-af50-2c3a014ed71e",
+    "category_id": "7b9d1e3f-4c5a-4d8e-9a2f-3e5b7c1d4a6f",
+    "slug": "employee-engagement",
+    "name": "Employee Engagement",
+    "description": "Employee Engagement prompts for human resources.",
+    "sort_order": 1706
+  },
+  {
+    "id": "2786d6c4-2d2f-4c80-8e15-1e6fe605a19e",
+    "category_id": "7b9d1e3f-4c5a-4d8e-9a2f-3e5b7c1d4a6f",
+    "slug": "recruitment",
+    "name": "Recruitment",
+    "description": "Recruitment prompts for human resources.",
+    "sort_order": 1707
+  },
+  {
+    "id": "b3cef807-62e4-415b-8f7b-7a2c596f67da",
+    "category_id": "7b9d1e3f-4c5a-4d8e-9a2f-3e5b7c1d4a6f",
+    "slug": "workforce-planning",
+    "name": "Workforce Planning",
+    "description": "Workforce Planning prompts for human resources.",
+    "sort_order": 1708
+  },
+  {
+    "id": "4b5da3bf-078b-4e6a-92f5-7797b809266b",
+    "category_id": "1e3c5a7d-9b2f-4d6a-8c4e-5a7d1b3c9f2e",
+    "slug": "agent-planning",
+    "name": "Agent Planning",
+    "description": "Agent Planning prompts for ai agents & automation.",
+    "sort_order": 1801
+  },
+  {
+    "id": "7e30a973-89d3-41d5-a166-38e8a09ec614",
+    "category_id": "1e3c5a7d-9b2f-4d6a-8c4e-5a7d1b3c9f2e",
+    "slug": "multi-agent-systems",
+    "name": "Multi-Agent Systems",
+    "description": "Multi-Agent Systems prompts for ai agents & automation.",
+    "sort_order": 1802
+  },
+  {
+    "id": "888138e5-8f43-4e6d-8aef-2adc815ff9bd",
+    "category_id": "1e3c5a7d-9b2f-4d6a-8c4e-5a7d1b3c9f2e",
+    "slug": "workflow-automation",
+    "name": "Workflow Automation",
+    "description": "Workflow Automation prompts for ai agents & automation.",
+    "sort_order": 1803
+  },
+  {
+    "id": "34e80b30-ebd1-401c-a09b-9bb6c501ea02",
+    "category_id": "1e3c5a7d-9b2f-4d6a-8c4e-5a7d1b3c9f2e",
+    "slug": "research-agents",
+    "name": "Research Agents",
+    "description": "Research Agents prompts for ai agents & automation.",
+    "sort_order": 1804
+  },
+  {
+    "id": "a164f0fd-6c55-4495-bd31-42d9cc6326a1",
+    "category_id": "1e3c5a7d-9b2f-4d6a-8c4e-5a7d1b3c9f2e",
+    "slug": "coding-agents",
+    "name": "Coding Agents",
+    "description": "Coding Agents prompts for ai agents & automation.",
+    "sort_order": 1805
+  },
+  {
+    "id": "39468b3e-ad1d-42a1-9c77-405c50efa548",
+    "category_id": "1e3c5a7d-9b2f-4d6a-8c4e-5a7d1b3c9f2e",
+    "slug": "sales-agents",
+    "name": "Sales Agents",
+    "description": "Sales Agents prompts for ai agents & automation.",
+    "sort_order": 1806
+  },
+  {
+    "id": "02555421-a4b9-4f88-a249-961530c41db1",
+    "category_id": "1e3c5a7d-9b2f-4d6a-8c4e-5a7d1b3c9f2e",
+    "slug": "customer-service-agents",
+    "name": "Customer Service Agents",
+    "description": "Customer Service Agents prompts for ai agents & automation.",
+    "sort_order": 1807
+  },
+  {
+    "id": "338f7cd6-09c9-4789-950d-02817e3ed7ed",
+    "category_id": "1e3c5a7d-9b2f-4d6a-8c4e-5a7d1b3c9f2e",
+    "slug": "autonomous-workflows",
+    "name": "Autonomous Workflows",
+    "description": "Autonomous Workflows prompts for ai agents & automation.",
+    "sort_order": 1808
+  },
+  {
+    "id": "213569e9-16e9-4230-80cf-6412e74ce0b4",
+    "category_id": "5a7d9c1e-3b4f-4d6c-8a2e-7d1c3b5f9a4e",
+    "slug": "system-prompts",
+    "name": "System Prompts",
+    "description": "System Prompts prompts for prompt engineering.",
+    "sort_order": 1901
+  },
+  {
+    "id": "b5eecf5e-e571-41cb-98fa-f60157105d86",
+    "category_id": "5a7d9c1e-3b4f-4d6c-8a2e-7d1c3b5f9a4e",
+    "slug": "few-shot-prompting",
+    "name": "Few-Shot Prompting",
+    "description": "Few-Shot Prompting prompts for prompt engineering.",
+    "sort_order": 1902
+  },
+  {
+    "id": "31ae7143-eddb-4bc3-9d9a-d0fec10fe864",
+    "category_id": "5a7d9c1e-3b4f-4d6c-8a2e-7d1c3b5f9a4e",
+    "slug": "chain-of-thought",
+    "name": "Chain of Thought",
+    "description": "Chain of Thought prompts for prompt engineering.",
+    "sort_order": 1903
+  },
+  {
+    "id": "b56087ba-67c0-4bd2-8c4c-c4e53a812bee",
+    "category_id": "5a7d9c1e-3b4f-4d6c-8a2e-7d1c3b5f9a4e",
+    "slug": "tree-of-thoughts",
+    "name": "Tree of Thoughts",
+    "description": "Tree of Thoughts prompts for prompt engineering.",
+    "sort_order": 1904
+  },
+  {
+    "id": "09604b62-06bc-48e5-80aa-32c6b5f50152",
+    "category_id": "5a7d9c1e-3b4f-4d6c-8a2e-7d1c3b5f9a4e",
+    "slug": "react",
+    "name": "ReAct",
+    "description": "ReAct prompts for prompt engineering.",
+    "sort_order": 1905
+  },
+  {
+    "id": "5820a248-3b1c-484c-bf4d-c254e0561269",
+    "category_id": "5a7d9c1e-3b4f-4d6c-8a2e-7d1c3b5f9a4e",
+    "slug": "structured-outputs",
+    "name": "Structured Outputs",
+    "description": "Structured Outputs prompts for prompt engineering.",
+    "sort_order": 1906
+  },
+  {
+    "id": "f2730005-84e3-4ea4-9b8e-f2af94ba85a9",
+    "category_id": "5a7d9c1e-3b4f-4d6c-8a2e-7d1c3b5f9a4e",
+    "slug": "prompt-testing",
+    "name": "Prompt Testing",
+    "description": "Prompt Testing prompts for prompt engineering.",
+    "sort_order": 1907
+  },
+  {
+    "id": "b5123816-bbda-4daa-8db3-52c5cb38c218",
+    "category_id": "5a7d9c1e-3b4f-4d6c-8a2e-7d1c3b5f9a4e",
+    "slug": "prompt-optimization",
+    "name": "Prompt Optimization",
+    "description": "Prompt Optimization prompts for prompt engineering.",
+    "sort_order": 1908
+  },
+  {
+    "id": "93d6aa90-0b8a-4c8d-99ff-fd8f59b135e4",
+    "category_id": "9d1f3b5c-7a4e-4d8c-2f6a-1b3e5c7d9a4f",
+    "slug": "brainstorming",
+    "name": "Brainstorming",
+    "description": "Brainstorming prompts for general purpose.",
+    "sort_order": 2001
+  },
+  {
+    "id": "04ffbc14-55da-49a7-804c-f00bbe471e2c",
+    "category_id": "9d1f3b5c-7a4e-4d8c-2f6a-1b3e5c7d9a4f",
+    "slug": "decision-making",
+    "name": "Decision Making",
+    "description": "Decision Making prompts for general purpose.",
+    "sort_order": 2002
+  },
+  {
+    "id": "39e13b72-8d8f-4e63-bb20-c66adecc56c9",
+    "category_id": "9d1f3b5c-7a4e-4d8c-2f6a-1b3e5c7d9a4f",
+    "slug": "summarization",
+    "name": "Summarization",
+    "description": "Summarization prompts for general purpose.",
+    "sort_order": 2003
+  },
+  {
+    "id": "5037ee72-cf1a-472a-b091-188659243df5",
+    "category_id": "9d1f3b5c-7a4e-4d8c-2f6a-1b3e5c7d9a4f",
+    "slug": "translation",
+    "name": "Translation",
+    "description": "Translation prompts for general purpose.",
+    "sort_order": 2004
+  },
+  {
+    "id": "60105c4e-d13c-45b7-b40f-a5fce673ea34",
+    "category_id": "9d1f3b5c-7a4e-4d8c-2f6a-1b3e5c7d9a4f",
+    "slug": "writing-assistance",
+    "name": "Writing Assistance",
+    "description": "Writing Assistance prompts for general purpose.",
+    "sort_order": 2005
+  },
+  {
+    "id": "5ce1bc0b-7aba-4535-856b-1823972732ef",
+    "category_id": "9d1f3b5c-7a4e-4d8c-2f6a-1b3e5c7d9a4f",
+    "slug": "idea-generation",
+    "name": "Idea Generation",
+    "description": "Idea Generation prompts for general purpose.",
+    "sort_order": 2006
+  },
+  {
+    "id": "3d5dfb98-faa0-44ec-8b94-cd9ce0c13005",
+    "category_id": "9d1f3b5c-7a4e-4d8c-2f6a-1b3e5c7d9a4f",
+    "slug": "problem-solving",
+    "name": "Problem Solving",
+    "description": "Problem Solving prompts for general purpose.",
+    "sort_order": 2007
+  },
+  {
+    "id": "d706ec23-1f21-44fa-88a2-7bee404c5dab",
+    "category_id": "9d1f3b5c-7a4e-4d8c-2f6a-1b3e5c7d9a4f",
+    "slug": "everyday-productivity",
+    "name": "Everyday Productivity",
+    "description": "Everyday Productivity prompts for general purpose.",
+    "sort_order": 2008
+  }
+]

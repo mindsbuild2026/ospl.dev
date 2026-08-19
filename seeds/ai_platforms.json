@@ -1,0 +1,242 @@
+[
+  {
+    "id": "6f13e7c8-7c87-4347-8b5e-8840c83a55eb",
+    "slug": "chatgpt",
+    "name": "ChatGPT",
+    "description": "OpenAI ChatGPT (GPT-4o, o3, o4)",
+    "sort_order": 10,
+    "active": true
+  },
+  {
+    "id": "3a9f0cd1-4015-46eb-8e26-2315b6d7a468",
+    "slug": "claude",
+    "name": "Claude",
+    "description": "Anthropic Claude (Opus, Sonnet, Haiku)",
+    "sort_order": 20,
+    "active": true
+  },
+  {
+    "id": "5c08b0d8-0d36-4af2-9d40-99e9a5db72f1",
+    "slug": "gemini",
+    "name": "Gemini",
+    "description": "Google Gemini AI models",
+    "sort_order": 30,
+    "active": true
+  },
+  {
+    "id": "c7f2a95c-f7a2-46db-b43c-4eb9efab7390",
+    "slug": "grok",
+    "name": "Grok",
+    "description": "xAI Grok assistant",
+    "sort_order": 40,
+    "active": true
+  },
+  {
+    "id": "1e61a5cf-f04c-4d91-90f4-0a7e03f0f2c7",
+    "slug": "perplexity",
+    "name": "Perplexity",
+    "description": "AI-powered answer engine",
+    "sort_order": 50,
+    "active": true
+  },
+  {
+    "id": "e5f4cb96-c6c8-4897-b8a8-8c4d2cb5bc32",
+    "slug": "copilot",
+    "name": "Microsoft Copilot",
+    "description": "Microsoft AI assistant",
+    "sort_order": 60,
+    "active": true
+  },
+  {
+    "id": "fcda2d88-48ef-4d5c-bcf9-fd2e70c0c5c8",
+    "slug": "meta-ai",
+    "name": "Meta AI",
+    "description": "Meta AI assistant",
+    "sort_order": 70,
+    "active": true
+  },
+  {
+    "id": "8dcf57b8-17ab-41f0-bbb5-58f4e79a07c0",
+    "slug": "deepseek",
+    "name": "DeepSeek",
+    "description": "DeepSeek reasoning models",
+    "sort_order": 80,
+    "active": true
+  },
+  {
+    "id": "4eb6a4a7-c51b-4cf5-ae67-f1d7e81b9a3f",
+    "slug": "mistral",
+    "name": "Mistral AI",
+    "description": "Mistral AI models",
+    "sort_order": 90,
+    "active": true
+  },
+  {
+    "id": "0d7b0fd4-3c39-4a0c-907d-2e8af7cf641e",
+    "slug": "le-chat",
+    "name": "Le Chat",
+    "description": "Mistral AI assistant",
+    "sort_order": 100,
+    "active": true
+  },
+  {
+    "id": "61bbd2cc-33a2-4d08-b3cf-0d9d56a20f77",
+    "slug": "character-ai",
+    "name": "Character.AI",
+    "description": "Character-based AI conversations",
+    "sort_order": 110,
+    "active": true
+  },
+  {
+    "id": "a86fd4f5-d0db-4f80-87d7-1a981f7d458e",
+    "slug": "poe",
+    "name": "Poe",
+    "description": "Multi-model AI platform",
+    "sort_order": 120,
+    "active": true
+  },
+  {
+    "id": "42b4b11f-cc3f-43db-93d4-f12b5d3ab25c",
+    "slug": "you-com",
+    "name": "You.com",
+    "description": "AI search and productivity assistant",
+    "sort_order": 130,
+    "active": true
+  },
+  {
+    "id": "ef31cf72-9c18-47d1-aea4-caf84b1d36e7",
+    "slug": "phind",
+    "name": "Phind",
+    "description": "Developer-focused AI search",
+    "sort_order": 140,
+    "active": true
+  },
+  {
+    "id": "d2c5ebfb-16db-4c75-bf6e-f9a4f863de8c",
+    "slug": "pi",
+    "name": "Pi",
+    "description": "Personal AI assistant",
+    "sort_order": 150,
+    "active": true
+  },
+  {
+    "id": "9eeb80f4-4e2f-43ec-87a6-c57d92c0f2cf",
+    "slug": "notebooklm",
+    "name": "NotebookLM",
+    "description": "Google AI research notebook",
+    "sort_order": 160,
+    "active": true
+  },
+  {
+    "id": "4a12f1b4-fca5-4d9e-9cf5-b7ddad9d5f5f",
+    "slug": "qwen",
+    "name": "Qwen",
+    "description": "Alibaba Qwen AI models",
+    "sort_order": 170,
+    "active": true
+  },
+  {
+    "id": "f74ef89d-7a52-4e8d-bd88-feb6e87f1b65",
+    "slug": "kimi",
+    "name": "Kimi",
+    "description": "Moonshot AI assistant",
+    "sort_order": 180,
+    "active": true
+  },
+  {
+    "id": "d91c5277-0a4f-48f3-b88c-fc4c97d6d921",
+    "slug": "github-copilot",
+    "name": "GitHub Copilot",
+    "description": "AI coding assistant",
+    "sort_order": 190,
+    "active": true
+  },
+  {
+    "id": "d7f7cb13-4dcb-4e55-97f8-7db52e0c862e",
+    "slug": "cursor",
+    "name": "Cursor",
+    "description": "AI-native code editor",
+    "sort_order": 200,
+    "active": true
+  },
+  {
+    "id": "5a56ef57-05cb-4f93-a87b-fef90e1a5dcf",
+    "slug": "windsurf",
+    "name": "Windsurf",
+    "description": "AI development environment",
+    "sort_order": 210,
+    "active": true
+  },
+  {
+    "id": "9ab8fba8-f6b8-47ea-88ab-cb4c51ef40e1",
+    "slug": "cline",
+    "name": "Cline",
+    "description": "Open-source coding agent",
+    "sort_order": 220,
+    "active": true
+  },
+  {
+    "id": "3f65dbdb-5164-40b2-b7f6-ff5cb9a5bb37",
+    "slug": "amazon-q",
+    "name": "Amazon Q",
+    "description": "AWS AI assistant",
+    "sort_order": 230,
+    "active": true
+  },
+  {
+    "id": "bbbd4f1c-fb88-4c88-9e6d-79dcaefb55b7",
+    "slug": "replit-ai",
+    "name": "Replit AI",
+    "description": "AI-powered software development",
+    "sort_order": 240,
+    "active": true
+  },
+  {
+    "id": "27bbef58-74d2-476f-8f7d-ef7f7b0af98e",
+    "slug": "bolt-new",
+    "name": "Bolt.new",
+    "description": "AI full-stack application builder",
+    "sort_order": 250,
+    "active": true
+  },
+  {
+    "id": "7df0ec26-bf42-4f0a-a75f-c4c54f7efb44",
+    "slug": "lovable",
+    "name": "Lovable",
+    "description": "AI web application builder",
+    "sort_order": 260,
+    "active": true
+  },
+  {
+    "id": "c6e9d6ea-bc12-4fa5-bfc9-df7617dbcc18",
+    "slug": "v0",
+    "name": "v0",
+    "description": "AI UI generation platform",
+    "sort_order": 270,
+    "active": true
+  },
+  {
+    "id": "de44f63a-c70f-4b45-a7f8-6b4f41df87d5",
+    "slug": "blackbox-ai",
+    "name": "Blackbox AI",
+    "description": "AI coding assistant and search",
+    "sort_order": 280,
+    "active": true
+  },
+  {
+    "id": "1b9f761e-cfe6-4c43-aef7-0baf88d6c0a7",
+    "slug": "open-webui",
+    "name": "Open WebUI",
+    "description": "Self-hosted AI interface",
+    "sort_order": 290,
+    "active": true
+  },
+  {
+    "id": "ea7c4b54-2b0e-4d97-9464-33d1f2ec6cb8",
+    "slug": "anythingllm",
+    "name": "AnythingLLM",
+    "description": "Private AI workspace platform",
+    "sort_order": 300,
+    "active": true
+  }
+]

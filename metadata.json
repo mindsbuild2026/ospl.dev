@@ -1,0 +1,6 @@
+{
+  "name": "PromptHub",
+  "description": "An elegant, open-source collaborative prompt library for prompt engineers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

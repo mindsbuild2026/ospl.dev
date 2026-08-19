@@ -1,0 +1,888 @@
+-- Enable extensions
+create extension if not exists "pgcrypto";
+create extension if not exists "pg_trgm";
+
+-- Create a strictly IMMUTABLE wrapper for converting a text array to string
+-- This resolves the "generation expression is not immutable" error on search_vector.
+create or replace function immutable_array_to_string(text[], text) 
+returns text 
+language sql immutable strict parallel safe 
+as $$
+  select array_to_string($1, $2);
+$$;
+
+--
+-- Lookup and taxonomy tables
+--
+create table if not exists authors (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid,
+  handle text not null unique,
+  name text not null,
+  avatar_url text,
+  bio text,
+  website text,
+  github text,
+  verified boolean not null default false,
+  reputation int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists categories (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  name text not null unique,
+  description text,
+  icon_name text,
+  sort_order int not null default 100,
+  is_trending boolean not null default false,
+  seo_h1 text,
+  meta_title text,
+  meta_description text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists subcategories (
+  id uuid primary key default gen_random_uuid(),
+  category_id uuid not null references categories(id) on delete cascade,
+  slug text not null,
+  name text not null,
+  description text,
+  sort_order int not null default 100,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(category_id, slug),
+  unique(category_id, name)
+);
+
+create table if not exists prompt_types (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  name text not null unique,
+  description text
+);
+
+create table if not exists ai_platforms (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  name text not null unique,
+  description text,
+  sort_order int not null default 100,
+  active boolean not null default true
+);
+
+create table if not exists tags (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  description text,
+  usage_count int not null default 0
+);
+
+create table if not exists collections (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  name text not null unique,
+  description text,
+  icon_name text,
+  category_id uuid references categories(id) on delete set null,
+  sort_order int not null default 100,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists industries (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  name text not null unique,
+  description text
+);
+
+create table if not exists prompt_techniques (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  name text not null unique,
+  description text
+);
+
+--
+-- Core prompts
+--
+create table if not exists prompts (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  title text not null,
+  short_description text not null,
+  description text not null,
+  category_id uuid not null references categories(id),
+  subcategory_id uuid references subcategories(id),
+  author_id uuid not null references authors(id) on delete restrict,
+  author_user_id uuid,
+  prompt_type_id uuid references prompt_types(id),
+  difficulty text,
+  license_type text not null default 'MIT',
+  commercial_use boolean not null default true,
+  attribution_required boolean not null default false,
+  featured boolean not null default false,
+  verified boolean not null default false,
+  community_validated boolean not null default false,
+  current_version text not null default '1.0.0',
+  meta_title text,
+  meta_description text,
+  seo_keywords text[],
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  moderation_status text not null default 'pending',
+  moderated_by uuid,
+  moderated_at timestamptz,
+  moderated_notes text,
+  search_vector tsvector generated always as (
+    setweight(to_tsvector('english'::regconfig, coalesce(title, '')), 'A') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(short_description, '')), 'B') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(description, '')), 'C') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(immutable_array_to_string(seo_keywords, ' '), '')), 'D')
+  ) stored
+);
+
+create index if not exists idx_prompts_slug on prompts(slug);
+create index if not exists idx_prompts_title on prompts(title);
+create index if not exists idx_prompts_category on prompts(category_id);
+create index if not exists idx_prompts_subcategory on prompts(subcategory_id);
+create index if not exists idx_prompts_author on prompts(author_id);
+create index if not exists idx_prompts_created_at on prompts(created_at desc);
+create index if not exists idx_prompts_updated_at on prompts(updated_at desc);
+create index if not exists idx_prompts_search_vector on prompts using gin(search_vector);
+
+--
+-- Prompt detail tables
+--
+create table if not exists prompt_variables (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  name text not null,
+  label text not null,
+  required boolean not null default false,
+  description text,
+  sort_order int not null default 100
+);
+
+create table if not exists prompt_examples (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  title text not null,
+  input text not null,
+  output text not null,
+  sort_order int not null default 100
+);
+
+create table if not exists prompt_test_cases (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  name text not null,
+  input text not null,
+  expected_result text not null,
+  tested_model text,
+  sort_order int not null default 100
+);
+
+create table if not exists prompt_proof_items (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  type text check (type in ('image','video','text')) not null,
+  title text not null,
+  url text,
+  thumbnail_url text,
+  content text,
+  description text,
+  duration_seconds int,
+  sort_order int not null default 100
+);
+
+create table if not exists prompt_version_history (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  version text not null,
+  released_at timestamptz not null default now(),
+  changes text[] not null,
+  sort_order int not null default 100
+);
+
+create table if not exists prompt_usage_instructions (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  instruction text not null,
+  sort_order int not null default 100
+);
+
+create table if not exists prompt_recommended_models (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  name text not null,
+  provider text not null,
+  sort_order int not null default 100
+);
+
+create table if not exists prompt_industries (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  industry_id uuid not null references industries(id) on delete restrict,
+  unique(prompt_id, industry_id)
+);
+
+create table if not exists prompt_techniques_map (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  technique_id uuid not null references prompt_techniques(id) on delete restrict,
+  unique(prompt_id, technique_id)
+);
+
+create table if not exists prompt_related_prompts (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  related_prompt_id uuid not null references prompts(id) on delete restrict,
+  relation_type text not null default 'related',
+  unique(prompt_id, related_prompt_id)
+);
+
+--
+-- Many-to-many maps
+--
+create table if not exists prompt_ai_platforms (
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  ai_platform_id uuid not null references ai_platforms(id) on delete restrict,
+  sort_order int not null default 100,
+  primary key(prompt_id, ai_platform_id)
+);
+
+create table if not exists prompt_tags (
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  tag_id uuid not null references tags(id) on delete restrict,
+  primary key(prompt_id, tag_id)
+);
+
+create table if not exists prompt_collections (
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  collection_id uuid not null references collections(id) on delete restrict,
+  sort_order int not null default 100,
+  primary key(prompt_id, collection_id)
+);
+
+--
+-- Ratings, reviews, analytics
+--
+create table if not exists prompt_reviews (
+  id uuid primary key default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  user_id uuid not null,
+  rating int not null check (rating between 1 and 5),
+  title text,
+  comment text,
+  approved boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(prompt_id, user_id)
+);
+
+create index if not exists idx_prompt_reviews_prompt on prompt_reviews(prompt_id);
+create index if not exists idx_prompt_reviews_user on prompt_reviews(user_id);
+
+create table if not exists prompt_metrics (
+  prompt_id uuid primary key references prompts(id) on delete cascade,
+  views bigint not null default 0,
+  copies bigint not null default 0,
+  likes bigint not null default 0,
+  bookmarks bigint not null default 0,
+  shares bigint not null default 0,
+  comments bigint not null default 0,
+  downloads bigint not null default 0,
+  rating_count int not null default 0,
+  rating_average numeric(3,2) not null default 0,
+  has_proof boolean not null default false,
+  success_rate numeric(5,2) not null default 0,
+  tested_models text[] not null default '{}',
+  trending_score numeric(8,2) not null default 0,
+  weekly_growth numeric(8,2) not null default 0,
+  popularity_rank int not null default 0,
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_prompt_metrics_trending on prompt_metrics(trending_score desc);
+create index if not exists idx_prompt_metrics_views on prompt_metrics(views desc);
+create index if not exists idx_prompt_metrics_rating on prompt_metrics(rating_average desc);
+
+create table if not exists prompt_events (
+  id uuid default gen_random_uuid(),
+  prompt_id uuid not null references prompts(id) on delete cascade,
+  user_id uuid,
+  event_type text not null check (event_type in ('view','copy','bookmark','share','comment','download','rating')),
+  event_metadata jsonb,
+  created_at timestamptz not null default now(),
+  primary key (id, created_at)
+) partition by range (created_at);
+
+create table if not exists prompt_events_default partition of prompt_events default;
+
+--
+-- Views
+--
+create view category_summaries as
+select
+  c.id,
+  c.slug,
+  c.name,
+  c.description,
+  c.icon_name,
+  c.is_trending,
+  c.seo_h1,
+  c.meta_title,
+  c.meta_description,
+  c.sort_order,
+  count(p.id)::int as prompt_count
+from categories c
+left join prompts p on p.category_id = c.id
+group by c.id
+order by c.sort_order;
+
+create view collection_summaries as
+select
+  c.id,
+  c.slug,
+  c.name,
+  c.description,
+  c.icon_name,
+  c.category_id,
+  c.sort_order,
+  count(pc.prompt_id)::int as prompt_count
+from collections c
+left join prompt_collections pc on pc.collection_id = c.id
+group by c.id
+order by prompt_count desc;
+
+create view author_summaries as
+select
+  a.id,
+  a.handle,
+  a.name,
+  a.avatar_url,
+  a.verified,
+  a.reputation,
+  count(p.id)::int as prompt_count
+from authors a
+left join prompts p on p.author_id = a.id
+group by a.id
+order by a.reputation desc;
+
+create view prompt_filter_options as
+select
+  coalesce(array_agg(distinct pt.name order by pt.name), '{}') as prompt_types,
+  coalesce(array_agg(distinct p.difficulty order by p.difficulty), '{}') as difficulties
+from prompts p
+left join prompt_types pt on pt.id = p.prompt_type_id;
+
+create view prompt_card_view as
+select
+  p.id,
+  p.slug,
+  p.title,
+  p.short_description,
+  p.category_id,
+  c.name as category_name,
+  p.subcategory_id,
+  sc.name as subcategory_name,
+  p.author_id,
+  a.name as author_name,
+  a.handle as author_handle,
+  a.avatar_url as author_avatar_url,
+  a.verified as author_verified,
+  p.featured,
+  p.verified,
+  p.community_validated,
+  p.created_at,
+  p.updated_at,
+  pm.views,
+  pm.copies,
+  pm.bookmarks,
+  pm.likes,
+  pm.shares,
+  pm.comments,
+  pm.rating_average as rating,
+  pm.rating_count,
+  pm.popularity_rank,
+  pm.trending_score,
+  pm.weekly_growth,
+  pm.has_proof,
+  pm.success_rate,
+  array_remove(array_agg(distinct t.name), NULL) as tags,
+  array_remove(array_agg(distinct ap.name), NULL) as ai_platforms
+from prompts p
+left join categories c on c.id = p.category_id
+left join subcategories sc on sc.id = p.subcategory_id
+left join authors a on a.id = p.author_id
+left join prompt_metrics pm on pm.prompt_id = p.id
+left join prompt_tags pt on pt.prompt_id = p.id
+left join tags t on t.id = pt.tag_id
+left join prompt_ai_platforms pap on pap.prompt_id = p.id
+left join ai_platforms ap on ap.id = pap.ai_platform_id
+group by
+  p.id, c.name, sc.name, a.name, a.handle, a.avatar_url, a.verified,
+  p.featured, p.verified, p.community_validated,
+  p.created_at, p.updated_at,
+  pm.views, pm.copies, pm.bookmarks, pm.likes, pm.shares, pm.comments,
+  pm.rating_average, pm.rating_count, pm.popularity_rank, pm.trending_score,
+  pm.weekly_growth, pm.has_proof, pm.success_rate, p.category_id, p.subcategory_id,
+  p.author_id;
+
+create view prompt_details as
+select
+  p.id,
+  p.slug,
+  p.title,
+  p.short_description,
+  p.description,
+  p.category_id,
+  c.name as category_name,
+  p.subcategory_id,
+  sc.name as subcategory_name,
+  p.author_id,
+  a.name as author_name,
+  a.handle as author_handle,
+  a.avatar_url as author_avatar_url,
+  a.bio as author_bio,
+  a.website as author_website,
+  a.github as author_github,
+  a.verified as author_verified,
+  a.reputation as author_reputation,
+  coalesce(a_prompt_counts.total_prompts, 0) as author_total_prompts,
+  p.difficulty,
+  pt.name as prompt_type,
+  p.license_type,
+  p.commercial_use,
+  p.attribution_required,
+  p.featured,
+  p.verified,
+  p.community_validated,
+  p.current_version,
+  p.meta_title,
+  p.meta_description,
+  p.seo_keywords,
+  p.moderation_status,
+  p.moderated_by,
+  p.moderated_at,
+  p.moderated_notes,
+  p.created_at,
+  p.updated_at,
+  pm.views,
+  pm.copies,
+  pm.likes,
+  pm.bookmarks,
+  pm.shares,
+  pm.comments,
+  pm.downloads,
+  pm.rating_average as rating,
+  pm.rating_count,
+  pm.popularity_rank,
+  pm.trending_score,
+  pm.weekly_growth,
+  pm.has_proof,
+  pm.success_rate,
+  pm.tested_models,
+  array_remove(array_agg(distinct t.name), NULL) as tags,
+  array_remove(array_agg(distinct ap.name), NULL) as ai_platforms,
+    jsonb_agg(distinct jsonb_build_object(
+      'name', pv.name,
+      'label', pv.label,
+      'required', pv.required,
+      'description', pv.description
+  )) filter (where pv.id is not null) as variables,
+  jsonb_agg(distinct jsonb_build_object(
+      'title', pe.title,
+      'input', pe.input,
+      'output', pe.output
+  )) filter (where pe.id is not null) as examples,
+  jsonb_agg(distinct jsonb_build_object(
+      'name', ptc.name,
+      'input', ptc.input,
+      'expectedResult', ptc.expected_result,
+      'testedModel', ptc.tested_model
+  )) filter (where ptc.id is not null) as test_cases,
+    jsonb_agg(distinct jsonb_build_object(
+      'type', ppi.type,
+      'title', ppi.title,
+      'url', ppi.url,
+      'thumbnailUrl', ppi.thumbnail_url,
+      'content', ppi.content,
+      'description', ppi.description,
+      'durationSeconds', ppi.duration_seconds
+  )) filter (where ppi.id is not null) as proof_results,
+  jsonb_agg(distinct jsonb_build_object(
+      'name', prm.name,
+      'provider', prm.provider
+  )) filter (where prm.id is not null) as recommended_models,
+  jsonb_agg(distinct jsonb_build_object(
+      'id', col.id,
+      'name', col.name,
+      'slug', col.slug
+  )) filter (where col.id is not null) as collections,
+  jsonb_agg(distinct jsonb_build_object(
+      'id', rp.related_prompt_id,
+      'title', rp_prompt.title,
+      'slug', rp_prompt.slug
+  )) filter (where rp.id is not null) as related_prompts,
+ jsonb_agg(distinct jsonb_build_object(
+      'version', pvh.version,
+      'releasedAt', pvh.released_at,
+      'changes', pvh.changes
+  )) filter (where pvh.id is not null) as version_history,
+  jsonb_agg(distinct jsonb_build_object(
+      'id', ind.id,
+      'name', ind.name,
+      'slug', ind.slug
+  )) filter (where ind.id is not null) as industries,
+  jsonb_agg(distinct jsonb_build_object(
+      'id', tech.id,
+      'name', tech.name,
+      'slug', tech.slug
+  )) filter (where tech.id is not null) as prompt_engineering_techniques
+from prompts p
+left join categories c on c.id = p.category_id
+left join subcategories sc on sc.id = p.subcategory_id
+left join authors a on a.id = p.author_id
+left join prompt_metrics pm on pm.prompt_id = p.id
+left join prompt_types pt on pt.id = p.prompt_type_id
+left join prompt_tags ptg on ptg.prompt_id = p.id
+left join tags t on t.id = ptg.tag_id
+left join prompt_ai_platforms pap on pap.prompt_id = p.id
+left join ai_platforms ap on ap.id = pap.ai_platform_id
+left join prompt_variables pv on pv.prompt_id = p.id
+left join prompt_examples pe on pe.prompt_id = p.id
+left join prompt_test_cases ptc on ptc.prompt_id = p.id
+left join prompt_proof_items ppi on ppi.prompt_id = p.id
+left join prompt_recommended_models prm on prm.prompt_id = p.id
+left join prompt_collections pc on pc.prompt_id = p.id
+left join collections col on col.id = pc.collection_id
+left join prompt_related_prompts rp on rp.prompt_id = p.id
+left join prompts rp_prompt on rp_prompt.id = rp.related_prompt_id
+left join prompt_version_history pvh on pvh.prompt_id = p.id
+left join prompt_industries pi on pi.prompt_id = p.id
+left join industries ind on ind.id = pi.industry_id
+left join prompt_techniques_map ptm on ptm.prompt_id = p.id
+left join prompt_techniques tech on tech.id = ptm.technique_id
+left join (
+  select author_id, count(*) as total_prompts
+  from prompts
+  group by author_id
+) a_prompt_counts on a_prompt_counts.author_id = a.id
+group by
+  p.id, c.name, sc.name,
+  a.name, a.handle, a.avatar_url, a.bio, a.website, a.github, a.verified, a.reputation,
+  a_prompt_counts.total_prompts,
+  p.difficulty, pt.name, p.license_type, p.commercial_use, p.attribution_required,
+  p.featured, p.verified, p.community_validated, p.current_version,
+  p.meta_title, p.meta_description, p.seo_keywords,
+  p.moderation_status, p.moderated_by, p.moderated_at, p.moderated_notes,
+  p.created_at, p.updated_at,
+  pm.views, pm.copies, pm.likes, pm.bookmarks, pm.shares, pm.comments,
+  pm.downloads, pm.rating_average, pm.rating_count, pm.popularity_rank,
+  pm.trending_score, pm.weekly_growth, pm.has_proof, pm.success_rate,
+  pm.tested_models, p.category_id, p.subcategory_id, p.author_id;
+
+--
+-- Search RPC
+--
+create or replace function search_prompt_cards(
+  search_text text,
+  category_slug_filter text,
+  category_id_filter uuid,
+  tag_filters text[],
+  sort_key text default 'Trending',
+  limit_count int default 60,
+  offset_count int default 0
+)
+returns setof prompt_card_view
+language plpgsql stable
+as $$
+begin
+  return query
+  select *
+  from prompt_card_view
+  where
+    (search_text is null or trim(search_text) = '' or
+      to_tsvector('english'::regconfig,
+        coalesce(title,'') || ' ' ||
+        coalesce(short_description,'') || ' ' ||
+        coalesce(category_name,'') || ' ' ||
+        coalesce(subcategory_name,'') || ' ' ||
+        coalesce(immutable_array_to_string(tags, ' '),'')
+      ) @@ plainto_tsquery('english'::regconfig, search_text))
+    and (category_slug_filter is null or trim(category_slug_filter) = '' or category_slug_filter = category_name)
+    and (category_id_filter is null or category_id_filter = category_id)
+    and (
+      tag_filters is null
+      or array_length(tag_filters, 1) = 0
+      or (tags is not null and tags @> tag_filters)
+    )
+  order by
+    case when sort_key = 'Trending' then trending_score end desc,
+    case when sort_key = 'Most Popular' then popularity_rank end asc,
+    case when sort_key = 'Most Copied' then copies end desc,
+    case when sort_key = 'Most Viewed' then views end desc,
+    case when sort_key = 'Highest Rated' then rating end desc,
+    case when sort_key = 'Most Bookmarked' then bookmarks end desc,
+    case when sort_key = 'Most Discussed' then comments end desc,
+    case when sort_key = 'Newest' then created_at end desc,
+    case when sort_key = 'Recently Updated' then updated_at end desc,
+    case when sort_key = 'A-Z' then title end asc,
+    trending_score desc
+  limit limit_count offset offset_count;
+end;
+$$;
+
+create or replace function increment_prompt_view(prompt_id_input uuid)
+returns void
+language plpgsql volatile
+as $$
+begin
+  insert into prompt_events(prompt_id, event_type, created_at)
+  values (prompt_id_input, 'view', now());
+  update prompt_metrics
+  set views = prompt_metrics.views + 1,
+      updated_at = now()
+  where prompt_id = prompt_id_input;
+end;
+$$;
+
+create or replace function increment_prompt_bookmark(prompt_id_input uuid, delta_input int)
+returns void
+language plpgsql volatile
+as $$
+begin
+  insert into prompt_events(prompt_id, event_type, event_metadata, created_at)
+  values (prompt_id_input, 'bookmark', jsonb_build_object('delta', delta_input), now());
+  update prompt_metrics
+  set bookmarks = prompt_metrics.bookmarks + delta_input,
+      updated_at = now()
+  where prompt_id = prompt_id_input;
+end;
+$$;
+
+create or replace function create_prompt_from_payload(payload jsonb)
+returns uuid
+language plpgsql volatile
+security definer
+set search_path = public, pg_catalog
+as $$
+declare
+  prompt_id uuid;
+  category_uuid uuid;
+  author_uuid uuid;
+  prompt_type_uuid uuid;
+  slug_text text := trim(coalesce(payload->>'slug',''));
+  title_text text := trim(coalesce(payload->>'title',''));
+begin
+  if slug_text = '' then
+    raise exception 'create_prompt_from_payload: slug is required';
+  end if;
+  if title_text = '' then
+    raise exception 'create_prompt_from_payload: title is required';
+  end if;
+
+  category_uuid := nullif(trim(coalesce(payload->>'categoryId','')),'')::uuid;
+  author_uuid := nullif(trim(coalesce(payload->>'authorId','')),'')::uuid;
+  prompt_type_uuid := nullif(trim(coalesce(payload->>'promptTypeId','')),'')::uuid;
+
+  if category_uuid is null then
+    raise exception 'create_prompt_from_payload: categoryId is required';
+  end if;
+  if author_uuid is null then
+    raise exception 'create_prompt_from_payload: authorId is required';
+  end if;
+
+  insert into prompts (
+    slug, title, short_description, description, category_id, subcategory_id, author_id,
+    author_user_id, prompt_type_id, difficulty, license_type, commercial_use,
+    attribution_required, featured, verified, community_validated,
+    current_version, meta_title, meta_description, seo_keywords,
+    moderation_status, created_at, updated_at
+  )
+  values (
+    slug_text,
+    title_text,
+    coalesce(payload->>'shortDescription',''),
+    coalesce(payload->>'description',''),
+    category_uuid,
+    nullif(trim(coalesce(payload->>'subCategoryId','')),'')::uuid,
+    author_uuid,
+    nullif(trim(coalesce(payload->>'authorUserId','')),'')::uuid,
+    prompt_type_uuid,
+    nullif(trim(coalesce(payload->>'difficulty','')),''),
+    coalesce(payload->>'licenseType','MIT'),
+    coalesce((coalesce(payload->>'commercialUse','false'))::boolean, false),
+    coalesce((coalesce(payload->>'attributionRequired','false'))::boolean, false),
+    coalesce((coalesce(payload->>'featured','false'))::boolean, false),
+    coalesce((coalesce(payload->>'verified','false'))::boolean, false),
+    coalesce((coalesce(payload->>'communityValidated','false'))::boolean, false),
+    coalesce(payload->>'currentVersion','1.0.0'),
+    nullif(trim(coalesce(payload->>'metaTitle','')),''),
+    nullif(trim(coalesce(payload->>'metaDescription','')),''),
+    array(select jsonb_array_elements_text(coalesce(payload->'seoKeywords', '[]'::jsonb))),
+    coalesce(payload->>'moderationStatus','pending'),
+    now(),
+    now()
+  )
+  returning id into prompt_id;
+
+  insert into prompt_metrics(prompt_id) values (prompt_id);
+  return prompt_id;
+end;
+$$;
+
+--
+-- Row Level Security (RLS)
+--
+alter table authors enable row level security;
+
+create policy author_public_select on authors for select using (true);
+
+create policy author_insert_self on authors for insert with check (
+  auth.role() = 'admin' or auth.uid() = user_id
+);
+
+create policy author_update_self on authors for update using (
+  auth.role() = 'admin' or auth.uid() = user_id
+);
+
+alter table prompts enable row level security;
+
+create policy prompt_public_select on prompts for select using (true);
+
+create policy prompt_insert_authors on prompts for insert with check (
+  auth.role() = 'admin'
+  or (
+    auth.role() = 'authenticated'
+    and (
+      author_user_id = auth.uid()
+      or exists (
+        select 1 from authors a where a.id = author_id and a.user_id = auth.uid()
+      )
+    )
+  )
+);
+
+create policy prompt_update_author on prompts for update using (
+  auth.role() = 'admin'
+  or (
+    auth.role() = 'authenticated'
+    and (
+      author_user_id = auth.uid()
+      or exists (
+        select 1 from authors a where a.id = prompts.author_id and a.user_id = auth.uid()
+      )
+    )
+  )
+);
+
+create policy prompt_delete_admin on prompts for delete using (
+  auth.role() = 'admin'
+);
+
+alter table prompt_reviews enable row level security;
+
+create policy prompt_reviews_public_select on prompt_reviews for select using (true);
+
+create policy prompt_reviews_insert_auth on prompt_reviews for insert with check (
+  auth.role() = 'authenticated'
+);
+
+create policy prompt_reviews_modify_owner on prompt_reviews for update using (
+  auth.role() = 'admin' or auth.uid() = user_id
+);
+
+create policy prompt_reviews_delete_owner on prompt_reviews for delete using (
+  auth.role() = 'admin' or auth.uid() = user_id
+);
+
+alter table prompt_events enable row level security;
+
+create policy prompt_events_insert on prompt_events for insert with check (
+  auth.role() = 'authenticated'
+);
+
+create policy prompt_events_select on prompt_events for select using (
+  auth.role() = 'admin'
+);
+
+alter table categories enable row level security;
+
+create policy categories_public_select on categories for select using (true);
+
+-- categories: admin can insert
+create policy categories_admin_insert
+on categories
+for insert
+with check (auth.role() = 'admin');
+
+-- categories: admin can update
+create policy categories_admin_update
+on categories
+for update
+using (auth.role() = 'admin');
+
+-- categories: admin can delete
+create policy categories_admin_delete
+on categories
+for delete
+using (auth.role() = 'admin');
+
+alter table tags enable row level security;
+
+create policy tags_public_select on tags
+for select using (true);
+
+create policy tags_admin_insert on tags
+for insert with check (auth.role() = 'admin');
+
+create policy tags_admin_update on tags
+for update using (auth.role() = 'admin')
+with check (auth.role() = 'admin');
+
+create policy tags_admin_delete on tags
+for delete using (auth.role() = 'admin');
+
+alter table ai_platforms enable row level security;
+
+create policy ai_platforms_public_select on ai_platforms
+for select using (true);
+
+create policy ai_platforms_admin_insert on ai_platforms
+for insert with check (auth.role() = 'admin');
+
+create policy ai_platforms_admin_update on ai_platforms
+for update using (auth.role() = 'admin')
+with check (auth.role() = 'admin');
+
+create policy ai_platforms_admin_delete on ai_platforms
+for delete using (auth.role() = 'admin');
+
+alter table collections enable row level security;
+
+create policy collections_public_select on collections
+for select using (true);
+
+create policy collections_admin_insert on collections
+for insert with check (auth.role() = 'admin');
+
+create policy collections_admin_update on collections
+for update using (auth.role() = 'admin')
+with check (auth.role() = 'admin');
+
+create policy collections_admin_delete on collections
+for delete using (auth.role() = 'admin');
+
+alter table prompt_metrics enable row level security;
+
+create policy prompt_metrics_public_select on prompt_metrics for select using (true);
+
+create policy prompt_metrics_update_authenticated on prompt_metrics for update using (
+  auth.role() = 'admin' or auth.role() = 'authenticated'
+);

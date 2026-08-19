@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;850&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  /* Reference Design Theme Colors */
+  --color-brand-bg: #f9f9f9;
+  --color-brand-bg-dark: #0a0a0a;
+  --color-brand-border: #e2e2e2;
+  --color-brand-border-dark: #27272a;
+  --color-brand-accent: #712ae2;
+  --color-brand-hover: #8a4cfc;
+  --color-brand-text: #1a1c1c;
+  --color-brand-text-dark: #fafafa;
+  --color-brand-muted: #7e7576;
+  --color-brand-muted-dark: #a1a1aa;
+  --color-brand-divider: #eeeeee;
+  --color-brand-divider-dark: #18181b;
+}
+
+body {
+  background-color: var(--color-brand-bg);
+  color: var(--color-brand-text);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.dark body {
+  background-color: var(--color-brand-bg-dark);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Base custom styles matching the reference screenshots' clean, rounded, modern feel */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(228, 228, 231, 0.6);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.015);
+}
+
+.dark .glass-panel {
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(39, 39, 42, 0.6);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.code-glass {
+  background: rgba(248, 250, 252, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(228, 228, 231, 0.8);
+}
+
+.dark .code-glass {
+  background: rgba(15, 15, 16, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(39, 39, 42, 0.8);
+}
+
+/* Faint concentric orbit circles matching the hero background in the screenshots */
+.orbit-line {
+  border: 1.5px solid rgba(124, 58, 237, 0.035);
+}
+.dark .orbit-line {
+  border: 1.5px solid rgba(139, 92, 246, 0.045);
+}
+
+.orbit-line-dashed {
+  border: 1px dashed rgba(124, 58, 237, 0.06);
+}
+.dark .orbit-line-dashed {
+  border: 1px dashed rgba(139, 92, 246, 0.08);
+}
+
+/* General premium focus states */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-brand-accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E4E4E7;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #27272A;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D4D4D8;
+}

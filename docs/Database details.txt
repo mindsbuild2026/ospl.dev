@@ -1,0 +1,3249 @@
+1. Tables & Columns
+
+[
+  {
+    "table_name": "ai_platforms",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "table_name": "ai_platforms",
+    "column_name": "slug",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms",
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms",
+    "column_name": "description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms",
+    "column_name": "provider",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms",
+    "column_name": "sort_order",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": "100"
+  },
+  {
+    "table_name": "ai_platforms",
+    "column_name": "active",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "true"
+  },
+  {
+    "table_name": "ai_platforms",
+    "column_name": "usage_count",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": "0"
+  },
+  {
+    "table_name": "ai_platforms",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "table_name": "ai_platforms",
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "table_name": "ai_platforms_summary",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms_summary",
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms_summary",
+    "column_name": "slug",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms_summary",
+    "column_name": "provider",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms_summary",
+    "column_name": "usage_count",
+    "data_type": "integer",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms_summary",
+    "column_name": "prompt_count",
+    "data_type": "bigint",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms_summary",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "ai_platforms_summary",
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "table_name",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "record_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "action",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "old_data",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "new_data",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "user_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "ip_address",
+    "data_type": "inet",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "user_agent",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "user_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "handle",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "avatar_url",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "bio",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "verified",
+    "data_type": "boolean",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "reputation",
+    "data_type": "integer",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "prompt_count",
+    "data_type": "bigint",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "author_summaries",
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "authors",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "table_name": "authors",
+    "column_name": "user_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "authors",
+    "column_name": "github_id",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "authors",
+    "column_name": "handle",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "authors",
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "authors",
+    "column_name": "avatar_url",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "authors",
+    "column_name": "bio",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "authors",
+    "column_name": "website",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "authors",
+    "column_name": "github",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "authors",
+    "column_name": "verified",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "false"
+  },
+  {
+    "table_name": "authors",
+    "column_name": "reputation",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": "0"
+  },
+  {
+    "table_name": "authors",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "table_name": "authors",
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "table_name": "authors",
+    "column_name": "is_admin",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "false"
+  },
+  {
+    "table_name": "categories",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "table_name": "categories",
+    "column_name": "slug",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "categories",
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "categories",
+    "column_name": "description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "categories",
+    "column_name": "icon_name",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": "'auto_awesome'::text"
+  },
+  {
+    "table_name": "categories",
+    "column_name": "is_trending",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "false"
+  },
+  {
+    "table_name": "categories",
+    "column_name": "sort_order",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": "100"
+  },
+  {
+    "table_name": "categories",
+    "column_name": "seo_h1",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "categories",
+    "column_name": "meta_title",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "categories",
+    "column_name": "meta_description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "categories",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "table_name": "categories",
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "slug",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "icon_name",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "is_trending",
+    "data_type": "boolean",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "sort_order",
+    "data_type": "integer",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "prompt_count",
+    "data_type": "bigint",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "category_summaries",
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_prompts",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "table_name": "collection_prompts",
+    "column_name": "collection_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_prompts",
+    "column_name": "prompt_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_prompts",
+    "column_name": "sort_order",
+    "data_type": "integer",
+    "is_nullable": "YES",
+    "column_default": "0"
+  },
+  {
+    "table_name": "collection_prompts",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "slug",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "icon_name",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "featured",
+    "data_type": "boolean",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "category_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "prompt_count",
+    "data_type": "bigint",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collection_summaries",
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collections",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "table_name": "collections",
+    "column_name": "slug",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "collections",
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "table_name": "collections",
+    "column_name": "description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collections",
+    "column_name": "icon_name",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collections",
+    "column_name": "category_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "table_name": "collections",
+    "column_name": "featured",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "false"
+  },
+  {
+    "table_name": "collections",
+    "column_name": "sort_order",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": "100"
+  },
+  {
+    "table_name": "collections",
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "table_name": "collections",
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  }
+]
+
+
+
+2. All RLS policies
+
+[
+  {
+    "schemaname": "public",
+    "tablename": "ai_platforms",
+    "policyname": "AI platforms are viewable by everyone",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "audit_logs",
+    "policyname": "Only admins can view audit logs",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.reputation > 5000))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "authors",
+    "policyname": "Authors are viewable by everyone",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "authors",
+    "policyname": "Authors can insert their own profile",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "authors",
+    "policyname": "Authors can update their own profile",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = user_id)",
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "categories",
+    "policyname": "Categories are viewable by everyone",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "categories",
+    "policyname": "Only admins can modify categories",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "false",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "collection_prompts",
+    "policyname": "Collection items visible if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = collection_prompts.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "collections",
+    "policyname": "Collections are viewable by everyone",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "industries",
+    "policyname": "Industries are viewable by everyone",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "cron",
+    "tablename": "job",
+    "policyname": "cron_job_policy",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "(username = CURRENT_USER)",
+    "with_check": null
+  },
+  {
+    "schemaname": "cron",
+    "tablename": "job_run_details",
+    "policyname": "cron_job_run_details_policy",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "(username = CURRENT_USER)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "moderation_logs",
+    "policyname": "Admins can view moderation logs",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.is_admin = true))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "moderation_queue",
+    "policyname": "Only moderators can view moderation queue",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.reputation > 2000))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_ai_platforms",
+    "policyname": "Anyone can view platforms for approved or own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_ai_platforms.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_ai_platforms",
+    "policyname": "Authors can delete platforms from their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_ai_platforms.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_ai_platforms",
+    "policyname": "Authors can insert platforms for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_ai_platforms.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_ai_platforms",
+    "policyname": "Platforms visible for approved prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_ai_platforms.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_analytics",
+    "policyname": "Analytics viewable for approved prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_analytics.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_collections",
+    "policyname": "Anyone can view prompt collections",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_collections",
+    "policyname": "Authors can delete prompts from collections",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "((EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.is_admin = true)))) OR (EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_collections.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_collections",
+    "policyname": "Authors can insert prompts into collections",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "((EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.is_admin = true)))) OR (EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_collections.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_daily_analytics",
+    "policyname": "Daily analytics viewable for approved prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_daily_analytics.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_events",
+    "policyname": "prompt_events_insert",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(auth.role() = ANY (ARRAY['authenticated'::text, 'anon'::text]))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_events",
+    "policyname": "prompt_events_select",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(auth.role() = 'admin'::text)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_examples",
+    "policyname": "Anyone can view examples for approved or own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_examples.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_examples",
+    "policyname": "Authors can delete examples from their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_examples.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_examples",
+    "policyname": "Authors can insert examples for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_examples.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_examples",
+    "policyname": "Authors can update examples for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_examples.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_examples.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_examples",
+    "policyname": "Examples viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_examples.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_industries",
+    "policyname": "Allow authenticated inserts",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "true"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_industries",
+    "policyname": "Industries mapping viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_industries.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_metrics",
+    "policyname": "Anyone can view prompt metrics",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_metrics",
+    "policyname": "Authenticated users can update metrics",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "true",
+    "with_check": "true"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_proof_items",
+    "policyname": "Proof items viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_proof_items.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_recommended_models",
+    "policyname": "Anyone can view models for approved or own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_recommended_models.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_recommended_models",
+    "policyname": "Authors can delete models from their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_recommended_models.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_recommended_models",
+    "policyname": "Authors can insert models for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_recommended_models.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_recommended_models",
+    "policyname": "Recommended models viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_recommended_models.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_related_prompts",
+    "policyname": "Related prompts viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_related_prompts.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_tags",
+    "policyname": "Anyone can view tags for approved or own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_tags.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_tags",
+    "policyname": "Authors can delete tags from their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_tags.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_tags",
+    "policyname": "Authors can insert tags for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_tags.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_techniques",
+    "policyname": "Prompt techniques are viewable by everyone",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_techniques_map",
+    "policyname": "Anyone can view techniques for approved or own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_techniques_map.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_techniques_map",
+    "policyname": "Authors can delete techniques from their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_techniques_map.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_techniques_map",
+    "policyname": "Authors can insert techniques for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_techniques_map.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_techniques_map",
+    "policyname": "Techniques mapping viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_techniques_map.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_test_cases",
+    "policyname": "Anyone can view test cases for approved or own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_test_cases.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_test_cases",
+    "policyname": "Authors can delete test cases from their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_test_cases.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_test_cases",
+    "policyname": "Authors can insert test cases for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_test_cases.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_test_cases",
+    "policyname": "Authors can update test cases for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_test_cases.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_test_cases.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_test_cases",
+    "policyname": "Test cases viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_test_cases.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_types",
+    "policyname": "Prompt types are viewable by everyone",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_usage_instructions",
+    "policyname": "Anyone can view instructions for approved or own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_usage_instructions.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_usage_instructions",
+    "policyname": "Authors can delete instructions from their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_usage_instructions.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_usage_instructions",
+    "policyname": "Authors can insert instructions for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_usage_instructions.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_usage_instructions",
+    "policyname": "Authors can update instructions for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_usage_instructions.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_usage_instructions.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_usage_instructions",
+    "policyname": "Usage instructions viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_usage_instructions.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_variables",
+    "policyname": "Anyone can view variables for approved or own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_variables.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_variables",
+    "policyname": "Authors can delete variables from their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_variables.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_variables",
+    "policyname": "Authors can insert variables for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_variables.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_variables",
+    "policyname": "Variables viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_variables.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_version_history",
+    "policyname": "Anyone can view versions for approved or own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_version_history.prompt_id) AND ((prompts.moderation_status = 'approved'::moderation_status) OR (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id)))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_version_history",
+    "policyname": "Authors can delete versions from their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_version_history.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_version_history",
+    "policyname": "Authors can insert versions for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_version_history.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_version_history",
+    "policyname": "Authors can update versions for their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_version_history.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_version_history.prompt_id) AND (auth.uid() IN ( SELECT authors.user_id\n           FROM authors\n          WHERE (authors.id = prompts.author_id))))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_version_history",
+    "policyname": "Version history viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_version_history.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompt_versions",
+    "policyname": "Versions viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = prompt_versions.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompts",
+    "policyname": "Admins can update prompt moderation status",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.is_admin = true))))",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.is_admin = true))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompts",
+    "policyname": "Admins can view all prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.is_admin = true))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompts",
+    "policyname": "Authors can delete their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(auth.uid() IN ( SELECT authors.user_id\n   FROM authors\n  WHERE (authors.id = prompts.author_id)))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompts",
+    "policyname": "Authors can insert prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(auth.uid() IN ( SELECT authors.user_id\n   FROM authors\n  WHERE (authors.id = prompts.author_id)))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompts",
+    "policyname": "Authors can update their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "((auth.uid() IN ( SELECT authors.user_id\n   FROM authors\n  WHERE (authors.id = prompts.author_id))) AND (moderation_status <> 'rejected'::moderation_status))",
+    "with_check": "((auth.uid() IN ( SELECT authors.user_id\n   FROM authors\n  WHERE (authors.id = prompts.author_id))) AND (moderation_status <> 'rejected'::moderation_status))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompts",
+    "policyname": "Authors can view their own prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(auth.uid() IN ( SELECT authors.user_id\n   FROM authors\n  WHERE (authors.id = prompts.author_id)))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "prompts",
+    "policyname": "Public can view approved prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(moderation_status = 'approved'::moderation_status)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "ratings",
+    "policyname": "Ratings viewable if prompt is viewable",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM prompts\n  WHERE ((prompts.id = ratings.prompt_id) AND (prompts.moderation_status = 'approved'::moderation_status))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "ratings",
+    "policyname": "Users can rate prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "ratings",
+    "policyname": "Users can update their own ratings",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = user_id)",
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "rejected_prompts",
+    "policyname": "Admins can delete rejected prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.is_admin = true))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "rejected_prompts",
+    "policyname": "Admins can view all rejected prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM authors\n  WHERE ((authors.user_id = auth.uid()) AND (authors.is_admin = true))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "rejected_prompts",
+    "policyname": "Authors can view their own rejected prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(auth.uid() IN ( SELECT authors.user_id\n   FROM authors\n  WHERE (authors.id = rejected_prompts.author_id)))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "saved_prompts",
+    "policyname": "Users can remove saved prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(auth.uid() = user_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "saved_prompts",
+    "policyname": "Users can save prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "saved_prompts",
+    "policyname": "Users can view their own saved prompts",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = user_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "subcategories",
+    "policyname": "Only admins can modify subcategories",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "false",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "subcategories",
+    "policyname": "Subcategories are viewable by everyone",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "tags",
+    "policyname": "Tags are viewable by everyone",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  }
+]
+
+
+3. All foreign keys (joins)
+
+[
+  {
+    "table_name": "collection_prompts",
+    "column_name": "collection_id",
+    "foreign_table_name": "collections",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "collection_prompts",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "collections",
+    "column_name": "category_id",
+    "foreign_table_name": "categories",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "moderation_logs",
+    "column_name": "performed_by",
+    "foreign_table_name": "authors",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "moderation_logs",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "moderation_queue",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "moderation_queue",
+    "column_name": "reviewer_id",
+    "foreign_table_name": "authors",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_ai_platforms",
+    "column_name": "ai_platform_id",
+    "foreign_table_name": "ai_platforms",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_ai_platforms",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_analytics",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_collections",
+    "column_name": "collection_id",
+    "foreign_table_name": "collections",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_collections",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_daily_analytics",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_examples",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_industries",
+    "column_name": "industry_id",
+    "foreign_table_name": "industries",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_industries",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_metrics",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_proof_items",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_recommended_models",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_related_prompts",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_related_prompts",
+    "column_name": "related_prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_tags",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_tags",
+    "column_name": "tag_id",
+    "foreign_table_name": "tags",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_techniques_map",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_techniques_map",
+    "column_name": "technique_id",
+    "foreign_table_name": "prompt_techniques",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_test_cases",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_usage_instructions",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_variables",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_version_history",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_versions",
+    "column_name": "author_id",
+    "foreign_table_name": "authors",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompt_versions",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompts",
+    "column_name": "approved_by",
+    "foreign_table_name": "authors",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompts",
+    "column_name": "author_id",
+    "foreign_table_name": "authors",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompts",
+    "column_name": "category_id",
+    "foreign_table_name": "categories",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompts",
+    "column_name": "prompt_type_id",
+    "foreign_table_name": "prompt_types",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "prompts",
+    "column_name": "subcategory_id",
+    "foreign_table_name": "subcategories",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "ratings",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "rejected_prompts",
+    "column_name": "author_id",
+    "foreign_table_name": "authors",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "rejected_prompts",
+    "column_name": "category_id",
+    "foreign_table_name": "categories",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "rejected_prompts",
+    "column_name": "prompt_type_id",
+    "foreign_table_name": "prompt_types",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "rejected_prompts",
+    "column_name": "rejected_by",
+    "foreign_table_name": "authors",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "saved_prompts",
+    "column_name": "prompt_id",
+    "foreign_table_name": "prompts",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "subcategories",
+    "column_name": "category_id",
+    "foreign_table_name": "categories",
+    "foreign_column_name": "id"
+  }
+]
+
+4. All primary keys
+
+[
+  {
+    "table_name": "ai_platforms",
+    "column_name": "id"
+  },
+  {
+    "table_name": "audit_logs",
+    "column_name": "id"
+  },
+  {
+    "table_name": "authors",
+    "column_name": "id"
+  },
+  {
+    "table_name": "categories",
+    "column_name": "id"
+  },
+  {
+    "table_name": "collection_prompts",
+    "column_name": "id"
+  },
+  {
+    "table_name": "collections",
+    "column_name": "id"
+  },
+  {
+    "table_name": "industries",
+    "column_name": "id"
+  },
+  {
+    "table_name": "moderation_logs",
+    "column_name": "id"
+  },
+  {
+    "table_name": "moderation_queue",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_ai_platforms",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_analytics",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_collections",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_daily_analytics",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_events",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_events",
+    "column_name": "created_at"
+  },
+  {
+    "table_name": "prompt_events_default",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_events_default",
+    "column_name": "created_at"
+  },
+  {
+    "table_name": "prompt_examples",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_industries",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_metrics",
+    "column_name": "prompt_id"
+  },
+  {
+    "table_name": "prompt_proof_items",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_recommended_models",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_related_prompts",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_tags",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_techniques",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_techniques_map",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_test_cases",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_types",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_usage_instructions",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_variables",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_version_history",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompt_versions",
+    "column_name": "id"
+  },
+  {
+    "table_name": "prompts",
+    "column_name": "id"
+  },
+  {
+    "table_name": "ratings",
+    "column_name": "id"
+  },
+  {
+    "table_name": "rejected_prompts",
+    "column_name": "id"
+  },
+  {
+    "table_name": "saved_prompts",
+    "column_name": "id"
+  },
+  {
+    "table_name": "subcategories",
+    "column_name": "id"
+  },
+  {
+    "table_name": "tags",
+    "column_name": "id"
+  }
+]
+
+5.All indexes
+
+[
+  {
+    "tablename": "ai_platforms",
+    "indexname": "idx_ai_platforms_usage_count",
+    "indexdef": "CREATE INDEX idx_ai_platforms_usage_count ON public.ai_platforms USING btree (usage_count DESC)"
+  },
+  {
+    "tablename": "ai_platforms",
+    "indexname": "ai_platforms_pkey",
+    "indexdef": "CREATE UNIQUE INDEX ai_platforms_pkey ON public.ai_platforms USING btree (id)"
+  },
+  {
+    "tablename": "ai_platforms",
+    "indexname": "ai_platforms_slug_key",
+    "indexdef": "CREATE UNIQUE INDEX ai_platforms_slug_key ON public.ai_platforms USING btree (slug)"
+  },
+  {
+    "tablename": "ai_platforms",
+    "indexname": "ai_platforms_name_key",
+    "indexdef": "CREATE UNIQUE INDEX ai_platforms_name_key ON public.ai_platforms USING btree (name)"
+  },
+  {
+    "tablename": "ai_platforms",
+    "indexname": "idx_ai_platforms_slug",
+    "indexdef": "CREATE UNIQUE INDEX idx_ai_platforms_slug ON public.ai_platforms USING btree (slug)"
+  },
+  {
+    "tablename": "audit_logs",
+    "indexname": "idx_audit_logs_created_at",
+    "indexdef": "CREATE INDEX idx_audit_logs_created_at ON public.audit_logs USING btree (created_at DESC)"
+  },
+  {
+    "tablename": "audit_logs",
+    "indexname": "audit_logs_pkey",
+    "indexdef": "CREATE UNIQUE INDEX audit_logs_pkey ON public.audit_logs USING btree (id)"
+  },
+  {
+    "tablename": "audit_logs",
+    "indexname": "idx_audit_logs_table_name",
+    "indexdef": "CREATE INDEX idx_audit_logs_table_name ON public.audit_logs USING btree (table_name)"
+  },
+  {
+    "tablename": "audit_logs",
+    "indexname": "idx_audit_logs_record_id",
+    "indexdef": "CREATE INDEX idx_audit_logs_record_id ON public.audit_logs USING btree (record_id)"
+  },
+  {
+    "tablename": "audit_logs",
+    "indexname": "idx_audit_logs_user_id",
+    "indexdef": "CREATE INDEX idx_audit_logs_user_id ON public.audit_logs USING btree (user_id)"
+  },
+  {
+    "tablename": "authors",
+    "indexname": "authors_handle_key",
+    "indexdef": "CREATE UNIQUE INDEX authors_handle_key ON public.authors USING btree (handle)"
+  },
+  {
+    "tablename": "authors",
+    "indexname": "authors_user_id_key",
+    "indexdef": "CREATE UNIQUE INDEX authors_user_id_key ON public.authors USING btree (user_id)"
+  },
+  {
+    "tablename": "authors",
+    "indexname": "authors_pkey",
+    "indexdef": "CREATE UNIQUE INDEX authors_pkey ON public.authors USING btree (id)"
+  },
+  {
+    "tablename": "authors",
+    "indexname": "idx_authors_is_admin",
+    "indexdef": "CREATE INDEX idx_authors_is_admin ON public.authors USING btree (is_admin) WHERE (is_admin = true)"
+  },
+  {
+    "tablename": "authors",
+    "indexname": "idx_authors_reputation",
+    "indexdef": "CREATE INDEX idx_authors_reputation ON public.authors USING btree (reputation DESC)"
+  },
+  {
+    "tablename": "authors",
+    "indexname": "idx_authors_handle",
+    "indexdef": "CREATE INDEX idx_authors_handle ON public.authors USING btree (handle)"
+  },
+  {
+    "tablename": "authors",
+    "indexname": "idx_authors_github_id",
+    "indexdef": "CREATE UNIQUE INDEX idx_authors_github_id ON public.authors USING btree (github_id) WHERE (github_id IS NOT NULL)"
+  },
+  {
+    "tablename": "categories",
+    "indexname": "categories_pkey",
+    "indexdef": "CREATE UNIQUE INDEX categories_pkey ON public.categories USING btree (id)"
+  },
+  {
+    "tablename": "categories",
+    "indexname": "categories_slug_key",
+    "indexdef": "CREATE UNIQUE INDEX categories_slug_key ON public.categories USING btree (slug)"
+  },
+  {
+    "tablename": "categories",
+    "indexname": "categories_name_key",
+    "indexdef": "CREATE UNIQUE INDEX categories_name_key ON public.categories USING btree (name)"
+  },
+  {
+    "tablename": "categories",
+    "indexname": "idx_categories_slug",
+    "indexdef": "CREATE UNIQUE INDEX idx_categories_slug ON public.categories USING btree (slug)"
+  },
+  {
+    "tablename": "categories",
+    "indexname": "idx_categories_sort_order",
+    "indexdef": "CREATE INDEX idx_categories_sort_order ON public.categories USING btree (sort_order)"
+  },
+  {
+    "tablename": "categories",
+    "indexname": "idx_categories_is_trending",
+    "indexdef": "CREATE INDEX idx_categories_is_trending ON public.categories USING btree (is_trending)"
+  },
+  {
+    "tablename": "collection_prompts",
+    "indexname": "idx_collection_prompts_collection_id",
+    "indexdef": "CREATE INDEX idx_collection_prompts_collection_id ON public.collection_prompts USING btree (collection_id)"
+  },
+  {
+    "tablename": "collection_prompts",
+    "indexname": "collection_prompts_pkey",
+    "indexdef": "CREATE UNIQUE INDEX collection_prompts_pkey ON public.collection_prompts USING btree (id)"
+  },
+  {
+    "tablename": "collection_prompts",
+    "indexname": "idx_collection_prompts_prompt_id",
+    "indexdef": "CREATE INDEX idx_collection_prompts_prompt_id ON public.collection_prompts USING btree (prompt_id)"
+  },
+  {
+    "tablename": "collection_prompts",
+    "indexname": "collection_prompts_collection_id_prompt_id_key",
+    "indexdef": "CREATE UNIQUE INDEX collection_prompts_collection_id_prompt_id_key ON public.collection_prompts USING btree (collection_id, prompt_id)"
+  },
+  {
+    "tablename": "collections",
+    "indexname": "collections_pkey",
+    "indexdef": "CREATE UNIQUE INDEX collections_pkey ON public.collections USING btree (id)"
+  },
+  {
+    "tablename": "collections",
+    "indexname": "idx_collections_featured",
+    "indexdef": "CREATE INDEX idx_collections_featured ON public.collections USING btree (featured)"
+  },
+  {
+    "tablename": "collections",
+    "indexname": "idx_collections_slug",
+    "indexdef": "CREATE UNIQUE INDEX idx_collections_slug ON public.collections USING btree (slug)"
+  },
+  {
+    "tablename": "collections",
+    "indexname": "collections_slug_key",
+    "indexdef": "CREATE UNIQUE INDEX collections_slug_key ON public.collections USING btree (slug)"
+  },
+  {
+    "tablename": "collections",
+    "indexname": "idx_collections_sort_order",
+    "indexdef": "CREATE INDEX idx_collections_sort_order ON public.collections USING btree (sort_order)"
+  },
+  {
+    "tablename": "industries",
+    "indexname": "industries_pkey",
+    "indexdef": "CREATE UNIQUE INDEX industries_pkey ON public.industries USING btree (id)"
+  },
+  {
+    "tablename": "industries",
+    "indexname": "idx_industries_slug",
+    "indexdef": "CREATE UNIQUE INDEX idx_industries_slug ON public.industries USING btree (slug)"
+  },
+  {
+    "tablename": "industries",
+    "indexname": "idx_industries_name",
+    "indexdef": "CREATE INDEX idx_industries_name ON public.industries USING btree (name)"
+  },
+  {
+    "tablename": "industries",
+    "indexname": "industries_name_key",
+    "indexdef": "CREATE UNIQUE INDEX industries_name_key ON public.industries USING btree (name)"
+  },
+  {
+    "tablename": "industries",
+    "indexname": "industries_slug_key",
+    "indexdef": "CREATE UNIQUE INDEX industries_slug_key ON public.industries USING btree (slug)"
+  },
+  {
+    "tablename": "moderation_logs",
+    "indexname": "idx_moderation_logs_performed_by",
+    "indexdef": "CREATE INDEX idx_moderation_logs_performed_by ON public.moderation_logs USING btree (performed_by)"
+  },
+  {
+    "tablename": "moderation_logs",
+    "indexname": "moderation_logs_pkey",
+    "indexdef": "CREATE UNIQUE INDEX moderation_logs_pkey ON public.moderation_logs USING btree (id)"
+  },
+  {
+    "tablename": "moderation_logs",
+    "indexname": "idx_moderation_logs_prompt_id",
+    "indexdef": "CREATE INDEX idx_moderation_logs_prompt_id ON public.moderation_logs USING btree (prompt_id)"
+  },
+  {
+    "tablename": "moderation_logs",
+    "indexname": "idx_moderation_logs_performed_at",
+    "indexdef": "CREATE INDEX idx_moderation_logs_performed_at ON public.moderation_logs USING btree (performed_at DESC)"
+  },
+  {
+    "tablename": "moderation_logs",
+    "indexname": "idx_moderation_logs_action",
+    "indexdef": "CREATE INDEX idx_moderation_logs_action ON public.moderation_logs USING btree (action)"
+  },
+  {
+    "tablename": "moderation_logs",
+    "indexname": "idx_moderation_logs_prompt_action",
+    "indexdef": "CREATE INDEX idx_moderation_logs_prompt_action ON public.moderation_logs USING btree (prompt_id, action)"
+  },
+  {
+    "tablename": "moderation_queue",
+    "indexname": "idx_moderation_queue_status",
+    "indexdef": "CREATE INDEX idx_moderation_queue_status ON public.moderation_queue USING btree (status)"
+  },
+  {
+    "tablename": "moderation_queue",
+    "indexname": "idx_moderation_queue_created_at",
+    "indexdef": "CREATE INDEX idx_moderation_queue_created_at ON public.moderation_queue USING btree (created_at DESC)"
+  },
+  {
+    "tablename": "moderation_queue",
+    "indexname": "moderation_queue_pkey",
+    "indexdef": "CREATE UNIQUE INDEX moderation_queue_pkey ON public.moderation_queue USING btree (id)"
+  },
+  {
+    "tablename": "moderation_queue",
+    "indexname": "idx_moderation_queue_prompt_id",
+    "indexdef": "CREATE INDEX idx_moderation_queue_prompt_id ON public.moderation_queue USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_ai_platforms",
+    "indexname": "idx_prompt_ai_platforms_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_ai_platforms_prompt_id ON public.prompt_ai_platforms USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_ai_platforms",
+    "indexname": "prompt_ai_platforms_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_ai_platforms_pkey ON public.prompt_ai_platforms USING btree (id)"
+  },
+  {
+    "tablename": "prompt_ai_platforms",
+    "indexname": "prompt_ai_platforms_prompt_id_ai_platform_id_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_ai_platforms_prompt_id_ai_platform_id_key ON public.prompt_ai_platforms USING btree (prompt_id, ai_platform_id)"
+  },
+  {
+    "tablename": "prompt_ai_platforms",
+    "indexname": "idx_prompt_ai_platforms_ai_platform_id",
+    "indexdef": "CREATE INDEX idx_prompt_ai_platforms_ai_platform_id ON public.prompt_ai_platforms USING btree (ai_platform_id)"
+  },
+  {
+    "tablename": "prompt_analytics",
+    "indexname": "idx_prompt_analytics_rating",
+    "indexdef": "CREATE INDEX idx_prompt_analytics_rating ON public.prompt_analytics USING btree (rating DESC)"
+  },
+  {
+    "tablename": "prompt_analytics",
+    "indexname": "idx_prompt_analytics_trending_score",
+    "indexdef": "CREATE INDEX idx_prompt_analytics_trending_score ON public.prompt_analytics USING btree (trending_score DESC)"
+  },
+  {
+    "tablename": "prompt_analytics",
+    "indexname": "idx_prompt_analytics_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_analytics_prompt_id ON public.prompt_analytics USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_analytics",
+    "indexname": "prompt_analytics_prompt_id_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_analytics_prompt_id_key ON public.prompt_analytics USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_analytics",
+    "indexname": "prompt_analytics_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_analytics_pkey ON public.prompt_analytics USING btree (id)"
+  },
+  {
+    "tablename": "prompt_analytics",
+    "indexname": "idx_prompt_analytics_views",
+    "indexdef": "CREATE INDEX idx_prompt_analytics_views ON public.prompt_analytics USING btree (views DESC)"
+  },
+  {
+    "tablename": "prompt_collections",
+    "indexname": "idx_prompt_collections_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_collections_prompt_id ON public.prompt_collections USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_collections",
+    "indexname": "idx_prompt_collections_collection_id",
+    "indexdef": "CREATE INDEX idx_prompt_collections_collection_id ON public.prompt_collections USING btree (collection_id)"
+  },
+  {
+    "tablename": "prompt_collections",
+    "indexname": "prompt_collections_prompt_id_collection_id_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_collections_prompt_id_collection_id_key ON public.prompt_collections USING btree (prompt_id, collection_id)"
+  },
+  {
+    "tablename": "prompt_collections",
+    "indexname": "prompt_collections_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_collections_pkey ON public.prompt_collections USING btree (id)"
+  },
+  {
+    "tablename": "prompt_daily_analytics",
+    "indexname": "prompt_daily_analytics_prompt_id_date_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_daily_analytics_prompt_id_date_key ON public.prompt_daily_analytics USING btree (prompt_id, date)"
+  },
+  {
+    "tablename": "prompt_daily_analytics",
+    "indexname": "idx_prompt_daily_analytics_date",
+    "indexdef": "CREATE INDEX idx_prompt_daily_analytics_date ON public.prompt_daily_analytics USING btree (date DESC)"
+  },
+  {
+    "tablename": "prompt_daily_analytics",
+    "indexname": "idx_prompt_daily_analytics_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_daily_analytics_prompt_id ON public.prompt_daily_analytics USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_daily_analytics",
+    "indexname": "prompt_daily_analytics_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_daily_analytics_pkey ON public.prompt_daily_analytics USING btree (id)"
+  },
+  {
+    "tablename": "prompt_events",
+    "indexname": "prompt_events_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_events_pkey ON ONLY public.prompt_events USING btree (id, created_at)"
+  },
+  {
+    "tablename": "prompt_events",
+    "indexname": "idx_prompt_events_type_time",
+    "indexdef": "CREATE INDEX idx_prompt_events_type_time ON ONLY public.prompt_events USING btree (event_type, created_at DESC)"
+  },
+  {
+    "tablename": "prompt_events",
+    "indexname": "idx_prompt_events_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_events_prompt_id ON ONLY public.prompt_events USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_events_default",
+    "indexname": "prompt_events_default_prompt_id_idx",
+    "indexdef": "CREATE INDEX prompt_events_default_prompt_id_idx ON public.prompt_events_default USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_events_default",
+    "indexname": "prompt_events_default_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_events_default_pkey ON public.prompt_events_default USING btree (id, created_at)"
+  },
+  {
+    "tablename": "prompt_events_default",
+    "indexname": "prompt_events_default_event_type_created_at_idx",
+    "indexdef": "CREATE INDEX prompt_events_default_event_type_created_at_idx ON public.prompt_events_default USING btree (event_type, created_at DESC)"
+  },
+  {
+    "tablename": "prompt_examples",
+    "indexname": "prompt_examples_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_examples_pkey ON public.prompt_examples USING btree (id)"
+  },
+  {
+    "tablename": "prompt_examples",
+    "indexname": "idx_prompt_examples_sort_order",
+    "indexdef": "CREATE INDEX idx_prompt_examples_sort_order ON public.prompt_examples USING btree (sort_order)"
+  },
+  {
+    "tablename": "prompt_examples",
+    "indexname": "idx_prompt_examples_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_examples_prompt_id ON public.prompt_examples USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_industries",
+    "indexname": "idx_prompt_industries_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_industries_prompt_id ON public.prompt_industries USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_industries",
+    "indexname": "prompt_industries_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_industries_pkey ON public.prompt_industries USING btree (id)"
+  },
+  {
+    "tablename": "prompt_industries",
+    "indexname": "prompt_industries_prompt_id_industry_id_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_industries_prompt_id_industry_id_key ON public.prompt_industries USING btree (prompt_id, industry_id)"
+  },
+  {
+    "tablename": "prompt_metrics",
+    "indexname": "idx_prompt_metrics_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_metrics_prompt_id ON public.prompt_metrics USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_metrics",
+    "indexname": "prompt_metrics_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_metrics_pkey ON public.prompt_metrics USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_proof_items",
+    "indexname": "prompt_proof_items_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_proof_items_pkey ON public.prompt_proof_items USING btree (id)"
+  },
+  {
+    "tablename": "prompt_proof_items",
+    "indexname": "idx_prompt_proof_items_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_proof_items_prompt_id ON public.prompt_proof_items USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_recommended_models",
+    "indexname": "prompt_recommended_models_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_recommended_models_pkey ON public.prompt_recommended_models USING btree (id)"
+  },
+  {
+    "tablename": "prompt_recommended_models",
+    "indexname": "idx_prompt_recommended_models_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_recommended_models_prompt_id ON public.prompt_recommended_models USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_related_prompts",
+    "indexname": "prompt_related_prompts_prompt_id_related_prompt_id_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_related_prompts_prompt_id_related_prompt_id_key ON public.prompt_related_prompts USING btree (prompt_id, related_prompt_id)"
+  },
+  {
+    "tablename": "prompt_related_prompts",
+    "indexname": "prompt_related_prompts_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_related_prompts_pkey ON public.prompt_related_prompts USING btree (id)"
+  },
+  {
+    "tablename": "prompt_related_prompts",
+    "indexname": "idx_prompt_related_prompts_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_related_prompts_prompt_id ON public.prompt_related_prompts USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_tags",
+    "indexname": "prompt_tags_prompt_id_tag_id_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_tags_prompt_id_tag_id_key ON public.prompt_tags USING btree (prompt_id, tag_id)"
+  },
+  {
+    "tablename": "prompt_tags",
+    "indexname": "idx_prompt_tags_tag_id",
+    "indexdef": "CREATE INDEX idx_prompt_tags_tag_id ON public.prompt_tags USING btree (tag_id)"
+  },
+  {
+    "tablename": "prompt_tags",
+    "indexname": "idx_prompt_tags_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_tags_prompt_id ON public.prompt_tags USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_tags",
+    "indexname": "prompt_tags_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_tags_pkey ON public.prompt_tags USING btree (id)"
+  },
+  {
+    "tablename": "prompt_techniques",
+    "indexname": "prompt_techniques_name_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_techniques_name_key ON public.prompt_techniques USING btree (name)"
+  },
+  {
+    "tablename": "prompt_techniques",
+    "indexname": "prompt_techniques_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_techniques_pkey ON public.prompt_techniques USING btree (id)"
+  },
+  {
+    "tablename": "prompt_techniques",
+    "indexname": "prompt_techniques_slug_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_techniques_slug_key ON public.prompt_techniques USING btree (slug)"
+  },
+  {
+    "tablename": "prompt_techniques",
+    "indexname": "idx_prompt_techniques_slug",
+    "indexdef": "CREATE UNIQUE INDEX idx_prompt_techniques_slug ON public.prompt_techniques USING btree (slug)"
+  },
+  {
+    "tablename": "prompt_techniques",
+    "indexname": "idx_prompt_techniques_name",
+    "indexdef": "CREATE INDEX idx_prompt_techniques_name ON public.prompt_techniques USING btree (name)"
+  },
+  {
+    "tablename": "prompt_techniques_map",
+    "indexname": "idx_prompt_techniques_map_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_techniques_map_prompt_id ON public.prompt_techniques_map USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_techniques_map",
+    "indexname": "prompt_techniques_map_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_techniques_map_pkey ON public.prompt_techniques_map USING btree (id)"
+  },
+  {
+    "tablename": "prompt_techniques_map",
+    "indexname": "prompt_techniques_map_prompt_id_technique_id_key",
+    "indexdef": "CREATE UNIQUE INDEX prompt_techniques_map_prompt_id_technique_id_key ON public.prompt_techniques_map USING btree (prompt_id, technique_id)"
+  },
+  {
+    "tablename": "prompt_test_cases",
+    "indexname": "idx_prompt_test_cases_prompt_id",
+    "indexdef": "CREATE INDEX idx_prompt_test_cases_prompt_id ON public.prompt_test_cases USING btree (prompt_id)"
+  },
+  {
+    "tablename": "prompt_test_cases",
+    "indexname": "prompt_test_cases_pkey",
+    "indexdef": "CREATE UNIQUE INDEX prompt_test_cases_pkey ON public.prompt_test_cases USING btree (id)"
+  }
+]
+
+6. All views
+
+[
+  {
+    "table_name": "ai_platforms_summary"
+  },
+  {
+    "table_name": "author_summaries"
+  },
+  {
+    "table_name": "category_summaries"
+  },
+  {
+    "table_name": "collection_summaries"
+  },
+  {
+    "table_name": "latest_prompts"
+  },
+  {
+    "table_name": "prompt_card_rows"
+  },
+  {
+    "table_name": "prompt_details"
+  },
+  {
+    "table_name": "prompt_filter_options"
+  },
+  {
+    "table_name": "tags_summary"
+  },
+  {
+    "table_name": "trending_prompts"
+  }
+]
+
+7.All functions
+
+[
+  {
+    "routine_name": "approve_prompt",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "audit_prompt_changes",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "cleanup_old_rejected_prompts",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "create_author_profile_for_auth_user",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "delete_rejected_prompt",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "enforce_pending_on_insert",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "generate_unique_author_handle",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "get_current_author",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "get_featured_prompts",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "get_related_prompts",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "get_user_saved_prompts",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gin_extract_query_trgm",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gin_extract_value_trgm",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gin_trgm_consistent",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gin_trgm_triconsistent",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_compress",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_consistent",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_decompress",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_distance",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_in",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_options",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_out",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_penalty",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_picksplit",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_same",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "gtrgm_union",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "immutable_array_to_string",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "increment_prompt_bookmark",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "increment_prompt_copy",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "increment_prompt_view",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "initialize_prompt_metrics",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "is_admin",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "is_moderator",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "log_prompt_submission",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "rate_prompt",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "recalculate_author_reputation",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "recalculate_prompt_score",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "recalculate_trending_score",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "reject_prompt",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "restore_rejected_prompt",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "search_prompt_cards",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "set_limit",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "show_limit",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "show_trgm",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "similarity",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "similarity_dist",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "similarity_op",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "strict_word_similarity",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "strict_word_similarity_commutator_op",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "strict_word_similarity_dist_commutator_op",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "strict_word_similarity_dist_op",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "strict_word_similarity_op",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "update_platform_usage_count",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "update_prompt_quality_score",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "update_tag_usage_count",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "word_similarity",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "word_similarity_commutator_op",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "word_similarity_dist_commutator_op",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "word_similarity_dist_op",
+    "routine_type": "FUNCTION"
+  },
+  {
+    "routine_name": "word_similarity_op",
+    "routine_type": "FUNCTION"
+  }
+]
+
+8.Complete table relationships with join columns
+
+[
+  {
+    "source_table": "collection_prompts",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "collection_prompts",
+    "source_column": "collection_id",
+    "target_table": "collections",
+    "target_column": "id"
+  },
+  {
+    "source_table": "collections",
+    "source_column": "category_id",
+    "target_table": "categories",
+    "target_column": "id"
+  },
+  {
+    "source_table": "moderation_logs",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "moderation_logs",
+    "source_column": "performed_by",
+    "target_table": "authors",
+    "target_column": "id"
+  },
+  {
+    "source_table": "moderation_queue",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "moderation_queue",
+    "source_column": "reviewer_id",
+    "target_table": "authors",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_ai_platforms",
+    "source_column": "ai_platform_id",
+    "target_table": "ai_platforms",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_ai_platforms",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_analytics",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_collections",
+    "source_column": "collection_id",
+    "target_table": "collections",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_collections",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_daily_analytics",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_examples",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_industries",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_industries",
+    "source_column": "industry_id",
+    "target_table": "industries",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_metrics",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_proof_items",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_recommended_models",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_related_prompts",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_related_prompts",
+    "source_column": "related_prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_tags",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_tags",
+    "source_column": "tag_id",
+    "target_table": "tags",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_techniques_map",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_techniques_map",
+    "source_column": "technique_id",
+    "target_table": "prompt_techniques",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_test_cases",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_usage_instructions",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_variables",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_version_history",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_versions",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompt_versions",
+    "source_column": "author_id",
+    "target_table": "authors",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompts",
+    "source_column": "approved_by",
+    "target_table": "authors",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompts",
+    "source_column": "prompt_type_id",
+    "target_table": "prompt_types",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompts",
+    "source_column": "category_id",
+    "target_table": "categories",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompts",
+    "source_column": "subcategory_id",
+    "target_table": "subcategories",
+    "target_column": "id"
+  },
+  {
+    "source_table": "prompts",
+    "source_column": "author_id",
+    "target_table": "authors",
+    "target_column": "id"
+  },
+  {
+    "source_table": "ratings",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "rejected_prompts",
+    "source_column": "prompt_type_id",
+    "target_table": "prompt_types",
+    "target_column": "id"
+  },
+  {
+    "source_table": "rejected_prompts",
+    "source_column": "rejected_by",
+    "target_table": "authors",
+    "target_column": "id"
+  },
+  {
+    "source_table": "rejected_prompts",
+    "source_column": "author_id",
+    "target_table": "authors",
+    "target_column": "id"
+  },
+  {
+    "source_table": "rejected_prompts",
+    "source_column": "category_id",
+    "target_table": "categories",
+    "target_column": "id"
+  },
+  {
+    "source_table": "saved_prompts",
+    "source_column": "prompt_id",
+    "target_table": "prompts",
+    "target_column": "id"
+  },
+  {
+    "source_table": "subcategories",
+    "source_column": "category_id",
+    "target_table": "categories",
+    "target_column": "id"
+  }
+]
+
+9. All In One
+
+[
+  {
+    "table_name": "ai_platforms",
+    "columns": "id (uuid), slug (text), name (text), description (text), provider (text), sort_order (integer), active (boolean), usage_count (integer), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "ai_platforms_summary",
+    "columns": "id (uuid), name (text), slug (text), provider (text), usage_count (integer), prompt_count (bigint), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "audit_logs",
+    "columns": "id (uuid), table_name (text), record_id (uuid), action (text), old_data (jsonb), new_data (jsonb), user_id (uuid), ip_address (inet), user_agent (text), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "author_summaries",
+    "columns": "id (uuid), user_id (uuid), handle (text), name (text), avatar_url (text), bio (text), verified (boolean), reputation (integer), prompt_count (bigint), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "authors",
+    "columns": "id (uuid), user_id (uuid), github_id (text), handle (text), name (text), avatar_url (text), bio (text), website (text), github (text), verified (boolean), reputation (integer), created_at (timestamp with time zone), updated_at (timestamp with time zone), is_admin (boolean)"
+  },
+  {
+    "table_name": "categories",
+    "columns": "id (uuid), slug (text), name (text), description (text), icon_name (text), is_trending (boolean), sort_order (integer), seo_h1 (text), meta_title (text), meta_description (text), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "category_summaries",
+    "columns": "id (uuid), slug (text), name (text), description (text), icon_name (text), is_trending (boolean), sort_order (integer), prompt_count (bigint), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "collection_prompts",
+    "columns": "id (uuid), collection_id (uuid), prompt_id (uuid), sort_order (integer), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "collection_summaries",
+    "columns": "id (uuid), slug (text), name (text), description (text), icon_name (text), featured (boolean), category_id (uuid), prompt_count (bigint), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "collections",
+    "columns": "id (uuid), slug (text), name (text), description (text), icon_name (text), category_id (uuid), featured (boolean), sort_order (integer), created_at (timestamp with time zone), updated_at (timestamp with time zone), image_url (text)"
+  },
+  {
+    "table_name": "industries",
+    "columns": "id (uuid), slug (text), name (text), description (text), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "latest_prompts",
+    "columns": "id (uuid), slug (text), title (text), short_description (text), category_id (uuid), category_name (text), author_id (uuid), author_handle (text), author_name (text), author_avatar (text), views (integer), rating (numeric), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "moderation_logs",
+    "columns": "id (uuid), prompt_id (uuid), action (text), old_status (USER-DEFINED), new_status (USER-DEFINED), reason (text), performed_by (uuid), performed_at (timestamp with time zone), metadata (jsonb)"
+  },
+  {
+    "table_name": "moderation_queue",
+    "columns": "id (uuid), prompt_id (uuid), reason (text), status (text), reviewer_id (uuid), review_notes (text), created_at (timestamp with time zone), reviewed_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_ai_platforms",
+    "columns": "id (uuid), prompt_id (uuid), ai_platform_id (uuid), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_analytics",
+    "columns": "id (uuid), prompt_id (uuid), views (integer), copies (integer), bookmarks (integer), rating (numeric), rating_count (integer), downloads (integer), trending_score (numeric), popularity_rank (integer), weekly_growth (numeric), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_card_rows",
+    "columns": "id (uuid), slug (text), title (text), short_description (text), category_name (text), subcategory_name (text), tags (ARRAY), ai_platforms (ARRAY), featured (boolean), verified (boolean), community_validated (boolean), views (integer), copies (integer), bookmarks (integer), rating (numeric), rating_count (integer), has_proof (boolean), success_rate (numeric), author_name (text), author_handle (text), author_avatar_url (text), author_verified (boolean), trending_score (numeric), weekly_growth (numeric), updated_at (timestamp with time zone), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_collections",
+    "columns": "id (uuid), prompt_id (uuid), collection_id (uuid), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_daily_analytics",
+    "columns": "id (uuid), prompt_id (uuid), date (date), views (integer), copies (integer), bookmarks (integer), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_details",
+    "columns": "id (uuid), slug (text), title (text), short_description (text), description (text), category_id (uuid), category_name (text), subcategory_id (uuid), subcategory_name (text), author_id (uuid), author_name (text), author_handle (text), author_avatar_url (text), author_bio (text), author_website (text), author_github (text), author_verified (boolean), author_reputation (integer), author_total_prompts (bigint), difficulty (text), prompt_type (text), license_type (text), commercial_use (boolean), attribution_required (boolean), featured (boolean), verified (boolean), community_validated (boolean), current_version (text), meta_title (text), meta_description (text), seo_keywords (ARRAY), moderation_status (USER-DEFINED), reviewed_by (uuid), reviewed_at (timestamp with time zone), created_at (timestamp with time zone), updated_at (timestamp with time zone), views (integer), copies (integer), likes (integer), bookmarks (integer), shares (integer), comments (integer), downloads (integer), rating (numeric), rating_count (integer), popularity_rank (integer), trending_score (numeric), weekly_growth (numeric), has_proof (boolean), success_rate (numeric), tested_models (ARRAY), tags (ARRAY), ai_platforms (ARRAY), variables (jsonb), usage_instructions (jsonb), examples (jsonb), test_cases (jsonb), proof_results (jsonb), recommended_models (jsonb), collections (jsonb), related_prompts (jsonb), version_history (jsonb), industries (jsonb), prompt_engineering_techniques (jsonb)"
+  },
+  {
+    "table_name": "prompt_events",
+    "columns": "id (uuid), prompt_id (uuid), user_id (uuid), event_type (text), event_metadata (jsonb), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_events_default",
+    "columns": "id (uuid), prompt_id (uuid), user_id (uuid), event_type (text), event_metadata (jsonb), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_examples",
+    "columns": "id (uuid), prompt_id (uuid), title (text), input (text), output (text), sort_order (integer), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_filter_options",
+    "columns": "options (json)"
+  },
+  {
+    "table_name": "prompt_industries",
+    "columns": "id (uuid), prompt_id (uuid), industry_id (uuid)"
+  },
+  {
+    "table_name": "prompt_metrics",
+    "columns": "prompt_id (uuid), views (integer), copies (integer), likes (integer), bookmarks (integer), shares (integer), comments (integer), downloads (integer), rating_count (integer), rating_average (numeric), has_proof (boolean), success_rate (numeric), tested_models (ARRAY), trending_score (numeric), weekly_growth (numeric), popularity_rank (integer), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_proof_items",
+    "columns": "id (uuid), prompt_id (uuid), type (USER-DEFINED), title (text), url (text), thumbnail_url (text), content (text), description (text), duration_seconds (integer), sort_order (integer), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_recommended_models",
+    "columns": "id (uuid), prompt_id (uuid), name (text), provider (text), sort_order (integer), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_related_prompts",
+    "columns": "id (uuid), prompt_id (uuid), related_prompt_id (uuid), relation_type (text)"
+  },
+  {
+    "table_name": "prompt_tags",
+    "columns": "id (uuid), prompt_id (uuid), tag_id (uuid), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_techniques",
+    "columns": "id (uuid), slug (text), name (text), description (text), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_techniques_map",
+    "columns": "id (uuid), prompt_id (uuid), technique_id (uuid)"
+  },
+  {
+    "table_name": "prompt_test_cases",
+    "columns": "id (uuid), prompt_id (uuid), input (text), sort_order (integer), created_at (timestamp with time zone), expected_result (text), tested_model (text), name (text)"
+  },
+  {
+    "table_name": "prompt_types",
+    "columns": "id (uuid), slug (text), name (text), description (text), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_usage_instructions",
+    "columns": "id (uuid), prompt_id (uuid), instruction (text), sort_order (integer), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_variables",
+    "columns": "id (uuid), prompt_id (uuid), name (text), label (text), required (boolean), description (text), sort_order (integer), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_version_history",
+    "columns": "id (uuid), prompt_id (uuid), version (text), released_at (timestamp with time zone), changes (ARRAY), sort_order (integer), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompt_versions",
+    "columns": "id (uuid), prompt_id (uuid), version_number (text), system_prompt (text), user_prompt (text), expected_output (text), change_description (text), author_id (uuid), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "prompts",
+    "columns": "id (uuid), slug (text), title (text), short_description (text), description (text), category_id (uuid), subcategory_id (uuid), author_id (uuid), moderation_status (USER-DEFINED), featured (boolean), verified (boolean), community_validated (boolean), difficulty (text), prompt_type (text), license_type (text), commercial_use (boolean), attribution_required (boolean), industry (ARRAY), system_prompt (text), user_prompt (text), expected_output (text), current_version (text), quality_score (numeric), meta_title (text), meta_description (text), seo_keywords (ARRAY), created_at (timestamp with time zone), updated_at (timestamp with time zone), submitted_at (timestamp with time zone), approved_at (timestamp with time zone), approved_by (uuid), prompt_type_id (uuid)"
+  },
+  {
+    "table_name": "ratings",
+    "columns": "id (uuid), prompt_id (uuid), user_id (uuid), rating_value (integer), review (text), helpful_count (integer), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "rejected_prompts",
+    "columns": "id (uuid), original_prompt_id (uuid), author_id (uuid), title (text), short_description (text), description (text), category_id (uuid), tags (ARRAY), parameters (jsonb), examples (jsonb), prompt_type_id (uuid), image_url (text), visibility (text), metadata (jsonb), system_prompt (text), user_prompt (text), expected_output (text), rejection_reason (text), rejected_at (timestamp with time zone), rejected_by (uuid), original_created_at (timestamp with time zone), created_at (timestamp with time zone), retained_until (timestamp with time zone)"
+  },
+  {
+    "table_name": "saved_prompts",
+    "columns": "id (uuid), user_id (uuid), prompt_id (uuid), created_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "subcategories",
+    "columns": "id (uuid), category_id (uuid), slug (text), name (text), description (text), sort_order (integer), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "tags",
+    "columns": "id (uuid), slug (text), name (text), description (text), usage_count (integer), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "tags_summary",
+    "columns": "id (uuid), slug (text), name (text), description (text), usage_count (integer), prompt_count (bigint), created_at (timestamp with time zone), updated_at (timestamp with time zone)"
+  },
+  {
+    "table_name": "trending_prompts",
+    "columns": "id (uuid), slug (text), title (text), short_description (text), category_id (uuid), category_name (text), author_id (uuid), author_handle (text), author_name (text), author_avatar (text), views (integer), trending_score (numeric), rating (numeric), created_at (timestamp with time zone)"
+  }
+]

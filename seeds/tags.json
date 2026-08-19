@@ -1,0 +1,32 @@
+[
+  {
+    "id": "70afb3d1-2b58-4e49-9bcd-4c37be9ae2f3",
+    "slug": "email",
+    "name": "Email",
+    "description": "Email writing and response prompts."
+  },
+  {
+    "id": "83e09f52-0cf1-4c81-8a82-d9c1da2ce4c8",
+    "slug": "copywriting",
+    "name": "Copywriting",
+    "description": "Creative copy and messaging prompts."
+  },
+  {
+    "id": "d3b8f2a1-6f28-4d2c-b93e-3083c0d9d1c3",
+    "slug": "automation",
+    "name": "Automation",
+    "description": "Automate workflows and repetitive tasks."
+  },
+  {
+    "id": "2a7f1c24-8321-4fd6-8ac4-52f6ce1f2c9f",
+    "slug": "debugging",
+    "name": "Debugging",
+    "description": "Fix code issues and identify errors."
+  },
+  {
+    "id": "b8d474d1-82ae-4ad6-aa2e-8314a9b4e8fb",
+    "slug": "planning",
+    "name": "Planning",
+    "description": "Strategy, project, and task planning prompts."
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "c5e4d6f2-a9f7-4e09-8bb8-922e0fb5cad9",
+    "slug": "saas",
+    "name": "SaaS",
+    "description": "Software-as-a-Service and product-driven businesses."
+  },
+  {
+    "id": "3a5ccccc-8a15-49c1-a30d-4ac08950db22",
+    "slug": "healthcare",
+    "name": "Healthcare",
+    "description": "Medical, wellness, and patient care industries."
+  },
+  {
+    "id": "9ecb1f24-4da0-4b7c-a61f-2b5d2fecd8bb",
+    "slug": "finance",
+    "name": "Finance",
+    "description": "Banking, investing, and fintech workflows."
+  },
+  {
+    "id": "fb801342-03d0-44ea-b4a9-fd8e3d3b5c4f",
+    "slug": "education",
+    "name": "Education",
+    "description": "Learning, teaching, and instructional design."
+  },
+  {
+    "id": "2dad3eac-6f05-4d36-a8ad-9c3ddb1f12c1",
+    "slug": "ecommerce",
+    "name": "E-commerce",
+    "description": "Online retail, marketplaces, and product merchandising."
+  }
+]
