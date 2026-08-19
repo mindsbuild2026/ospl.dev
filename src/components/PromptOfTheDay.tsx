@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { PromptCard } from '../types';
 import { getPlatformCode } from '../lib/promptSchema';
+import { copyTextToClipboard } from '../lib/clipboardService';
 import { Calendar, Copy, Check, Eye, Heart, Sparkles, MessageSquare } from 'lucide-react';
 
 interface PromptOfTheDayProps {
@@ -13,6 +14,7 @@ interface PromptOfTheDayProps {
   onPromptClick: (id: string) => void;
   savedPromptIds: string[];
   toggleSavePrompt: (id: string) => void;
+  onCopyPrompt?: (id: string) => void;
   isAuthenticated: boolean;
 }
 
@@ -21,6 +23,7 @@ export default function PromptOfTheDay({
   onPromptClick,
   savedPromptIds,
   toggleSavePrompt,
+  onCopyPrompt,
   isAuthenticated,
 }: PromptOfTheDayProps) {
   const [copied, setCopied] = useState(false);
@@ -30,11 +33,17 @@ export default function PromptOfTheDay({
   const potd = [...prompts].sort((a, b) => b.engagement.trendingScore - a.engagement.trendingScore || b.stats.rating - a.stats.rating)[0];
   const isSaved = savedPromptIds.includes(potd.id);
 
-  const handleCopy = (e: React.MouseEvent) => {
+  const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(`${potd.title}\n${potd.shortDescription}`);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    const copyText = potd.systemPrompt || `${potd.title}\n${potd.shortDescription}`;
+    const success = await copyTextToClipboard(copyText);
+    if (success) {
+      setCopied(true);
+      if (onCopyPrompt) {
+        onCopyPrompt(potd.id);
+      }
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
@@ -79,7 +88,7 @@ export default function PromptOfTheDay({
             </span>
             <span className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-              <span>Community Rating: {potd.stats.rating.toFixed(1)}/5</span>
+              <span>Community Rating: {potd.stats.ratingCount > 0 && potd.stats.rating > 0 ? `${potd.stats.rating.toFixed(1)}/5` : "No ratings yet"}</span>
             </span>
           </div>
         </div>

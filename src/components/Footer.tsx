@@ -11,6 +11,7 @@ interface FooterProps {
   setSelectedCategoryFilter: (category: string | null) => void;
   setSelectedPromptId: (id: string | null) => void;
   setSearchQuery: (query: string) => void;
+  onFeedbackClick?: () => void;
 }
 
 export default function Footer({
@@ -18,6 +19,7 @@ export default function Footer({
   setSelectedCategoryFilter,
   setSelectedPromptId,
   setSearchQuery,
+  onFeedbackClick,
 }: FooterProps) {
   const navigate = useNavigate();
 
@@ -82,6 +84,14 @@ export default function Footer({
             <a href="#" className="hover:text-brand-accent transition-colors">
               DOCUMENTATION
             </a>
+            {onFeedbackClick && (
+              <button
+                onClick={onFeedbackClick}
+                className="hover:text-brand-accent transition-colors bg-none border-none cursor-pointer p-0 font-sans text-xs font-bold tracking-wider text-purple-600 dark:text-purple-400"
+              >
+                FEEDBACK
+              </button>
+            )}
             <button
               onClick={() => navigate('/privacy-policy')}
               className="hover:text-brand-accent transition-colors bg-none border-none cursor-pointer p-0 font-sans text-xs font-bold tracking-wider"
@@ -97,7 +107,7 @@ export default function Footer({
           </nav>
 
           <div className="text-[11px] text-neutral-400 dark:text-neutral-500 font-mono tracking-wide md:text-right">
-            © {new Date().getFullYear()} PROMPTHUB. ALL RIGHTS RESERVED.
+            c {new Date().getFullYear()} PROMPTHUB. ALL RIGHTS RESERVED.
           </div>
         </div>
       </div>

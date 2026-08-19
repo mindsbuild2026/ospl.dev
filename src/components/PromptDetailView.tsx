@@ -10,8 +10,9 @@
  * - Support for both Casual Creator Prompts and Multi-Step Developer Pro Workflows
  */
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Prompt, PromptSubmissionAsset } from "../types";
+import { copyTextToClipboard } from "../lib/clipboardService";
 import {
   ArrowLeft,
   Copy,
@@ -46,6 +47,7 @@ import {
   CheckCircle,
   AlertCircle,
   HelpCircle,
+  Star,
 } from "lucide-react";
 import {
   formatCompactNumber,
@@ -57,6 +59,8 @@ import { estimateEnvironmentalImpact } from "../utils/environmentalEstimator";
 import { DEFAULT_AVATAR } from "../lib/constants";
 import { VariableInfoTooltip } from "./submission/VariableInfoTooltip";
 import { EnvironmentalImpactCard } from "./submission/EnvironmentalImpactCard";
+import { fetchPromptRatingSummary, ratePrompt } from "../lib/promptRepository";
+import { PromptRatingSummary } from "../types";
 import {
   isCurrentUserAdmin,
   deleteApprovedPrompt,
@@ -85,6 +89,7 @@ export interface PromptDetailViewProps {
   toggleSave: () => void;
   isAuthenticated: boolean;
   onCopy: (id: string) => void;
+  onRatePrompt?: (id: string, rating: number) => Promise<void>;
 }
 
 export default function PromptDetailView({
@@ -96,6 +101,7 @@ export default function PromptDetailView({
   toggleSave,
   isAuthenticated,
   onCopy,
+  onRatePrompt,
 }: PromptDetailViewProps) {
   const [copied, setCopied] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -183,10 +189,12 @@ export default function PromptDetailView({
   const handleCopyPrompt = async () => {
     try {
       const copyText = getPromptCopyText(prompt);
-      await navigator.clipboard.writeText(copyText);
-      setCopied(true);
-      onCopy(prompt.id);
-      setTimeout(() => setCopied(false), 2000);
+      const success = await copyTextToClipboard(copyText);
+      if (success) {
+        setCopied(true);
+        onCopy(prompt.id);
+        setTimeout(() => setCopied(false), 2000);
+      }
     } catch (error) {
       console.error("[PromptDetailView] Failed to copy prompt:", error);
     }
@@ -195,9 +203,11 @@ export default function PromptDetailView({
   // Copy Step Prompt Handler
   const handleCopyStepPrompt = async (stepId: string, stepPromptText: string) => {
     try {
-      await navigator.clipboard.writeText(stepPromptText);
-      setCopiedStepId(stepId);
-      setTimeout(() => setCopiedStepId(null), 2000);
+      const success = await copyTextToClipboard(stepPromptText);
+      if (success) {
+        setCopiedStepId(stepId);
+        setTimeout(() => setCopiedStepId(null), 2000);
+      }
     } catch (error) {
       console.error("[PromptDetailView] Failed to copy step prompt:", error);
     }
@@ -206,9 +216,11 @@ export default function PromptDetailView({
   // Copy Share Link Handler
   const handleShareLink = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
+      const success = await copyTextToClipboard(window.location.href);
+      if (success) {
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      }
     } catch (error) {
       console.error("[PromptDetailView] Failed to copy link:", error);
     }
@@ -468,7 +480,11 @@ export default function PromptDetailView({
           </span>
           <span className="flex items-center gap-1.5" title="Community Rating">
             <Zap className="w-4 h-4 text-amber-500" />
-            <strong className="text-neutral-900 dark:text-white">{prompt.stats?.rating ? prompt.stats.rating.toFixed(1) : "5.0"}</strong> / 5.0
+            <strong className="text-neutral-900 dark:text-white">
+              {prompt.stats?.ratingCount && prompt.stats.ratingCount > 0 && prompt.stats?.rating
+                ? `${prompt.stats.rating.toFixed(1)} / 5.0`
+                : "No ratings yet"}
+            </strong>
           </span>
         </div>
 
@@ -867,6 +883,12 @@ export default function PromptDetailView({
         {/* RIGHT / SUPPORTING SIDEBAR COLUMN (~35%) */}
         <div className="space-y-6 min-w-0">
           
+          {/* COMMUNITY RATING & INTERACTIVE RATING WIDGET */}
+          <CommunityRatingCard
+            promptId={prompt.id}
+            isAuthenticated={isAuthenticated}
+          />
+
           {/* 11. AI QUALITY REVIEW CARD */}
           <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-5">
             <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-3">
@@ -1147,6 +1169,205 @@ export default function PromptDetailView({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function CommunityRatingCard({
+  promptId,
+  isAuthenticated,
+}: {
+  promptId: string;
+  isAuthenticated: boolean;
+}) {
+  const [summary, setSummary] = useState<PromptRatingSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+
+  const loadSummary = useCallback(async () => {
+    try {
+      const data = await fetchPromptRatingSummary(promptId);
+      setSummary(data);
+    } catch (err) {
+      console.error("Failed to load rating summary:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [promptId]);
+
+  useEffect(() => {
+    loadSummary();
+  }, [loadSummary]);
+
+  const handleRate = async (ratingVal: number) => {
+    if (!isAuthenticated) {
+      setFeedbackMsg("Please sign in to rate this prompt.");
+      return;
+    }
+    setSubmitting(true);
+    setFeedbackMsg(null);
+
+    // Optimistically update local state so selected stars highlight instantly
+    setSummary((prev) => {
+      const prevRating = prev?.userRating || null;
+      const newCount = prev?.ratingCount ? (prevRating ? prev.ratingCount : prev.ratingCount + 1) : 1;
+
+      const newDist = { ...(prev?.distribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }) };
+      if (prevRating) {
+        const prevKey = prevRating as 1 | 2 | 3 | 4 | 5;
+        newDist[prevKey] = Math.max(0, (newDist[prevKey] || 1) - 1);
+      }
+      const newKey = ratingVal as 1 | 2 | 3 | 4 | 5;
+      newDist[newKey] = (newDist[newKey] || 0) + 1;
+
+      return {
+        averageRating: prev?.averageRating ? prev.averageRating : ratingVal,
+        ratingCount: newCount,
+        userRating: ratingVal,
+        distribution: newDist,
+      };
+    });
+
+    try {
+      const res = await ratePrompt(promptId, ratingVal);
+      setFeedbackMsg(`Your rating of ${ratingVal} star${ratingVal > 1 ? "s" : ""} has been recorded!`);
+      if (res?.rating_average !== undefined && res?.rating_average !== null) {
+        setSummary((prev) => prev ? {
+          ...prev,
+          averageRating: Number(res.rating_average),
+          ratingCount: Number(res.rating_count || prev.ratingCount),
+          userRating: ratingVal,
+        } : null);
+      }
+      await loadSummary();
+    } catch (err: any) {
+      setFeedbackMsg(err?.message || "Failed to submit rating.");
+      await loadSummary();
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const hasRatings = Boolean(summary && summary.ratingCount > 0);
+  const currentRating = summary?.averageRating;
+
+  return (
+    <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-5">
+      <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-3">
+        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-500">
+          <Star className="w-4 h-4 fill-amber-400" />
+          <span>Community Rating</span>
+        </div>
+        {hasRatings && currentRating !== null && (
+          <span className="text-xs font-mono font-bold text-neutral-900 dark:text-white">
+            {currentRating.toFixed(1)} / 5.0
+          </span>
+        )}
+      </div>
+
+      {loading ? (
+        <div className="py-4 text-center text-xs text-neutral-400 font-mono animate-pulse">
+          Loading ratings...
+        </div>
+      ) : !hasRatings ? (
+        <div className="text-center py-5 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-1.5">
+          <Star className="w-6 h-6 text-neutral-300 dark:text-neutral-700 mx-auto" />
+          <h4 className="font-bold text-neutral-900 dark:text-white text-xs">No ratings yet</h4>
+          <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
+            Be the first to rate this prompt.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-black text-neutral-900 dark:text-white font-mono">
+              {currentRating?.toFixed(1)}
+            </span>
+            <span className="text-xs text-neutral-500 dark:text-neutral-400 font-mono">
+              ({summary?.ratingCount} {summary?.ratingCount === 1 ? "rating" : "ratings"})
+            </span>
+          </div>
+
+          <div className="space-y-1 text-xs">
+            {[5, 4, 3, 2, 1].map((starKey) => {
+              const count = summary?.distribution[starKey as 1 | 2 | 3 | 4 | 5] || 0;
+              const pct = summary?.ratingCount && summary.ratingCount > 0
+                ? Math.round((count / summary.ratingCount) * 100)
+                : 0;
+
+              return (
+                <div key={starKey} className="flex items-center gap-2">
+                  <span className="w-5 text-[10px] font-bold text-neutral-500 dark:text-neutral-400 font-mono text-right">
+                    {starKey}★
+                  </span>
+                  <div className="flex-1 h-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+                    <div
+                      className="h-full bg-amber-400 rounded-full transition-all duration-300"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <span className="w-8 text-[10px] font-mono text-neutral-400 text-right">
+                    {pct}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* User Interactive Rating Widget */}
+      <div className="pt-3 border-t border-neutral-100 dark:border-neutral-800 space-y-2">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-bold text-neutral-900 dark:text-white">
+            {summary?.userRating ? "Your Rating:" : "Rate this prompt:"}
+          </span>
+          {summary?.userRating ? (
+            <span className="font-mono text-[10px] text-purple-600 dark:text-purple-400 font-semibold">
+              {summary.userRating}★ (Click to update)
+            </span>
+          ) : null}
+        </div>
+
+        <div className="flex items-center gap-1.5 justify-center py-1">
+          {[1, 2, 3, 4, 5].map((starIndex) => {
+            const activeStar = hoverRating !== null
+              ? starIndex <= hoverRating
+              : summary?.userRating !== null && summary?.userRating !== undefined
+              ? starIndex <= summary.userRating
+              : false;
+
+            return (
+              <button
+                key={starIndex}
+                type="button"
+                disabled={submitting}
+                onMouseEnter={() => setHoverRating(starIndex)}
+                onMouseLeave={() => setHoverRating(null)}
+                onClick={() => handleRate(starIndex)}
+                className="p-1 rounded-lg hover:bg-amber-500/10 transition cursor-pointer disabled:opacity-50"
+                title={`Rate ${starIndex} star${starIndex > 1 ? "s" : ""}`}
+              >
+                <Star
+                  className={`w-6 h-6 transition-all ${
+                    activeStar
+                      ? "fill-amber-400 text-amber-400 scale-110"
+                      : "text-neutral-300 dark:text-neutral-700 hover:text-amber-400"
+                  }`}
+                />
+              </button>
+            );
+          })}
+        </div>
+
+        {feedbackMsg && (
+          <p className="text-[11px] font-mono text-center text-purple-600 dark:text-purple-400 animate-fadeIn">
+            {feedbackMsg}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

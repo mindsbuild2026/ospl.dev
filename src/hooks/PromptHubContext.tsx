@@ -8,6 +8,9 @@ interface PromptHubContextValue {
   isAuthModalOpen: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
+  isFeedbackModalOpen: boolean;
+  openFeedbackModal: () => void;
+  closeFeedbackModal: () => void;
 }
 
 const PromptHubContext = createContext<PromptHubContextValue | undefined>(undefined);
@@ -15,6 +18,7 @@ const PromptHubContext = createContext<PromptHubContextValue | undefined>(undefi
 export function PromptHubProvider({ children }: { children: React.ReactNode }) {
   const promptHub = usePromptHub();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   const value = useMemo(
     () => ({
@@ -22,8 +26,11 @@ export function PromptHubProvider({ children }: { children: React.ReactNode }) {
       isAuthModalOpen,
       openAuthModal: () => setIsAuthModalOpen(true),
       closeAuthModal: () => setIsAuthModalOpen(false),
+      isFeedbackModalOpen,
+      openFeedbackModal: () => setIsFeedbackModalOpen(true),
+      closeFeedbackModal: () => setIsFeedbackModalOpen(false),
     }),
-    [promptHub, isAuthModalOpen],
+    [promptHub, isAuthModalOpen, isFeedbackModalOpen],
   );
 
   return <PromptHubContext.Provider value={value}>{children}</PromptHubContext.Provider>;

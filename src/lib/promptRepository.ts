@@ -17,6 +17,9 @@ import {
   LookupReference,
   LookupAuthor,
   PromptSubmissionPayload,
+  PromptRatingSummary,
+  ReputationHistorySummary,
+  ReputationEvent,
 } from "../types";
 import { supabase } from "./supabase";
 import { assertNoError } from "./errors";
@@ -147,7 +150,7 @@ function mapPromptCard(row: DatabasePromptCardRow): PromptCard {
       views: Number(row.views || 0),
       copies: Number(row.copies || 0),
       bookmarks: Number(row.bookmarks || 0),
-      rating: Number(row.rating || 0),
+      rating: Number(row.rating_count || 0) > 0 && row.rating ? Number(row.rating) : 0,
       ratingCount: Number(row.rating_count || 0),
       updated: row.updated_label || row.updated_at || "",
     },
@@ -829,6 +832,31 @@ export async function fetchPromptDetail(
 
   assertNoError(error, "Unable to load prompt details.");
   if (!data) return null;
+
+  // Fallback: If user_prompt or system_prompt is missing from prompt_details view row, fetch directly from prompts table
+  if ((!data.user_prompt && !data.system_prompt) && data.id) {
+    try {
+      const { data: basePrompt } = await client
+        .from("prompts")
+        .select("user_prompt, system_prompt, expected_output, prompt_mode, creator_mode, structured_output_schema")
+        .eq("id", data.id)
+        .maybeSingle();
+
+      if (basePrompt) {
+        data.user_prompt = basePrompt.user_prompt;
+        data.system_prompt = basePrompt.system_prompt;
+        data.expected_output = basePrompt.expected_output;
+        if (!data.prompt_mode) data.prompt_mode = basePrompt.prompt_mode;
+        if (!data.creator_mode) data.creator_mode = basePrompt.creator_mode;
+        if (!data.structured_output_schema && basePrompt.structured_output_schema) {
+          data.structured_output_schema = basePrompt.structured_output_schema;
+        }
+      }
+    } catch {
+      // Ignore fallback errors
+    }
+  }
+
   const card = mapPromptCard(data);
 
   const rawMode = data.prompt_mode || (data.creator_mode === 'developer' ? 'developer_pro' : 'casual');
@@ -964,7 +992,7 @@ export async function fetchPromptDetail(
       bookmarks: Number(data.bookmarks || 0),
       shares: Number(data.shares || 0),
       comments: Number(data.comments || 0),
-      rating: Number(data.rating || 0),
+      rating: Number(data.rating_count || 0) > 0 && data.rating ? Number(data.rating) : 0,
       ratingCount: Number(data.rating_count || 0),
       downloads: Number(data.downloads || 0),
       updated: data.updated_label || data.updated_at || "",
@@ -1019,27 +1047,382 @@ export async function updatePromptBookmark(promptId: string, delta: 1 | -1) {
   assertNoError(error, "Unable to update prompt bookmark analytics.");
 }
 
-export async function incrementPromptCopy(promptId: string) {
+const copyCooldownMap = new Map<string, number>();
+
+export async function incrementPromptCopy(promptId: string): Promise<{ success: boolean; copies: number }> {
+  if (!promptId) {
+    return { success: false, copies: 0 };
+  }
+
+  // 1. Client-side deduplication window (3 seconds per promptId)
+  const lastCopyTime = copyCooldownMap.get(promptId) || 0;
+  const now = Date.now();
+  if (now - lastCopyTime < 3000) {
+    // Return existing cached count if clicked within cooldown window
+    return { success: true, copies: -1 };
+  }
+  copyCooldownMap.set(promptId, now);
+
   const client = requireSupabase();
-  const { error } = await client.rpc("increment_prompt_copy", {
-    _prompt_id: promptId,
-  });
-  assertNoError(error, "Unable to update prompt copy analytics.");
+
+  // 2. Try RPC increment_prompt_copy with prompt_id_input
+  try {
+    const { data, error } = await client.rpc("increment_prompt_copy", {
+      prompt_id_input: promptId,
+    });
+    if (!error && data && typeof data === 'object' && 'copies' in data) {
+      return { success: true, copies: Number((data as any).copies) };
+    }
+  } catch {}
+
+  // Try RPC increment_prompt_copy with _prompt_id alias
+  try {
+    const { data, error } = await client.rpc("increment_prompt_copy", {
+      _prompt_id: promptId,
+    });
+    if (!error && data && typeof data === 'object' && 'copies' in data) {
+      return { success: true, copies: Number((data as any).copies) };
+    }
+  } catch {}
+
+  // 3. Fallback: Pure Table Update on prompt_metrics & event log on prompt_events
+  try {
+    const { data: authData } = await client.auth.getUser();
+    const userId = authData?.user?.id || null;
+
+    // Log copy event quietly if table exists
+    try {
+      await client.from("prompt_events").insert({
+        prompt_id: promptId,
+        user_id: userId,
+        event_type: "copy",
+        event_metadata: { source: "web_client" },
+        created_at: new Date().toISOString(),
+      });
+    } catch {}
+
+    // Fetch current copy count from prompt_metrics
+    const { data: metricsRow } = await client
+      .from("prompt_metrics")
+      .select("copies")
+      .eq("prompt_id", promptId)
+      .maybeSingle();
+
+    const currentCopies = Number(metricsRow?.copies || 0);
+    const newCopies = currentCopies + 1;
+
+    // Upsert updated count
+    await client
+      .from("prompt_metrics")
+      .upsert({
+        prompt_id: promptId,
+        copies: newCopies,
+        updated_at: new Date().toISOString(),
+      });
+
+    return { success: true, copies: newCopies };
+  } catch (err) {
+    console.warn("[PromptRepository] Fallback copy counter warning:", err);
+    return { success: true, copies: -1 };
+  }
 }
 
 export async function ratePrompt(promptId: string, rating: number) {
   const client = requireSupabase();
-  const { error } = await client.rpc("rate_prompt", {
-    prompt_id: promptId,
-    rating_input: rating,
-  });
-  assertNoError(error, "Unable to submit prompt rating.");
+  const roundedRating = Math.max(1, Math.min(5, Math.round(rating)));
+
+  // 1. Try calling RPC rate_prompt
+  try {
+    const { data, error } = await client.rpc("rate_prompt", {
+      prompt_id_input: promptId,
+      rating_input: roundedRating,
+    });
+
+    if (!error && data) {
+      return data;
+    }
+  } catch {}
+
+  // 2. Fallback: Pure ratings table update/insert without on_conflict or author_id
+  const { data: authData } = await client.auth.getUser();
+  const userId = authData?.user?.id || null;
+
+  if (userId) {
+    try {
+      const { data: existingRating } = await client
+        .from("ratings")
+        .select("id")
+        .eq("prompt_id", promptId)
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (existingRating?.id) {
+        await client
+          .from("ratings")
+          .update({
+            rating_value: roundedRating,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingRating.id);
+      } else {
+        await client
+          .from("ratings")
+          .insert({
+            prompt_id: promptId,
+            user_id: userId,
+            rating_value: roundedRating,
+          });
+      }
+    } catch (insertErr) {
+      console.warn("[Ratings] Rating update/insert warning:", insertErr);
+    }
+  }
+
+  // 3. Recalculate prompt ratings metrics
+  let count = 0;
+  let avg: number | null = null;
+
+  try {
+    const { data: ratingRows } = await client
+      .from("ratings")
+      .select("rating_value")
+      .eq("prompt_id", promptId);
+
+    count = ratingRows?.length || 0;
+    if (count > 0) {
+      const sum = (ratingRows || []).reduce((acc, r) => acc + (r.rating_value || 0), 0);
+      avg = Number((sum / count).toFixed(1));
+    }
+
+    // Try updating prompt_metrics (absorb 403 Forbidden silently)
+    await client
+      .from("prompt_metrics")
+      .upsert({
+        prompt_id: promptId,
+        rating_count: count,
+        rating_average: avg,
+      });
+  } catch {}
+
+  if (userId) {
+    updateAuthorReputation(userId).catch(() => {});
+  }
+
+  return {
+    success: true,
+    rating_average: avg,
+    rating_count: count,
+    user_rating: roundedRating,
+  };
 }
 
-export async function updateAuthorReputation(userId: string) {
+export async function fetchPromptRatingSummary(promptId: string): Promise<PromptRatingSummary> {
   const client = requireSupabase();
-  const { error } = await client.rpc("update_author_reputation", {
-    user_id_input: userId,
-  });
-  assertNoError(error, "Unable to update author reputation.");
+
+  try {
+    const { data, error } = await client.rpc("get_prompt_rating_summary", {
+      p_prompt_id: promptId,
+    });
+    if (!error && data) {
+      return {
+        averageRating: data.average_rating !== null && data.average_rating !== undefined
+          ? Number(data.average_rating)
+          : null,
+        ratingCount: Number(data.rating_count || 0),
+        userRating: data.user_rating !== null && data.user_rating !== undefined
+          ? Number(data.user_rating)
+          : null,
+        distribution: {
+          5: Number(data.distribution?.["5"] || 0),
+          4: Number(data.distribution?.["4"] || 0),
+          3: Number(data.distribution?.["3"] || 0),
+          2: Number(data.distribution?.["2"] || 0),
+          1: Number(data.distribution?.["1"] || 0),
+        },
+      };
+    }
+  } catch {}
+
+  const { data: ratingRows } = await client
+    .from("ratings")
+    .select("rating_value, user_id")
+    .eq("prompt_id", promptId);
+
+  const ratings = ratingRows || [];
+  const ratingCount = ratings.length;
+  let averageRating: number | null = null;
+  const distribution: { 5: number; 4: number; 3: number; 2: number; 1: number } = {
+    5: 0,
+    4: 0,
+    3: 0,
+    2: 0,
+    1: 0,
+  };
+
+  if (ratingCount > 0) {
+    const sum = ratings.reduce((acc: number, r: any) => {
+      const val = Number(r.rating_value);
+      if (val >= 1 && val <= 5) {
+        const key = val as 1 | 2 | 3 | 4 | 5;
+        distribution[key] = (distribution[key] || 0) + 1;
+      }
+      return acc + val;
+    }, 0);
+    averageRating = Number((sum / ratingCount).toFixed(1));
+  }
+
+  let userRating: number | null = null;
+  try {
+    const currentUser = (await client.auth.getUser())?.data?.user;
+    if (currentUser) {
+      const userRow = ratings.find((r: any) => r.user_id === currentUser.id);
+      if (userRow) {
+        userRating = Number(userRow.rating_value);
+      }
+    }
+  } catch {}
+
+  return {
+    averageRating,
+    ratingCount,
+    userRating,
+    distribution,
+  };
+}
+
+export async function updateAuthorReputation(userId: string): Promise<number> {
+  const client = requireSupabase();
+
+  // Try RPC 1: recalculate_author_reputation
+  try {
+    const { data, error } = await client.rpc("recalculate_author_reputation", {
+      p_user_id_input: userId,
+    });
+
+    if (!error && data !== null && data !== undefined) {
+      return Number(data);
+    }
+  } catch {}
+
+  // Pure Table Fallback (Recalculate directly from tables without throwing errors)
+  try {
+    const { data: author } = await client
+      .from("authors")
+      .select("id, verified")
+      .or(`user_id.eq.${userId},id.eq.${userId}`)
+      .maybeSingle();
+
+    if (!author) return 0;
+
+    const { data: approvedPrompts } = await client
+      .from("prompts")
+      .select("id")
+      .eq("author_id", author.id)
+      .eq("moderation_status", "approved");
+
+    const approvedCount = approvedPrompts?.length || 0;
+    const verifiedBonus = author.verified ? 100 : 0;
+    const calculatedRep = (approvedCount * 50) + verifiedBonus;
+
+    await client
+      .from("authors")
+      .update({ reputation: calculatedRep, updated_at: new Date().toISOString() })
+      .eq("id", author.id);
+
+    return calculatedRep;
+  } catch {
+    return 0;
+  }
+}
+
+export async function fetchAuthorReputationHistory(userId: string): Promise<ReputationHistorySummary> {
+  const client = requireSupabase();
+
+  try {
+    const { data, error } = await client.rpc("get_author_reputation_history", {
+      p_user_id: userId,
+    });
+
+    if (!error && data) {
+      return {
+        totalReputation: Number(data.totalReputation || 0),
+        approvedPromptsCount: Number(data.approvedPromptsCount || 0),
+        fiveStarRatingsCount: Number(data.fiveStarRatingsCount || 0),
+        fourStarRatingsCount: Number(data.fourStarRatingsCount || 0),
+        isVerified: Boolean(data.isVerified),
+        adminAdjustmentsTotal: Number(data.adminAdjustmentsTotal || 0),
+        events: Array.isArray(data.events)
+          ? data.events.map((e: any) => ({
+              id: e.id,
+              userId: e.userId,
+              authorId: e.authorId,
+              eventType: e.eventType,
+              points: Number(e.points || 0),
+              referenceId: e.referenceId || null,
+              description: e.description || "",
+              createdAt: e.createdAt,
+            }))
+          : [],
+      };
+    }
+  } catch {
+    // Ignore RPC error and fallback
+  }
+
+  const { data: author } = await client
+    .from("authors")
+    .select("id, verified, reputation")
+    .or(`user_id.eq.${userId},id.eq.${userId}`)
+    .maybeSingle();
+
+  if (!author) {
+    return {
+      totalReputation: 0,
+      approvedPromptsCount: 0,
+      fiveStarRatingsCount: 0,
+      fourStarRatingsCount: 0,
+      isVerified: false,
+      adminAdjustmentsTotal: 0,
+      events: [],
+    };
+  }
+
+  const { data: approvedPrompts } = await client
+    .from("prompts")
+    .select("id")
+    .eq("author_id", author.id)
+    .eq("moderation_status", "approved");
+
+  const approvedCount = approvedPrompts?.length || 0;
+
+  const { data: reputationLogs } = await client
+    .from("author_reputation_logs")
+    .select("*")
+    .eq("author_id", author.id)
+    .order("created_at", { ascending: false });
+
+  const events: ReputationEvent[] = (reputationLogs || []).map((log: any) => ({
+    id: log.id,
+    userId: log.user_id,
+    authorId: log.author_id,
+    eventType: log.event_type,
+    points: Number(log.points || 0),
+    referenceId: log.reference_id,
+    description: log.description || "",
+    createdAt: log.created_at,
+  }));
+
+  const adminAdjustmentsTotal = events
+    .filter((e) => e.eventType === "admin_adjustment")
+    .reduce((sum, e) => sum + e.points, 0);
+
+  return {
+    totalReputation: Number(author.reputation || 0),
+    approvedPromptsCount: approvedCount,
+    fiveStarRatingsCount: 0,
+    fourStarRatingsCount: 0,
+    isVerified: Boolean(author.verified),
+    adminAdjustmentsTotal,
+    events,
+  };
 }

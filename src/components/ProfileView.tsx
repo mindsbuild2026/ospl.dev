@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { User, Mail, Calendar, Globe, Github, ShieldCheck, Check, AlertCircle, ArrowLeft, Loader2, Sparkles, Hash } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { User, Mail, Calendar, Globe, Github, ShieldCheck, Check, AlertCircle, ArrowLeft, Loader2, Sparkles, Hash, X } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
-import { LookupAuthor } from '../types';
+import { LookupAuthor, ReputationHistorySummary } from '../types';
+import { fetchAuthorReputationHistory } from '../lib/promptRepository';
 import { supabase } from '../lib/supabase';
 
 interface ProfileViewProps {
@@ -31,6 +32,30 @@ export default function ProfileView({
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Reputation Breakdown Modal State
+  const [showReputationModal, setShowReputationModal] = useState(false);
+  const [repSummary, setRepSummary] = useState<ReputationHistorySummary | null>(null);
+  const [repLoading, setRepLoading] = useState(false);
+
+  const loadReputationHistory = useCallback(async () => {
+    if (!author?.user_id && !user?.id) return;
+    setRepLoading(true);
+    try {
+      const summary = await fetchAuthorReputationHistory(author?.user_id || user?.id || '');
+      setRepSummary(summary);
+    } catch (err) {
+      console.error('Failed to load reputation history:', err);
+    } finally {
+      setRepLoading(false);
+    }
+  }, [author?.user_id, user?.id]);
+
+  useEffect(() => {
+    if (showReputationModal) {
+      loadReputationHistory();
+    }
+  }, [showReputationModal, loadReputationHistory]);
 
   // Hydrate fields from author record
   useEffect(() => {
@@ -228,9 +253,17 @@ export default function ProfileView({
 
             {/* Microstats */}
             <div className="mt-5 pt-5 border-t border-neutral-100 dark:border-neutral-850 flex items-center justify-around text-center select-none">
-              <div>
-                <span className="block font-display text-sm font-black text-neutral-900 dark:text-white">{author.reputation || 0}</span>
-                <span className="text-[10px] text-neutral-450 dark:text-neutral-500 uppercase font-bold tracking-wider">Reputation</span>
+              <div
+                onClick={() => setShowReputationModal(true)}
+                className="cursor-pointer group hover:bg-neutral-100 dark:hover:bg-neutral-800/60 p-1.5 rounded-xl transition"
+                title="Click to view Reputation Breakdown"
+              >
+                <span className="block font-display text-sm font-black text-purple-600 dark:text-purple-400 group-hover:scale-105 transition-transform">
+                  {author?.reputation || 0} pts
+                </span>
+                <span className="text-[10px] text-neutral-450 dark:text-neutral-500 uppercase font-bold tracking-wider underline decoration-dotted">
+                  Reputation
+                </span>
               </div>
               <div className="w-px h-6 bg-neutral-200/50 dark:bg-neutral-800/80" />
               <div>
@@ -435,6 +468,77 @@ export default function ProfileView({
           </form>
         </div>
       </div>
+      {/* REPUTATION BREAKDOWN & AUDIT LOG MODAL */}
+      {showReputationModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white dark:bg-neutral-900 rounded-[28px] border border-neutral-200 dark:border-neutral-800 max-w-md w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <h3 className="font-display text-base font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-600" />
+                <span>Reputation Breakdown</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowReputationModal(false)}
+                className="p-1 rounded-full text-neutral-400 hover:text-neutral-700 dark:hover:text-white transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {repLoading ? (
+              <div className="py-8 text-center text-xs text-neutral-400 font-mono animate-pulse">
+                Loading reputation breakdown...
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider block">Total Reputation</span>
+                    <span className="text-3xl font-black text-purple-700 dark:text-purple-300 font-mono">
+                      {repSummary?.totalReputation ?? author?.reputation ?? 0} pts
+                    </span>
+                  </div>
+                  {repSummary?.isVerified && (
+                    <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/30">
+                      Verified (+100)
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800/50">
+                    <span className="text-neutral-600 dark:text-neutral-300">Approved Prompts (+50 pts each)</span>
+                    <span className="font-mono font-bold text-neutral-900 dark:text-white">
+                      +{(repSummary?.approvedPromptsCount || 0) * 50} pts ({repSummary?.approvedPromptsCount || 0})
+                    </span>
+                  </div>
+                  <div className="flex justify-between p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800/50">
+                    <span className="text-neutral-600 dark:text-neutral-300">5★ Ratings Received (+10 pts each)</span>
+                    <span className="font-mono font-bold text-neutral-900 dark:text-white">
+                      +{(repSummary?.fiveStarRatingsCount || 0) * 10} pts ({repSummary?.fiveStarRatingsCount || 0})
+                    </span>
+                  </div>
+                  <div className="flex justify-between p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800/50">
+                    <span className="text-neutral-600 dark:text-neutral-300">4★ Ratings Received (+5 pts each)</span>
+                    <span className="font-mono font-bold text-neutral-900 dark:text-white">
+                      +{(repSummary?.fourStarRatingsCount || 0) * 5} pts ({repSummary?.fourStarRatingsCount || 0})
+                    </span>
+                  </div>
+                  {Boolean(repSummary?.adminAdjustmentsTotal) && (
+                    <div className="flex justify-between p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800/50">
+                      <span className="text-neutral-600 dark:text-neutral-300">Admin Adjustments</span>
+                      <span className="font-mono font-bold text-purple-600">
+                        {repSummary!.adminAdjustmentsTotal >= 0 ? '+' : ''}{repSummary?.adminAdjustmentsTotal} pts
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

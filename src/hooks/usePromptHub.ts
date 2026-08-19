@@ -552,36 +552,39 @@ export function usePromptHub(): { state: PromptHubState; actions: PromptHubActio
 
   // ✅ 2. IMPLEMENTED handleCopyPrompt
   const handleCopyPrompt = useCallback((id: string) => {
-    // A. Optimistically update prompt cards state
-    setPromptCards((prev) =>
-      prev.map((prompt) => {
-        if (prompt.id !== id) return prompt;
-        return {
-          ...prompt,
-          stats: {
-            ...prompt.stats,
-            copies: (prompt.stats?.copies ?? 0) + 1,
-          },
-        };
+    incrementPromptCopy(id)
+      .then((res) => {
+        if (!res.success) return;
+
+        setPromptCards((prev) =>
+          prev.map((prompt) => {
+            if (prompt.id !== id) return prompt;
+            const updatedCopies = res.copies > 0 ? res.copies : (prompt.stats?.copies ?? 0) + 1;
+            return {
+              ...prompt,
+              stats: {
+                ...prompt.stats,
+                copies: updatedCopies,
+              },
+            };
+          })
+        );
+
+        setSelectedPrompt((prev) => {
+          if (!prev || prev.id !== id) return prev;
+          const updatedCopies = res.copies > 0 ? res.copies : (prev.stats?.copies ?? 0) + 1;
+          return {
+            ...prev,
+            stats: {
+              ...prev.stats,
+              copies: updatedCopies,
+            },
+          };
+        });
       })
-    );
-
-    // B. Optimistically update selected prompt detail state
-    setSelectedPrompt((prev) => {
-      if (!prev || prev.id !== id) return prev;
-      return {
-        ...prev,
-        stats: {
-          ...prev.stats,
-          copies: (prev.stats?.copies ?? 0) + 1,
-        },
-      };
-    });
-
-    // C. Fire and forget backend RPC request
-    incrementPromptCopy(id).catch((error) => {
-      console.warn('Failed to sync prompt copy analytics:', getUserFriendlyMessage(error));
-    });
+      .catch((error) => {
+        console.warn('Failed to sync prompt copy analytics:', getUserFriendlyMessage(error));
+      });
   }, []);
 
   const publishPrompt = useCallback(async (newPrompt: PromptSubmissionPayload): Promise<string> => {
@@ -662,20 +665,23 @@ export function usePromptHub(): { state: PromptHubState; actions: PromptHubActio
       if (rating < 1 || rating > 5) {
         throw new Error('Rating must be between 1 and 5');
       }
-      await ratePrompt(promptId, rating);
-      console.log('[v0] Rating submitted successfully:', { promptId, rating });
+      const res = await ratePrompt(promptId, rating);
+      console.log('[v0] Rating submitted successfully:', { promptId, rating, res });
       
-      setSelectedPrompt((previous) =>
-        previous && previous.id === promptId
-          ? {
-              ...previous,
-              stats: {
-                ...previous.stats,
-                ratingCount: previous.stats.ratingCount + 1,
-              },
-            }
-          : previous
-      );
+      if (res && res.rating_count !== undefined) {
+        setSelectedPrompt((previous) =>
+          previous && previous.id === promptId
+            ? {
+                ...previous,
+                stats: {
+                  ...previous.stats,
+                  rating: res.rating_average !== null && res.rating_average !== undefined ? Number(res.rating_average) : 0,
+                  ratingCount: Number(res.rating_count),
+                },
+              }
+            : previous
+        );
+      }
     } catch (error) {
       console.error('[v0] Failed to submit rating:', error);
       setDbError(getUserFriendlyMessage(error) || 'Failed to submit rating');

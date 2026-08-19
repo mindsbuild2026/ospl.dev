@@ -442,3 +442,99 @@ export interface FilterOptions {
   promptTypes: string[];
   difficulties: string[];
 }
+
+export type FeedbackType = 'bug' | 'feature' | 'improvement' | 'general' | 'other';
+export type FeedbackStatus = 'new' | 'reviewed' | 'in_progress' | 'resolved' | 'archived';
+
+export interface FeedbackItem {
+  id: string;
+  user_id?: string | null;
+  type: FeedbackType;
+  message: string;
+  rating?: number | null;
+  contact_email?: string | null;
+  is_anonymous: boolean;
+  status: FeedbackStatus;
+  admin_notes?: string | null;
+  created_at: string;
+  updated_at: string;
+  author?: {
+    name?: string;
+    handle?: string;
+    avatar_url?: string;
+  } | null;
+  user_email?: string | null;
+}
+
+export interface CreateFeedbackPayload {
+  type: FeedbackType;
+  message: string;
+  rating?: number | null;
+  contact_email?: string | null;
+  is_anonymous?: boolean;
+}
+
+export interface FeedbackFilters {
+  search?: string;
+  status?: FeedbackStatus | 'all';
+  type?: FeedbackType | 'all';
+  rating?: number | 'all';
+  authFilter?: 'all' | 'authenticated' | 'anonymous';
+  startDate?: string;
+  endDate?: string;
+  sortBy?: 'newest' | 'oldest' | 'rating_desc' | 'rating_asc';
+}
+
+export interface FeedbackSummaryMetrics {
+  total: number;
+  newCount: number;
+  bugsCount: number;
+  featureRequestsCount: number;
+  anonymousCount: number;
+  averageRating: number | null;
+}
+
+export interface RatingDistribution {
+  5: number;
+  4: number;
+  3: number;
+  2: number;
+  1: number;
+}
+
+export interface PromptRatingSummary {
+  averageRating: number | null;
+  ratingCount: number;
+  userRating: number | null;
+  distribution: RatingDistribution;
+}
+
+export type ReputationEventType =
+  | 'prompt_approved'
+  | 'rating_received'
+  | 'verified_bonus'
+  | 'admin_adjustment';
+
+export interface ReputationEvent {
+  id: string;
+  userId: string;
+  authorId: string;
+  eventType: ReputationEventType;
+  points: number;
+  referenceId?: string | null;
+  description: string;
+  createdAt: string;
+}
+
+export interface ReputationHistorySummary {
+  totalReputation: number;
+  approvedPromptsCount: number;
+  fiveStarRatingsCount: number;
+  fourStarRatingsCount: number;
+  isVerified: boolean;
+  adminAdjustmentsTotal: number;
+  events: ReputationEvent[];
+}
+
+
+

@@ -28,7 +28,7 @@ export default function LeaderboardPromo({
 
   // Derive top prompts deterministically
   const mostCopied = [...prompts].sort((a, b) => b.stats.copies - a.stats.copies)[0];
-  const highestRated = [...prompts].sort((a, b) => b.stats.rating - a.stats.rating)[0];
+  const highestRated = [...prompts].sort((a, b) => (b.stats.ratingCount > 0 ? b.stats.rating : 0) - (a.stats.ratingCount > 0 ? a.stats.rating : 0))[0];
   const trending = [...prompts].sort((a, b) => (b.stats.views + b.stats.copies) - (a.stats.views + a.stats.copies))[1] || prompts[0];
 
   // Leaderboard statistics config
@@ -42,7 +42,7 @@ export default function LeaderboardPromo({
     },
     {
       title: 'Highest Rated Prompt',
-      badge: `${highestRated.stats.rating.toFixed(1)} rating`,
+      badge: highestRated && highestRated.stats.ratingCount > 0 && highestRated.stats.rating > 0 ? `${highestRated.stats.rating.toFixed(1)} rating` : "No ratings yet",
       prompt: highestRated,
       icon: <Star className="w-5 h-5 text-amber-500 fill-amber-500" />,
       colorClass: 'from-amber-500/10 to-transparent bg-amber-500/5',

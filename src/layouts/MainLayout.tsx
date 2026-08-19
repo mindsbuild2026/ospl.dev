@@ -5,10 +5,21 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import FloatingSubmitBtn from '../components/FloatingSubmitBtn';
 import AuthModal from '../components/AuthModal';
+import FeedbackModal from '../components/feedback/FeedbackModal';
+import FeedbackButton from '../components/feedback/FeedbackButton';
 import { ErrorAlert, LoadingSpinner } from '../components/shared';
 
 export default function MainLayout() {
-  const { state, actions, isAuthModalOpen, openAuthModal, closeAuthModal } = usePromptHubContext();
+  const {
+    state,
+    actions,
+    isAuthModalOpen,
+    openAuthModal,
+    closeAuthModal,
+    isFeedbackModalOpen,
+    openFeedbackModal,
+    closeFeedbackModal,
+  } = usePromptHubContext();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -62,15 +73,19 @@ export default function MainLayout() {
         setSelectedCategoryFilter={actions.setSelectedCategoryFilter}
         setSelectedPromptId={actions.setSelectedPromptId}
         setSearchQuery={actions.setSearchQuery}
+        onFeedbackClick={openFeedbackModal}
       />
 
       {!hideFloatingButton && (
-        <FloatingSubmitBtn
-          onClick={() => {
-            actions.onSubmitClick();
-            navigate('/submit');
-          }}
-        />
+        <>
+          <FloatingSubmitBtn
+            onClick={() => {
+              actions.onSubmitClick();
+              navigate('/submit');
+            }}
+          />
+          <FeedbackButton onClick={openFeedbackModal} />
+        </>
       )}
 
       <AuthModal
@@ -78,6 +93,14 @@ export default function MainLayout() {
         onClose={closeAuthModal}
         signInWithGithub={actions.signInWithGithub}
       />
+
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={closeFeedbackModal}
+        user={state.user}
+        authorName={state.author?.name}
+      />
     </div>
   );
 }
+

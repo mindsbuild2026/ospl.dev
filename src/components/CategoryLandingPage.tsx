@@ -6,6 +6,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Category, FilterOptions, PromptCard } from "../types";
 import { getPrimaryPlatform } from "../lib/promptSchema";
+import { copyTextToClipboard } from "../lib/clipboardService";
 import {
   ArrowLeft,
   Sparkles,
@@ -49,11 +50,13 @@ export default function CategoryLandingPage({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const handleCopy = (e: React.MouseEvent, id: string, text: string) => {
+  const handleCopy = async (e: React.MouseEvent, id: string, text: string) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+    const success = await copyTextToClipboard(text);
+    if (success) {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
   };
 
   const normalizedSlug = categorySlug.replace("-prompts", "").toLowerCase();
@@ -295,7 +298,7 @@ export default function CategoryLandingPage({
                         </span>
                         <span>{p.stats.copies.toLocaleString()} COPIES</span>
                         <span className="text-amber-500">
-                          {p.stats.rating.toFixed(1)} RATING
+                          {p.stats.ratingCount > 0 && p.stats.rating > 0 ? `${p.stats.rating.toFixed(1)} RATING` : "NO RATINGS"}
                         </span>
                         <span>{p.verified ? "VERIFIED" : "COMMUNITY"}</span>
                         <span>{p.results.hasProof ? "PROOF" : "NO PROOF"}</span>
@@ -368,7 +371,7 @@ export default function CategoryLandingPage({
                         </p>
                       </div>
                       <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 mt-4 pt-3 border-t border-neutral-100 dark:border-neutral-850 uppercase flex flex-wrap gap-2 justify-between select-none">
-                        <span>{p.stats.rating.toFixed(1)} rating</span>
+                        <span>{p.stats.ratingCount > 0 && p.stats.rating > 0 ? `${p.stats.rating.toFixed(1)} rating` : "no ratings"}</span>
                         <span>{p.stats.copies} copies</span>
                         <span>{p.stats.views} views</span>
                         <span>{p.results.hasProof ? "proof" : "no proof"}</span>

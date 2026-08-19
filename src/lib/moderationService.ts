@@ -593,3 +593,23 @@ export async function getCurrentAuthor() {
   assertNoError(error, "Failed to fetch current author");
   return data;
 }
+
+/**
+ * Admin manual reputation adjustment
+ */
+export async function adminAdjustReputation(
+  authorId: string,
+  points: number,
+  reason: string
+): Promise<{ success: boolean; new_reputation?: number; message?: string }> {
+  const db = requireSupabase();
+  const { data, error } = await db.rpc("admin_adjust_reputation", {
+    p_author_id: authorId,
+    p_points: points,
+    p_reason: reason,
+  });
+
+  assertNoError(error, "Failed to adjust author reputation.");
+  return data as { success: boolean; new_reputation?: number; message?: string };
+}
+

@@ -7,6 +7,7 @@
 
 import { useState, useCallback } from 'react';
 import { CLIPBOARD_TIMEOUT, ERROR_MESSAGES } from '../lib/constants';
+import { copyTextToClipboard } from '../lib/clipboardService';
 
 interface CopyState {
   copiedId: string | null;
@@ -21,41 +22,17 @@ export function useCopyToClipboard(timeout: number = CLIPBOARD_TIMEOUT) {
   const [state, setState] = useState<CopyState>({ copiedId: null, error: null });
 
   const copy = useCallback(
-    async (id: string, text: string) => {
+    async (id: string, text: string): Promise<boolean> => {
       setState({ copiedId: null, error: null });
 
-      try {
-        // Try modern Clipboard API first
-        if (navigator.clipboard?.writeText) {
-          await navigator.clipboard.writeText(text);
-          setState({ copiedId: id, error: null });
-          setTimeout(() => setState({ copiedId: null, error: null }), timeout);
-          return;
-        }
-
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-9999px';
-        textArea.style.top = '-9999px';
-        document.body.appendChild(textArea);
-
-        try {
-          textArea.select();
-          const success = document.execCommand('copy');
-          if (success) {
-            setState({ copiedId: id, error: null });
-            setTimeout(() => setState({ copiedId: null, error: null }), timeout);
-          } else {
-            setState({ copiedId: null, error: ERROR_MESSAGES.UNABLE_TO_COPY });
-          }
-        } finally {
-          document.body.removeChild(textArea);
-        }
-      } catch (err) {
-        console.error('Clipboard error:', err);
+      const success = await copyTextToClipboard(text);
+      if (success) {
+        setState({ copiedId: id, error: null });
+        setTimeout(() => setState({ copiedId: null, error: null }), timeout);
+        return true;
+      } else {
         setState({ copiedId: null, error: ERROR_MESSAGES.UNABLE_TO_COPY });
+        return false;
       }
     },
     [timeout],

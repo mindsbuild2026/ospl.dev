@@ -5,6 +5,7 @@
 
 import React, { useState } from "react";
 import { PromptCard } from "../types";
+import { copyTextToClipboard } from "../lib/clipboardService";
 import {
   Clock,
   Check,
@@ -27,11 +28,13 @@ export default function LatestCommunityPrompts({
 }: LatestCommunityPromptsProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const handleCopy = (e: React.MouseEvent, id: string, text: string) => {
+  const handleCopy = async (e: React.MouseEvent, id: string, text: string) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+    const success = await copyTextToClipboard(text);
+    if (success) {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
   };
 
   const latestItems = [...prompts]

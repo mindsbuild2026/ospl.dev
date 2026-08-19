@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { copyTextToClipboard } from '../lib/clipboardService';
 import {
   Sparkles,
   Check,
@@ -81,12 +82,13 @@ export default function DashboardView({
   );
 
   // Handle clipboard copy
-  const handleCopy = (e: React.MouseEvent, id: string, text: string) => {
+  const handleCopy = async (e: React.MouseEvent, id: string, text: string) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(text).then(() => {
+    const success = await copyTextToClipboard(text);
+    if (success) {
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
-    });
+    }
   };
 
   // Helper formatting values

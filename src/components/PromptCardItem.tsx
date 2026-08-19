@@ -12,6 +12,7 @@
 
 import React, { useState } from 'react';
 import { PromptCard } from '../types';
+import { copyTextToClipboard } from '../lib/clipboardService';
 import {
   Copy,
   Check,
@@ -54,15 +55,17 @@ export const PromptCardItem: React.FC<PromptCardItemProps> = ({
     return name.substring(0, 2).toUpperCase();
   };
 
-  const handleCopyAction = (e: React.MouseEvent) => {
+  const handleCopyAction = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const copyText = prompt.systemPrompt || `${prompt.title}\n${prompt.shortDescription}`;
-    navigator.clipboard.writeText(copyText);
-    setCopied(true);
-    if (onCopy) {
-      onCopy(prompt.id, copyText);
+    const success = await copyTextToClipboard(copyText);
+    if (success) {
+      setCopied(true);
+      if (onCopy) {
+        onCopy(prompt.id, copyText);
+      }
+      setTimeout(() => setCopied(false), 2000);
     }
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleLikeAction = (e: React.MouseEvent) => {
@@ -210,8 +213,8 @@ export const PromptCardItem: React.FC<PromptCardItemProps> = ({
 
               {/* Real Metrics */}
               <div className="flex items-center gap-3 font-mono text-[11px] text-neutral-500 dark:text-neutral-400 shrink-0">
-                {prompt.stats.rating > 0 && (
-                  <div className="flex items-center gap-1 text-amber-500 font-bold">
+                {prompt.stats.ratingCount > 0 && prompt.stats.rating > 0 && (
+                  <div className="flex items-center gap-1 text-amber-500 font-bold" title={`${prompt.stats.rating.toFixed(1)} / 5.0 (${prompt.stats.ratingCount} ${prompt.stats.ratingCount === 1 ? 'rating' : 'ratings'})`}>
                     <span>★</span>
                     <span>{prompt.stats.rating.toFixed(1)}</span>
                   </div>
@@ -337,8 +340,8 @@ export const PromptCardItem: React.FC<PromptCardItemProps> = ({
 
             {/* Real Engagement Metrics */}
             <div className="flex items-center gap-3 font-mono text-[11px] text-neutral-500 dark:text-neutral-400 shrink-0">
-              {prompt.stats.rating > 0 && (
-                <div className="flex items-center gap-1 text-amber-500 font-bold">
+              {prompt.stats.ratingCount > 0 && prompt.stats.rating > 0 && (
+                <div className="flex items-center gap-1 text-amber-500 font-bold" title={`${prompt.stats.rating.toFixed(1)} / 5.0 (${prompt.stats.ratingCount} ${prompt.stats.ratingCount === 1 ? 'rating' : 'ratings'})`}>
                   <span>★</span>
                   <span>{prompt.stats.rating.toFixed(1)}</span>
                 </div>
