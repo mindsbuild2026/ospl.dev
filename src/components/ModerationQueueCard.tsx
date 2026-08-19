@@ -162,15 +162,26 @@ export default function ModerationQueueCard({
           )}
 
           <div className="mb-4">
-            <span
-              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
-                prompt.moderation.status === 'approved'
-                  ? 'border-green-200 text-green-700 bg-green-50'
-                  : 'border-yellow-200 text-yellow-700 bg-yellow-50'
-              }`}
-            >
-              {prompt.moderation.status}
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
+                  prompt.moderation.status === 'approved'
+                    ? 'border-green-200 text-green-700 bg-green-50'
+                    : 'border-yellow-200 text-yellow-700 bg-yellow-50'
+                }`}
+              >
+                {prompt.moderation.status}
+              </span>
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${
+                  prompt.prompt_mode === 'developer_pro'
+                    ? 'border-purple-200 text-purple-700 bg-purple-50'
+                    : 'border-blue-200 text-blue-700 bg-blue-50'
+                }`}
+              >
+                {prompt.prompt_mode === 'developer_pro' ? 'Developer Pro Workflow' : 'Casual Prompt'}
+              </span>
+            </div>
             {prompt.moderation.submittedAt && (
               <span className="block text-xs text-gray-500 mt-2">
                 Submitted: {new Date(prompt.moderation.submittedAt).toLocaleDateString()}

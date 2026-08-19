@@ -55,16 +55,7 @@ export function defaultSubmissionPayload(): PromptSubmissionPayload {
     industry_ids: [],
     technique_ids: [],
     recommended_models: [{ name: 'Claude 3.5 Sonnet', provider: 'Anthropic' }],
-    variables: [
-      {
-        name: 'topic',
-        label: 'Topic',
-        required: true,
-        description: 'Primary topic or subject matter.',
-        variable_type: 'string',
-        options: [],
-      },
-    ],
+    variables: [],
     usage_instructions: ['Paste system and user prompts into your AI tool.'],
     examples: [
       {
@@ -89,18 +80,10 @@ export function defaultSubmissionPayload(): PromptSubmissionPayload {
         changes: ['Initial submission'],
       },
     ],
-    // Developer Pro default fields
+    // Prompt Mode & Developer Pro default fields
+    prompt_mode: 'casual',
     creator_mode: 'casual',
-    workflow_steps: [
-      {
-        id: `step_${Date.now()}_1`,
-        order: 1,
-        title: 'Step 1: Scaffold & Initial Prompt',
-        prompt: '',
-        description: 'First step in the developer prompt workflow.',
-        analysisState: 'idle',
-      },
-    ],
+    workflow_steps: [],
     pipeline_type: 'single_shot',
     temperature: 0.7,
     max_tokens: 2048,
@@ -141,15 +124,27 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
     if (savedDraft) {
       try {
         const parsed = JSON.parse(savedDraft) as PromptSubmissionPayload;
+        const restoredMode = parsed.prompt_mode 
+          ? (parsed.prompt_mode === 'developer_pro' ? 'developer' : 'casual')
+          : (parsed.creator_mode === 'developer' ? 'developer' : 'casual');
+        
         setSubmission((prev) => ({
           ...prev,
           ...parsed,
+          prompt_mode: restoredMode === 'developer' ? 'developer_pro' : 'casual',
+          creator_mode: restoredMode,
           category_id: parsed.category_id || lookupData.categories[0]?.id || '',
           author_id: author?.id || parsed.author_id || lookupData.authors[0]?.id || '',
           ai_platform_ids: parsed.ai_platform_ids?.length ? parsed.ai_platform_ids : lookupData.aiPlatforms.slice(0, 1).map((p) => p.id),
         }));
-        if (parsed.creator_mode) {
-          setCreatorModeState(parsed.creator_mode);
+        setCreatorModeState(restoredMode);
+        
+        const restoredText = parsed.last_analyzed_text || (parsed.user_prompt || parsed.system_prompt || '').trim();
+        if (restoredText || parsed.ai_has_analyzed || parsed.ai_validation_status) {
+          setLastAnalyzedPrompt(restoredText);
+          if (parsed.ai_validation_status === 'pass' || parsed.ai_validation_status === 'warning') {
+            setAiStatus('success');
+          }
         }
       } catch {
         // Fallback to default
@@ -167,16 +162,44 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
   // 2. Auto-save draft on form change
   useEffect(() => {
     if (!lookupData) return;
-    window.localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...submission, creator_mode: creatorMode }));
-  }, [submission, creatorMode, lookupData]);
+    const prompt_mode = creatorMode === 'developer' ? 'developer_pro' : 'casual';
+    window.localStorage.setItem(
+      DRAFT_KEY, 
+      JSON.stringify({ 
+        ...submission, 
+        creator_mode: creatorMode, 
+        prompt_mode, 
+        last_analyzed_text: lastAnalyzedPrompt || submission.last_analyzed_text,
+        ai_has_analyzed: Boolean(lastAnalyzedPrompt || submission.last_analyzed_text || submission.ai_validation_status)
+      })
+    );
+  }, [submission, creatorMode, lookupData, lastAnalyzedPrompt]);
 
   // 3. Mode Switcher (Casual <-> Developer) preserving ALL state
   const setCreatorMode = useCallback((mode: 'casual' | 'developer') => {
     setCreatorModeState(mode);
-    setSubmission((prev) => ({
-      ...prev,
-      creator_mode: mode,
-    }));
+    setSubmission((prev) => {
+      const prompt_mode = mode === 'developer' ? 'developer_pro' : 'casual';
+      let steps = prev.workflow_steps || [];
+      if (mode === 'developer' && steps.length === 0) {
+        steps = [
+          {
+            id: `step_${Date.now()}_1`,
+            order: 1,
+            title: 'Step 1: Scaffold & Initial Prompt',
+            prompt: '',
+            description: 'First step in the developer prompt workflow.',
+            analysisState: 'idle',
+          },
+        ];
+      }
+      return {
+        ...prev,
+        prompt_mode,
+        creator_mode: mode,
+        workflow_steps: mode === 'casual' ? [] : steps,
+      };
+    });
   }, []);
 
   // 4. Live Variable Extraction across single prompts & workflow steps combined
@@ -389,6 +412,7 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
     try {
       const result = await generatePromptDetailsWithGemini(rawPromptText.trim(), lookupData);
       setAiResult(result);
+      setLastAnalyzedPrompt(rawPromptText.trim());
       const { review, metadata } = result;
 
       if (review.status === 'fail' || review.flags.invalid || review.flags.spam) {
@@ -404,6 +428,8 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
         const patch: Partial<PromptSubmissionPayload> = {
           ai_validation_status: review.status,
           ai_quality_score: review.score,
+          last_analyzed_text: rawPromptText.trim(),
+          ai_has_analyzed: true,
         };
 
         if (metadata) {
@@ -638,7 +664,11 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
   // Debounced auto-analysis when prompt text changes (supporting BOTH Casual & Developer Pro modes)
   useEffect(() => {
     if (!lookupData) return;
-    if (effectivePromptText.length < 15 || effectivePromptText === lastAnalyzedPrompt) return;
+    const isAlreadyAnalyzed =
+      effectivePromptText === lastAnalyzedPrompt ||
+      (Boolean(submission.last_analyzed_text) && submission.last_analyzed_text === effectivePromptText);
+
+    if (effectivePromptText.length < 15 || isAlreadyAnalyzed) return;
 
     const timer = setTimeout(() => {
       setLastAnalyzedPrompt(effectivePromptText);
@@ -646,7 +676,7 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
     }, 1200);
 
     return () => clearTimeout(timer);
-  }, [effectivePromptText, lookupData, lastAnalyzedPrompt, handleGenerateAiDetails]);
+  }, [effectivePromptText, lookupData, lastAnalyzedPrompt, submission.last_analyzed_text, handleGenerateAiDetails]);
 
   // Explicit Regenerate trigger handler
   const handleRegenerateAiDetails = useCallback(async () => {
@@ -677,17 +707,17 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
 
   // 10. Unified Validation & Submission Pipeline
   const validateForm = useCallback((): boolean => {
-    // For Casual Creator, auto-populate required default arrays if empty
+    // For Casual Creator, auto-populate required default arrays if empty and ensure workflow_steps is empty
     let payloadToValidate = { ...submission };
     if (creatorMode === 'casual') {
       payloadToValidate = {
         ...payloadToValidate,
+        prompt_mode: 'casual',
+        creator_mode: 'casual',
+        workflow_steps: [],
         recommended_models: payloadToValidate.recommended_models.length
           ? payloadToValidate.recommended_models
           : [{ name: 'GPT-4o', provider: 'OpenAI' }],
-        variables: payloadToValidate.variables.length
-          ? payloadToValidate.variables
-          : [{ name: 'input', label: 'Input', required: true, description: 'Prompt input' }],
         usage_instructions: payloadToValidate.usage_instructions.length
           ? payloadToValidate.usage_instructions
           : ['Paste the prompt into your AI model.'],
@@ -712,6 +742,8 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
       const combinedStepsText = steps.map((s) => `### Step ${s.order}: ${s.title}\n${s.prompt}`).join('\n\n');
       payloadToValidate = {
         ...payloadToValidate,
+        prompt_mode: 'developer_pro',
+        creator_mode: 'developer',
         system_prompt: payloadToValidate.system_prompt || combinedStepsText,
         user_prompt: payloadToValidate.user_prompt || firstStepPrompt || combinedStepsText,
       };
@@ -738,37 +770,46 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
     const isFormValid = validateForm();
     if (!isFormValid) return;
 
-    // Stage 2: AI Prompt Validation
+    // Stage 2: AI Prompt Validation (Only run if NOT already reviewed/validated)
     if (lookupData && creatorMode === 'casual') {
-      setAiStatus('loading');
-      try {
-        const result = await generatePromptDetailsWithGemini(submission, lookupData);
-        setAiResult(result);
+      const alreadyReviewed = Boolean(
+        aiStatus === 'success' ||
+        aiStatus === 'applied' ||
+        submission.ai_validation_status === 'pass' ||
+        aiResult !== null
+      );
 
-        const { review } = result;
+      if (!alreadyReviewed) {
+        setAiStatus('loading');
+        try {
+          const result = await generatePromptDetailsWithGemini(submission, lookupData);
+          setAiResult(result);
 
-        // Stage 3: Validation Result Check
-        if (review.status === 'fail' || review.flags.invalid || review.flags.spam) {
+          const { review } = result;
+
+          // Stage 3: Validation Result Check
+          if (review.status === 'fail' || review.flags.invalid || review.flags.spam) {
+            setAiStatus('error');
+            const issueMsg = review.issues.length > 0 ? review.issues.join('. ') : 'Prompt failed AI quality validation standards.';
+            setSubmitError(`AI Validation Failed: ${issueMsg}`);
+            return; // Do NOT proceed to review/submission, preserve form state
+          }
+
+          // Save validation score/status onto submission
+          setSubmission((prev) => ({
+            ...prev,
+            ai_validation_status: review.status,
+            ai_quality_score: review.score,
+          }));
+
+          setAiStatus('success');
+        } catch (err) {
           setAiStatus('error');
-          const issueMsg = review.issues.length > 0 ? review.issues.join('. ') : 'Prompt failed AI quality validation standards.';
-          setSubmitError(`AI Validation Failed: ${issueMsg}`);
-          return; // Do NOT proceed to review/submission, preserve form state
+          const errMsg = err instanceof Error ? err.message : 'AI validation service error';
+          setAiError(errMsg);
+          setSubmitError(`AI Validation Error: ${errMsg}. Please try again.`);
+          return; // Do NOT silently mark valid on AI service error
         }
-
-        // Save validation score/status onto submission
-        setSubmission((prev) => ({
-          ...prev,
-          ai_validation_status: review.status,
-          ai_quality_score: review.score,
-        }));
-
-        setAiStatus('success');
-      } catch (err) {
-        setAiStatus('error');
-        const errMsg = err instanceof Error ? err.message : 'AI validation service error';
-        setAiError(errMsg);
-        setSubmitError(`AI Validation Error: ${errMsg}. Please try again.`);
-        return; // Do NOT silently mark valid on AI service error
       }
     } else if (creatorMode === 'developer') {
       // Analyze any unanalyzed or stale workflow steps before proceeding to review
@@ -779,19 +820,71 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
       }
     }
 
-    // Stage 4: Proceed to Review
+    // Stage 4: Open Popup for User Review immediately with exact current values
     setIsReviewMode(true);
-  }, [validateForm, lookupData, submission, creatorMode]);
+  }, [validateForm, lookupData, submission, creatorMode, aiStatus, aiResult]);
 
   const handleFinalSubmit = useCallback(async () => {
     setSubmitError('');
+
+    // Re-verify form validation before ANY backend submit API call
+    const isFormValid = validateForm();
+    if (!isFormValid) {
+      setIsSubmitting(false);
+      setIsReviewMode(false);
+      return;
+    }
+
+    if (creatorMode === 'casual' && (aiStatus === 'error' || submission.ai_validation_status === 'fail')) {
+      setSubmitError('Cannot submit prompt: Prompt failed AI quality standards. Please fix highlighted errors.');
+      setIsSubmitting(false);
+      setIsReviewMode(false);
+      return;
+    }
+
+    if (creatorMode === 'developer') {
+      const invalidStep = submission.workflow_steps?.find((s) => s.analysisState === 'invalid');
+      if (invalidStep) {
+        setSubmitError(`Cannot submit prompt: Step ${invalidStep.order} ("${invalidStep.title}") has validation issues.`);
+        setIsSubmitting(false);
+        setIsReviewMode(false);
+        return;
+      }
+    }
+
     setIsSubmitting(true);
 
     try {
+      const isCasual = creatorMode === 'casual';
+      const promptMode = isCasual ? 'casual' : 'developer_pro';
+      const steps = isCasual ? [] : (submission.workflow_steps || []);
+      const combinedStepsText = steps.length > 0
+        ? steps.map((s) => `### Step ${s.order}: ${s.title || 'Step'}\n${s.prompt || ''}`).join('\n\n')
+        : '';
+
+      const resolvedUserPrompt = (
+        submission.user_prompt?.trim() ||
+        submission.system_prompt?.trim() ||
+        steps[0]?.prompt?.trim() ||
+        combinedStepsText ||
+        ''
+      );
+
+      const resolvedSystemPrompt = (
+        submission.system_prompt?.trim() ||
+        submission.user_prompt?.trim() ||
+        combinedStepsText ||
+        ''
+      );
+
       const finalPayload: PromptSubmissionPayload = {
         ...submission,
+        prompt_mode: promptMode,
+        creator_mode: isCasual ? 'casual' : 'developer',
+        workflow_steps: steps,
+        user_prompt: resolvedUserPrompt,
+        system_prompt: resolvedSystemPrompt,
         author_id: author?.id || submission.author_id,
-        creator_mode: creatorMode,
         environmental_estimate: environmentalFootprint,
       };
 
@@ -803,7 +896,7 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
       setIsSubmitting(false);
       throw err;
     }
-  }, [submission, author, creatorMode, environmentalFootprint, onSubmitPrompt]);
+  }, [submission, author, creatorMode, environmentalFootprint, onSubmitPrompt, validateForm, aiStatus]);
 
   const handleSaveDraft = useCallback(() => {
     window.localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...submission, creator_mode: creatorMode }));
@@ -824,6 +917,7 @@ export function useSubmissionState({ author, lookupData, onSubmitPrompt }: UseSu
       });
     }
     setSubmission(defaultSubmissionPayload());
+    setLastAnalyzedPrompt('');
     setFieldErrors({});
     window.localStorage.removeItem(DRAFT_KEY);
   }, [submission.assets]);

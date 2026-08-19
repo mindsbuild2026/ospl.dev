@@ -13,6 +13,7 @@ import {
   FilterOptions,
   Prompt,
   PromptCard,
+  PromptMode,
   LookupReference,
   LookupAuthor,
   PromptSubmissionPayload,
@@ -21,6 +22,7 @@ import { supabase } from "./supabase";
 import { assertNoError } from "./errors";
 import { ERROR_MESSAGES } from "./constants";
 import { apiCache } from "./cache";
+import { validatePromptSubmission } from "./validation";
 
 export type PromptSort =
   | "Trending"
@@ -127,6 +129,7 @@ function listFromJson(value: unknown): string[] {
  * Map database row to PromptCard with type safety
  */
 function mapPromptCard(row: DatabasePromptCardRow): PromptCard {
+  const modeRaw = (row as any).prompt_mode || ((row as any).creator_mode === 'developer' ? 'developer_pro' : 'casual');
   return {
     id: row.id,
     slug: row.slug,
@@ -139,6 +142,7 @@ function mapPromptCard(row: DatabasePromptCardRow): PromptCard {
     featured: Boolean(row.featured),
     verified: Boolean(row.verified),
     communityValidated: Boolean(row.community_validated),
+    prompt_mode: modeRaw === 'developer_pro' ? 'developer_pro' : 'casual',
     stats: {
       views: Number(row.views || 0),
       copies: Number(row.copies || 0),
@@ -445,6 +449,15 @@ export async function fetchPromptSubmissionLookups(): Promise<PromptSubmissionLo
     { id: 'cat_productivity', slug: 'productivity', name: 'Productivity' },
   ];
 
+  const defaultSubcategories: LookupReference[] = [
+    { id: 'sub_coding_frontend', categoryId: 'cat_coding', slug: 'frontend', name: 'Frontend & UI' },
+    { id: 'sub_coding_backend', categoryId: 'cat_coding', slug: 'backend', name: 'Backend & APIs' },
+    { id: 'sub_coding_devops', categoryId: 'cat_coding', slug: 'devops', name: 'DevOps & Architecture' },
+    { id: 'sub_creative_writing', categoryId: 'cat_creative', slug: 'writing', name: 'Creative Writing' },
+    { id: 'sub_creative_copywriting', categoryId: 'cat_creative', slug: 'copywriting', name: 'Copywriting & Marketing' },
+    { id: 'sub_productivity_automation', categoryId: 'cat_productivity', slug: 'automation', name: 'Workflow Automation' },
+  ];
+
   const defaultPlatforms: LookupReference[] = [
     { id: 'plat_gpt4', slug: 'gpt-4', name: 'GPT-4' },
     { id: 'plat_claude3', slug: 'claude-3', name: 'Claude 3' },
@@ -452,9 +465,19 @@ export async function fetchPromptSubmissionLookups(): Promise<PromptSubmissionLo
     { id: 'plat_mistral', slug: 'mistral', name: 'Mistral' },
   ];
 
+  const mappedSubcategories: LookupReference[] = (subcategories && subcategories.length > 0)
+    ? subcategories.map((s: any) => ({
+        id: s.id,
+        slug: s.slug,
+        name: s.name,
+        description: s.description,
+        categoryId: s.category_id || s.categoryId,
+      }))
+    : defaultSubcategories;
+
   return {
     categories: (categories && categories.length > 0) ? categories : defaultCategories,
-    subcategories: subcategories || [],
+    subcategories: mappedSubcategories,
     promptTypes: promptTypes || [],
     aiPlatforms: (aiPlatforms && aiPlatforms.length > 0) ? aiPlatforms : defaultPlatforms,
     tags: tags || [],
@@ -468,6 +491,14 @@ export async function fetchPromptSubmissionLookups(): Promise<PromptSubmissionLo
 export async function createPromptFromPayload(
   prompt: PromptSubmissionPayload,
 ): Promise<string> {
+  // STRICT REPOSITORY GUARD: Abort database insertion if form validation errors exist
+  const errors = validatePromptSubmission(prompt);
+  if (errors.length > 0) {
+    const errorMap = errors.map((e) => `${e.field}: ${e.message}`).join('; ');
+    console.error('[createPromptFromPayload] Aborted database insertion due to validation errors:', errorMap);
+    throw new Error(`Cannot save prompt to backend: Form validation errors present (${errorMap})`);
+  }
+
   const client = requireSupabase();
 
   const rawTitle = prompt.title || 'prompt';
@@ -479,12 +510,35 @@ export async function createPromptFromPayload(
 
   let uniqueSlug = `${baseSlug}-${Math.random().toString(36).substring(2, 7)}`;
 
+  const effectiveMode: PromptMode = prompt.prompt_mode || (prompt.creator_mode === 'developer' ? 'developer_pro' : 'casual');
+  const isDeveloperPro = effectiveMode === 'developer_pro';
+
   const structuredOutputJson = JSON.stringify({
     custom_schema: prompt.structured_output_schema || null,
-    workflow_steps: prompt.workflow_steps || [],
+    workflow_steps: isDeveloperPro ? (prompt.workflow_steps || []) : [],
     proof_items: prompt.proof_items || [],
     assets: prompt.assets || [],
   });
+
+  const workflowSteps = isDeveloperPro ? (prompt.workflow_steps || []) : [];
+  const combinedStepsPrompt = workflowSteps.length > 0
+    ? workflowSteps.map((s) => `### Step ${s.order}: ${s.title || 'Step'}\n${s.prompt || ''}`).join('\n\n')
+    : '';
+
+  const finalUserPrompt = (
+    prompt.user_prompt?.trim() ||
+    prompt.system_prompt?.trim() ||
+    workflowSteps[0]?.prompt?.trim() ||
+    combinedStepsPrompt ||
+    ''
+  );
+
+  const finalSystemPrompt = (
+    prompt.system_prompt?.trim() ||
+    prompt.user_prompt?.trim() ||
+    combinedStepsPrompt ||
+    ''
+  );
 
   let promptInsert = await client
     .from("prompts")
@@ -511,10 +565,11 @@ export async function createPromptFromPayload(
       moderation_status: "pending",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      system_prompt: prompt.system_prompt,
-      user_prompt: prompt.user_prompt,
+      system_prompt: finalSystemPrompt,
+      user_prompt: finalUserPrompt,
       expected_output: prompt.expected_output || null,
-      creator_mode: prompt.creator_mode || "casual",
+      prompt_mode: effectiveMode,
+      creator_mode: prompt.creator_mode || (isDeveloperPro ? "developer" : "casual"),
       pipeline_type: prompt.pipeline_type || "single_shot",
       temperature: prompt.temperature ?? 0.70,
       max_tokens: prompt.max_tokens ?? 2048,
@@ -552,10 +607,11 @@ export async function createPromptFromPayload(
         moderation_status: "pending",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        system_prompt: prompt.system_prompt,
-        user_prompt: prompt.user_prompt,
+        system_prompt: finalSystemPrompt,
+        user_prompt: finalUserPrompt,
         expected_output: prompt.expected_output || null,
-        creator_mode: prompt.creator_mode || "casual",
+        prompt_mode: effectiveMode,
+        creator_mode: prompt.creator_mode || (isDeveloperPro ? "developer" : "casual"),
         pipeline_type: prompt.pipeline_type || "single_shot",
         temperature: prompt.temperature ?? 0.70,
         max_tokens: prompt.max_tokens ?? 2048,
@@ -697,6 +753,26 @@ export async function createPromptFromPayload(
     })),
   );
 
+  if (isDeveloperPro && prompt.workflow_steps && prompt.workflow_steps.length > 0) {
+    await insertPairs(
+      "prompt_workflow_steps",
+      prompt.workflow_steps.map((step, index) => ({
+        prompt_id: promptId,
+        step_order: step.order || index + 1,
+        title: step.title || `Step ${index + 1}`,
+        prompt: step.prompt || '',
+        description: step.description || '',
+        analysis_state: step.analysisState || 'valid',
+        validation_status: step.validationStatus || 'pass',
+        quality_score: step.qualityScore ?? 90,
+        validation_issues: step.validationIssues || [],
+        variables: step.variables || [],
+        reference_assets: step.referenceAssets || [],
+        result_assets: step.resultAssets || [],
+      }))
+    );
+  }
+
   // Insert Environmental Footprint Estimate if calculated
   if (prompt.environmental_estimate) {
     const env = prompt.environmental_estimate;
@@ -755,68 +831,94 @@ export async function fetchPromptDetail(
   if (!data) return null;
   const card = mapPromptCard(data);
 
+  const rawMode = data.prompt_mode || (data.creator_mode === 'developer' ? 'developer_pro' : 'casual');
+  const promptMode: PromptMode = rawMode === 'developer_pro' ? 'developer_pro' : 'casual';
+
   let parsedWorkflowSteps: any[] | undefined = undefined;
 
-  // 1. Try reading workflow_steps from structured_output_schema JSON payload
-  if (data.structured_output_schema) {
-    try {
-      const parsed = JSON.parse(data.structured_output_schema);
-      if (Array.isArray(parsed?.workflow_steps) && parsed.workflow_steps.length > 0) {
-        parsedWorkflowSteps = parsed.workflow_steps;
+  if (promptMode === 'developer_pro') {
+    // 1. Try reading workflow_steps from structured_output_schema JSON payload
+    if (data.structured_output_schema) {
+      try {
+        const parsed = JSON.parse(data.structured_output_schema);
+        if (Array.isArray(parsed?.workflow_steps) && parsed.workflow_steps.length > 0) {
+          parsedWorkflowSteps = parsed.workflow_steps;
+        }
+      } catch {
+        // Ignore non-JSON schema strings
       }
-    } catch {
-      // Ignore non-JSON schema strings
     }
-  }
 
-  // 2. Try fetching from relational `prompt_workflow_steps` table in Supabase if JSON payload was empty
-  if (!parsedWorkflowSteps || parsedWorkflowSteps.length === 0) {
-    try {
-      const { data: stepRows, error: stepErr } = await client
-        .from("prompt_workflow_steps")
-        .select("*")
-        .eq("prompt_id", data.id)
-        .order("step_order", { ascending: true });
+    // 2. Try fetching from relational `prompt_workflow_steps` table in Supabase if JSON payload was empty
+    if (!parsedWorkflowSteps || parsedWorkflowSteps.length === 0) {
+      try {
+        const { data: stepRows, error: stepErr } = await client
+          .from("prompt_workflow_steps")
+          .select("*")
+          .eq("prompt_id", data.id)
+          .order("step_order", { ascending: true });
 
-      if (!stepErr && stepRows && stepRows.length > 0) {
-        parsedWorkflowSteps = stepRows.map((row: any, idx: number) => ({
-          id: row.id || `step_${row.step_order || idx + 1}`,
-          order: Number(row.step_order || row.order || idx + 1),
-          title: row.title || `Step ${row.step_order || idx + 1}`,
-          prompt: row.prompt || row.prompt_text || "",
-          description: row.description || "",
-          analysisState: row.analysis_state || "valid",
-          validationStatus: row.validation_status || "pass",
-          qualityScore: row.quality_score ? Number(row.quality_score) : 90,
-          validationIssues: Array.isArray(row.validation_issues) ? row.validation_issues : [],
-          variables: Array.isArray(row.variables) ? row.variables : [],
-          referenceAssets: Array.isArray(row.reference_assets) ? row.reference_assets : [],
-          resultAssets: Array.isArray(row.result_assets) ? row.result_assets : [],
-        }));
+        if (!stepErr && stepRows && stepRows.length > 0) {
+          parsedWorkflowSteps = stepRows.map((row: any, idx: number) => ({
+            id: row.id || `step_${row.step_order || idx + 1}`,
+            order: Number(row.step_order || row.order || idx + 1),
+            title: row.title || `Step ${row.step_order || idx + 1}`,
+            prompt: row.prompt || row.prompt_text || "",
+            description: row.description || "",
+            analysisState: row.analysis_state || "valid",
+            validationStatus: row.validation_status || "pass",
+            qualityScore: row.quality_score ? Number(row.quality_score) : 90,
+            validationIssues: Array.isArray(row.validation_issues) ? row.validation_issues : [],
+            variables: Array.isArray(row.variables) ? row.variables : [],
+            referenceAssets: Array.isArray(row.reference_assets) ? row.reference_assets : [],
+            resultAssets: Array.isArray(row.result_assets) ? row.result_assets : [],
+          }));
+        }
+      } catch {
+        // Ignore missing optional relational table
       }
-    } catch {
-      // Ignore missing optional relational table
     }
-  }
 
-  // 3. Guarantee ascending step_order sorting for multi-step workflows
-  if (parsedWorkflowSteps && Array.isArray(parsedWorkflowSteps)) {
-    const validSteps = parsedWorkflowSteps.filter((s: any) => s && (s.prompt?.trim() || s.title?.trim()));
-    if (validSteps.length > 0) {
-      parsedWorkflowSteps = validSteps.sort((a: any, b: any) => {
-        const orderA = Number(a.order ?? a.step_order ?? 0);
-        const orderB = Number(b.order ?? b.step_order ?? 0);
-        return orderA - orderB;
-      });
+    // 3. Guarantee ascending step_order sorting for multi-step workflows
+    if (parsedWorkflowSteps && Array.isArray(parsedWorkflowSteps)) {
+      const validSteps = parsedWorkflowSteps.filter((s: any) => s && (s.prompt?.trim() || s.title?.trim()));
+      if (validSteps.length > 0) {
+        parsedWorkflowSteps = validSteps.sort((a: any, b: any) => {
+          const orderA = Number(a.order ?? a.step_order ?? 0);
+          const orderB = Number(b.order ?? b.step_order ?? 0);
+          return orderA - orderB;
+        });
+      } else {
+        parsedWorkflowSteps = undefined;
+      }
     } else {
       parsedWorkflowSteps = undefined;
     }
-  } else {
-    parsedWorkflowSteps = undefined;
   }
+
+  const combinedStepPrompts = (parsedWorkflowSteps || [])
+    .map((s: any) => s.prompt || s.description || '')
+    .filter(Boolean)
+    .join('\n\n');
+
+  const resolvedUserPrompt = (
+    data.user_prompt?.trim() ||
+    data.system_prompt?.trim() ||
+    combinedStepPrompts ||
+    data.description ||
+    ""
+  );
+
+  const resolvedSystemPrompt = (
+    data.system_prompt?.trim() ||
+    data.user_prompt?.trim() ||
+    combinedStepPrompts ||
+    ""
+  );
 
   return {
     ...card,
+    prompt_mode: promptMode,
     workflow_steps: parsedWorkflowSteps,
     description: data.description || card.shortDescription,
     difficulty: data.difficulty || "",
@@ -829,8 +931,8 @@ export async function fetchPromptDetail(
       data.prompt_engineering_techniques,
     ),
     prompt: {
-      systemPrompt: data.system_prompt || "",
-      userPrompt: data.user_prompt || "",
+      systemPrompt: resolvedSystemPrompt,
+      userPrompt: resolvedUserPrompt,
       expectedOutput: data.expected_output || "",
     },
     variables: Array.isArray(data.variables) ? data.variables : [],

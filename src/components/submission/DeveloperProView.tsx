@@ -27,6 +27,7 @@ import { PromptSubmissionLookups } from '../../lib/promptRepository';
 import { ImageProofUploader } from './ImageProofUploader';
 import { EnvironmentalImpactCard } from './EnvironmentalImpactCard';
 import { VariableInfoTooltip } from './VariableInfoTooltip';
+import { UnifiedClassificationForm } from './UnifiedClassificationForm';
 
 export interface DeveloperProViewProps {
   submission: PromptSubmissionPayload;
@@ -668,111 +669,28 @@ export function DeveloperProView({
       {/* RIGHT COLUMN: Developer Pro Sidebar Metadata (~35%) */}
       <div className="space-y-6 lg:sticky lg:top-8">
         
-        {/* Card: Template Metadata */}
-        <div className="rounded-[28px] border border-neutral-200/80 bg-white p-6 md:p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white">
-              Workflow Metadata
-            </h3>
-            {onGenerateAiDetails && (
-              <button
-                type="button"
-                onClick={() => {
+        {/* Card: Workflow Metadata (Shared Backend Classification Form) */}
+        <UnifiedClassificationForm
+          sectionTitle="Workflow Metadata"
+          submission={submission}
+          lookupData={lookupData}
+          fieldErrors={fieldErrors}
+          onUpdateField={onUpdateField}
+          onGenerateAiDetails={
+            onGenerateAiDetails
+              ? async () => {
                   const combined = (submission.workflow_steps || [])
                     .filter((s) => s.prompt.trim())
                     .map((s) => `Step ${s.order} (${s.title || 'Step'}):\n${s.prompt.trim()}`)
                     .join('\n\n');
                   if (combined.trim()) {
-                    onGenerateAiDetails(combined.trim());
+                    await onGenerateAiDetails(combined.trim());
                   }
-                }}
-                disabled={isAiLoading || !(submission.workflow_steps || []).some((s) => s.prompt.trim())}
-                className="inline-flex items-center gap-1.5 rounded-full bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/50 px-3 py-1 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
-                title="Auto-generate workflow title, descriptions, category, tags, and platforms based on step prompts"
-              >
-                {isAiLoading ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-purple-600" />
-                ) : (
-                  <Sparkles className="h-3.5 w-3.5 text-purple-600" />
-                )}
-                <span>Auto-Generate</span>
-              </button>
-            )}
-          </div>
-
-          {/* Title */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-              Workflow Title <span className="text-purple-600">*</span>
-            </label>
-            <input
-              type="text"
-              value={submission.title}
-              onChange={(e) => onUpdateField({ title: e.target.value })}
-              placeholder="e.g. SaaS Application Scaffolding"
-              className="w-full rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-xs font-bold text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white outline-none focus:border-purple-500"
-            />
-          </div>
-
-          {/* Short Description */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-              Short Description <span className="text-purple-600">*</span>
-            </label>
-            <textarea
-              value={submission.short_description}
-              onChange={(e) => onUpdateField({ short_description: e.target.value })}
-              rows={3}
-              placeholder="Brief summary of what this workflow accomplishes..."
-              className="w-full resize-none rounded-xl border border-neutral-200 bg-white p-3 text-xs text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white outline-none focus:border-purple-500"
-            />
-          </div>
-
-          {/* Category Selector */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-              Category <span className="text-purple-600">*</span>
-            </label>
-            <select
-              value={submission.category_id}
-              onChange={(e) => onUpdateField({ category_id: e.target.value, subcategory_id: undefined })}
-              className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-xs font-bold text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white outline-none"
-            >
-              <option value="">Select Category...</option>
-              {categoryOptions.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* AI Platforms Selection */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block">
-              Compatible AI Platforms
-            </label>
-            <div className="flex flex-wrap gap-1.5">
-              {aiPlatforms.map((p) => {
-                const selected = submission.ai_platform_ids.includes(p.id);
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => handleTogglePlatform(p.id)}
-                    className={`rounded-full px-3 py-1 text-xs font-bold transition ${
-                      selected
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-900 dark:text-neutral-400'
-                    }`}
-                  >
-                    {p.name}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+                }
+              : undefined
+          }
+          isAiLoading={isAiLoading}
+        />
 
         {/* Environmental Footprint Card */}
         <EnvironmentalImpactCard

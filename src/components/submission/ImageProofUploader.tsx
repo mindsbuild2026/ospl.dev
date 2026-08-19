@@ -14,7 +14,8 @@ import { validateImageFile, ASSET_CONFIG } from '../../lib/assetService';
 
 export interface ImageProofUploaderProps {
   assets: PromptSubmissionAsset[];
-  onUploadFile: (file: File) => Promise<void>;
+  onUploadFile?: (file: File) => Promise<void>;
+  onUploadAsset?: (file: File) => Promise<void>;
   onRemoveAsset: (assetId: string) => Promise<void>;
   onRetryUpload?: (asset: PromptSubmissionAsset) => Promise<void>;
   disabled?: boolean;
@@ -23,10 +24,12 @@ export interface ImageProofUploaderProps {
 export function ImageProofUploader({
   assets = [],
   onUploadFile,
+  onUploadAsset,
   onRemoveAsset,
   onRetryUpload,
   disabled = false,
 }: ImageProofUploaderProps) {
+  const handleUpload = onUploadFile || onUploadAsset;
   const [isDragging, setIsDragging] = useState(false);
   const [validationError, setValidationError] = useState('');
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -42,9 +45,11 @@ export function ImageProofUploader({
         setValidationError(check.error || 'Invalid image file.');
         return;
       }
-      onUploadFile(file).catch((err) => {
-        setValidationError(err instanceof Error ? err.message : 'Upload failed.');
-      });
+      if (handleUpload) {
+        handleUpload(file).catch((err) => {
+          setValidationError(err instanceof Error ? err.message : 'Upload failed.');
+        });
+      }
     });
   }, [assets.length, onUploadFile]);
 

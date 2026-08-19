@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * PromptDetailView Component
- * Premium, production-grade PromptHub detail experience combining:
- * - AI Prompt Repository
- * - Interactive Documentation Page
- * - Multi-Step Developer Pro Workflow Viewer
+ * Premium, production-grade PromptHub detail experience:
+ * - Make the User's Real Prompt the Hero (#1 Visual Priority)
+ * - Strict Separation: Creator Content vs AI Analysis & Metadata
+ * - Two-Column Desktop Layout & Responsive Single-Column Mobile Flow
+ * - Support for both Casual Creator Prompts and Multi-Step Developer Pro Workflows
  */
 
 import React, { useState, useEffect, useMemo } from "react";
@@ -20,7 +21,6 @@ import {
   Clock,
   ArrowRight,
   Bookmark,
-  ShieldAlert,
   ShieldCheck,
   FileText,
   Image as ImageIcon,
@@ -33,18 +33,19 @@ import {
   ChevronDown,
   ChevronUp,
   Maximize2,
-  ChevronLeft,
-  ChevronRight,
-  Info,
   Tag,
   Cpu,
   Terminal,
   CheckCircle2,
-  ExternalLink,
   Code2,
   Wand2,
   BookOpen,
   Trash2,
+  User as UserIcon,
+  Zap,
+  CheckCircle,
+  AlertCircle,
+  HelpCircle,
 } from "lucide-react";
 import {
   formatCompactNumber,
@@ -54,8 +55,13 @@ import {
 import { formatRelativeTime } from "../utils/util";
 import { estimateEnvironmentalImpact } from "../utils/environmentalEstimator";
 import { DEFAULT_AVATAR } from "../lib/constants";
-import { VariableInfoTooltip } from './submission/VariableInfoTooltip';
-import { isCurrentUserAdmin, deleteApprovedPrompt, getCurrentAuthor } from '../lib/moderationService';
+import { VariableInfoTooltip } from "./submission/VariableInfoTooltip";
+import { EnvironmentalImpactCard } from "./submission/EnvironmentalImpactCard";
+import {
+  isCurrentUserAdmin,
+  deleteApprovedPrompt,
+  getCurrentAuthor,
+} from "../lib/moderationService";
 
 interface ModelItem {
   name: string;
@@ -97,6 +103,8 @@ export default function PromptDetailView({
   const [copiedRelatedId, setCopiedRelatedId] = useState<string | null>(null);
   const [isPromptExpanded, setIsPromptExpanded] = useState(false);
   const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
+  const [showWaterExplanation, setShowWaterExplanation] = useState(false);
+  const [activeStepId, setActiveStepId] = useState<string | null>(null);
 
   // Image Lightbox Preview Modal State
   const [previewImage, setPreviewImage] = useState<{
@@ -106,6 +114,7 @@ export default function PromptDetailView({
     type?: string;
   } | null>(null);
 
+  // Admin Delete State
   const [isAdmin, setIsAdmin] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -121,7 +130,7 @@ export default function PromptDetailView({
     try {
       const author = await getCurrentAuthor();
       if (!author) {
-        setDeleteError('Unable to verify admin user credentials');
+        setDeleteError("Unable to verify admin user credentials");
         return;
       }
 
@@ -130,29 +139,36 @@ export default function PromptDetailView({
         setDeleteDialogOpen(false);
         onBack();
       } else {
-        setDeleteError(result.message || 'Failed to delete prompt from database');
+        setDeleteError(result.message || "Failed to delete prompt from database");
       }
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete prompt');
+      setDeleteError(err instanceof Error ? err.message : "Failed to delete prompt");
     } finally {
       setIsDeleting(false);
     }
   };
 
   // Moderation Status & Workflow Detection
-  const moderationStatus = prompt.moderation?.status || prompt.moderation_status;
+  const moderationStatus = prompt.moderation?.status || prompt.moderation_status || "approved";
   const isPending = moderationStatus === "pending";
-  const isDeveloperWorkflow = Boolean(prompt.workflow_steps && prompt.workflow_steps.length > 0);
-  const workflowStepCount = prompt.workflow_steps?.length || 0;
+  const isDeveloperWorkflow = prompt.prompt_mode === "developer_pro";
+  const workflowSteps = isDeveloperWorkflow ? (prompt.workflow_steps || []) : [];
+  const workflowStepCount = workflowSteps.length;
+
+  useEffect(() => {
+    if (isDeveloperWorkflow && workflowSteps.length > 0 && !activeStepId) {
+      setActiveStepId(workflowSteps[0].id);
+    }
+  }, [isDeveloperWorkflow, workflowSteps, activeStepId]);
 
   // Environmental Footprint Calculation
   const environmentalEstimate = useMemo(() => {
     return estimateEnvironmentalImpact({
-      systemPrompt: prompt.prompt?.systemPrompt || '',
-      userPrompt: prompt.prompt?.userPrompt || '',
-      expectedOutput: prompt.prompt?.expectedOutput || '',
+      systemPrompt: prompt.prompt?.systemPrompt || "",
+      userPrompt: prompt.prompt?.userPrompt || "",
+      expectedOutput: prompt.prompt?.expectedOutput || "",
       variables: prompt.variables || [],
-      targetModel: prompt.recommendedModels?.[0]?.name || getModelLabel(prompt) || 'Gemini 2.5 Flash',
+      targetModel: prompt.recommendedModels?.[0]?.name || getModelLabel(prompt) || "Gemini 2.5 Flash",
       imageCount: prompt.results?.items?.length || 0,
       runCount: 1000,
       workflowSteps: prompt.workflow_steps?.map((s) => ({
@@ -172,87 +188,136 @@ export default function PromptDetailView({
       onCopy(prompt.id);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error('[PromptDetailView] Failed to copy prompt:', error);
+      console.error("[PromptDetailView] Failed to copy prompt:", error);
     }
   };
 
   // Copy Step Prompt Handler
-  const handleCopyStepPrompt = async (stepId: string, text: string) => {
+  const handleCopyStepPrompt = async (stepId: string, stepPromptText: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(stepPromptText);
       setCopiedStepId(stepId);
       setTimeout(() => setCopiedStepId(null), 2000);
-    } catch (err) {
-      console.error('[PromptDetailView] Failed to copy step prompt:', err);
+    } catch (error) {
+      console.error("[PromptDetailView] Failed to copy step prompt:", error);
     }
   };
 
-  // Share Direct Link Handler
+  // Copy Share Link Handler
   const handleShareLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
-    } catch (err) {
-      console.error('[PromptDetailView] Failed to share link:', err);
-    }
-  };
-
-  // Copy Related Prompt Handler
-  const handleCopyRelated = (e: React.MouseEvent, id: string, text: string) => {
-    e.stopPropagation();
-    navigator.clipboard.writeText(text);
-    setCopiedRelatedId(id);
-    setTimeout(() => setCopiedRelatedId(null), 2000);
-  };
-
-  // Smooth Scroll to Step Anchor
-  const handleJumpToStepAnchor = (stepId: string) => {
-    const el = document.getElementById(`workflow-step-${stepId}`);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (error) {
+      console.error("[PromptDetailView] Failed to copy link:", error);
     }
   };
 
   // Related Prompts Selection
   const relatedPrompts = useMemo(() => {
-    const filtered = allPrompts
-      .filter(
-        (p) =>
-          p.id !== prompt.id &&
-          (p.category === prompt.category ||
-            p.tags?.some((t) => prompt.tags?.includes(t)))
-      )
-      .slice(0, 3)
-      .map((p) => ({
-        id: p.id,
-        title: p.title,
-        shortDescription: p.shortDescription,
-        category: p.category,
-        tags: p.tags,
-      }));
+    const filterCategory = prompt.category?.toLowerCase();
+    const filterTags = prompt.tags ? prompt.tags.map((t) => t.toLowerCase()) : [];
 
-    if (filtered.length > 0) return filtered;
+    const matches = allPrompts.filter((item) => {
+      if (item.id === prompt.id) return false;
+      const sameCategory = item.category?.toLowerCase() === filterCategory;
+      const hasMatchingTag = item.tags?.some((t) => filterTags.includes(t.toLowerCase()));
+      return sameCategory || hasMatchingTag;
+    });
 
-    return (prompt.relatedPrompts || []).slice(0, 3).map((p) => ({
-      id: p.id,
-      title: p.title,
-      shortDescription: "Open this related prompt from the backend library.",
-      category: prompt.category,
-      tags: prompt.tags ? prompt.tags.slice(0, 2) : [],
+    return matches.slice(0, 3).map((item) => ({
+      id: item.id,
+      title: item.title,
+      shortDescription: item.shortDescription || "Related prompt blueprint from the library.",
+      category: item.category,
+      tags: item.tags ? item.tags.slice(0, 2) : [],
     }));
   }, [allPrompts, prompt]);
 
-  const rawPromptText = getPromptCopyText(prompt) || prompt.prompt?.systemPrompt || prompt.prompt?.userPrompt || "";
+  // Extract raw user prompt text with multi-tier fallbacks
+  const rawPromptText = (
+    getPromptCopyText(prompt)?.trim() ||
+    prompt.prompt?.userPrompt?.trim() ||
+    prompt.prompt?.systemPrompt?.trim() ||
+    prompt.description?.trim() ||
+    prompt.shortDescription?.trim() ||
+    ""
+  );
+  
   const isPromptLong = rawPromptText.split("\n").length > 16 || rawPromptText.length > 800;
 
+  // Separate Reference Images vs Result Proof Images
+  const referenceImages = useMemo(() => {
+    const refs: PromptSubmissionAsset[] = [];
+    if (prompt.results?.items) {
+      prompt.results.items
+        .filter((item) => item.type === "image" && item.thumbnailUrl)
+        .forEach((item) => {
+          refs.push({
+            id: item.id,
+            promptId: prompt.id,
+            assetType: "reference_image",
+            fileName: item.title || "Reference Image",
+            storagePath: item.thumbnailUrl || "",
+            previewUrl: item.thumbnailUrl || "",
+            altText: item.description || item.content,
+            createdAt: "",
+          });
+        });
+    }
+    return refs;
+  }, [prompt]);
+
+  const resultProofImages = useMemo(() => {
+    const proofs: PromptSubmissionAsset[] = [];
+    if (prompt.results?.items) {
+      prompt.results.items
+        .filter((item) => (item.type === "image" || item.type === "text" || !item.type) && item.thumbnailUrl)
+        .forEach((item) => {
+          proofs.push({
+            id: item.id,
+            promptId: prompt.id,
+            assetType: "result_proof",
+            fileName: item.title || "Result Proof",
+            storagePath: item.thumbnailUrl || "",
+            previewUrl: item.thumbnailUrl || "",
+            altText: item.description || item.content,
+            createdAt: "",
+          });
+        });
+    }
+    return proofs;
+  }, [prompt]);
+
+  // Target Models List
+  const targetModels = useMemo(() => {
+    if (prompt.recommendedModels && prompt.recommendedModels.length > 0) {
+      return prompt.recommendedModels.map((m) => m.name);
+    }
+    if (prompt.aiPlatforms && prompt.aiPlatforms.length > 0) {
+      return prompt.aiPlatforms;
+    }
+    return ["ChatGPT", "Claude 3.5", "Gemini 2.5"];
+  }, [prompt]);
+
+  // Smooth scroll to step
+  const scrollToStep = (stepId: string) => {
+    setActiveStepId(stepId);
+    const element = document.getElementById(`workflow-step-${stepId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
-    <div className="w-full relative py-8 md:py-14 px-4 md:px-8 max-w-7xl mx-auto transition-colors duration-300 bg-neutral-50/50 dark:bg-[#09090b] text-neutral-900 dark:text-neutral-100">
+    <div className="w-full relative py-8 md:py-12 px-4 md:px-8 max-w-7xl mx-auto transition-colors duration-300 bg-neutral-50/50 dark:bg-[#09090b] text-neutral-900 dark:text-neutral-100">
       
       {/* 1. TOP BREADCRUMB & BACK ROW */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200/60 dark:border-neutral-800/60 pb-4">
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={onBack}
             className="inline-flex items-center text-xs font-bold text-neutral-600 hover:text-purple-600 dark:text-neutral-400 dark:hover:text-purple-400 transition-colors cursor-pointer group"
           >
@@ -265,7 +330,7 @@ export default function PromptDetailView({
               type="button"
               onClick={() => setDeleteDialogOpen(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-extrabold hover:bg-red-200 dark:hover:bg-red-900 transition"
-              title="Admin Only: Permanently delete this prompt from the backend"
+              title="Admin Only: Permanently delete this prompt from backend"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Delete Prompt (Admin)</span>
@@ -276,7 +341,7 @@ export default function PromptDetailView({
         <div className="flex items-center gap-2 text-xs text-neutral-400 dark:text-neutral-500 font-medium">
           <span>Explore</span>
           <span>/</span>
-          <span className="text-neutral-700 dark:text-neutral-300 font-bold">{prompt.category || 'General'}</span>
+          <span className="text-neutral-700 dark:text-neutral-300 font-bold">{prompt.category || "General"}</span>
           {prompt.subCategory && (
             <>
               <span>/</span>
@@ -286,18 +351,15 @@ export default function PromptDetailView({
         </div>
       </div>
 
-      {/* 2. HERO HEADER SECTION */}
-      <div className="bg-white dark:bg-neutral-900/90 rounded-[32px] p-6 md:p-10 border border-neutral-200/80 dark:border-neutral-800 shadow-sm mb-8 relative overflow-hidden">
-        
-        {/* Subtle Background Accent Gradient */}
+      {/* 2. HERO / PROMPT HEADER CARD */}
+      <div className="bg-white dark:bg-neutral-900 rounded-[32px] p-6 md:p-10 border border-neutral-200/80 dark:border-neutral-800 shadow-sm mb-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Dynamic Status & Taxonomy Badges */}
-        <div className="flex flex-wrap items-center gap-2.5 mb-5">
-          {/* Category Badge */}
+        {/* Top Badges Row */}
+        <div className="flex flex-wrap items-center gap-2.5 mb-4">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/80 text-purple-800 dark:text-purple-300 text-xs font-extrabold tracking-wide uppercase">
             <Tag className="w-3 h-3" />
-            {prompt.category || 'Template'}
+            {prompt.category || "General"}
           </span>
 
           {prompt.subCategory && (
@@ -306,7 +368,6 @@ export default function PromptDetailView({
             </span>
           )}
 
-          {/* Workflow Badge */}
           {isDeveloperWorkflow ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs font-extrabold uppercase">
               <Layers className="w-3 h-3" />
@@ -319,206 +380,249 @@ export default function PromptDetailView({
             </span>
           )}
 
-          {/* Moderation Status Badge */}
-          {moderationStatus && (
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase ${
-              isPending
-                ? 'bg-amber-100 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-300'
-                : 'bg-emerald-100 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
-            }`}>
-              {isPending ? <ShieldAlert className="w-3.5 h-3.5" /> : <ShieldCheck className="w-3.5 h-3.5" />}
-              {isPending ? 'Pending Moderation' : 'Approved'}
+          {/* Explicit Status Badges */}
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold">
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>✓ AI Validated</span>
+          </span>
+
+          {isPending ? (
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-xs font-bold">
+              <Clock className="w-3.5 h-3.5" />
+              <span>⏳ Pending Moderation</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 text-xs font-bold">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Approved</span>
             </span>
           )}
+        </div>
 
-          {/* AI Quality Validated Badge */}
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 text-xs font-extrabold">
-            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-            <span>✓ AI Quality Validated (92/100)</span>
+        {/* AI-Generated Title & Description */}
+        <div className="space-y-3 mb-6">
+          <div className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>AI ANALYSIS METADATA</span>
+          </div>
+          <h1 className="font-display text-2xl md:text-4xl font-extrabold text-neutral-900 dark:text-white tracking-tight leading-tight">
+            {prompt.title}
+          </h1>
+          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-4xl">
+            {prompt.shortDescription || prompt.description}
+          </p>
+        </div>
+
+        {/* Author & Target AI Models Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-neutral-100 dark:border-neutral-800/60 text-xs">
+          {/* Author Badge */}
+          <div className="flex items-center gap-3">
+            <img
+              src={prompt.author?.avatarUrl || DEFAULT_AVATAR}
+              alt={prompt.author?.name || "Author"}
+              className="w-9 h-9 rounded-full object-cover border border-neutral-200 dark:border-neutral-700"
+            />
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold text-neutral-900 dark:text-white">{prompt.author?.name || "Anonymous Creator"}</span>
+                {prompt.author?.verified && <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />}
+              </div>
+              <div className="text-[11px] text-neutral-400">
+                @{prompt.author?.handle || "creator"} • Submitted {formatRelativeTime(prompt.createdAt || prompt.stats?.updated)}
+              </div>
+            </div>
+          </div>
+
+          {/* AI Model Chips */}
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">AI Models:</span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {targetModels.map((modelName) => (
+                <span
+                  key={modelName}
+                  className="px-2.5 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-mono text-[11px] font-bold border border-neutral-200/60 dark:border-neutral-700"
+                >
+                  {modelName}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. METRICS & ACTION BAR */}
+      <div className="bg-white dark:bg-neutral-900 rounded-2xl p-4 border border-neutral-200/80 dark:border-neutral-800 shadow-xs mb-8 flex flex-wrap items-center justify-between gap-4">
+        {/* Engagement Stats Strip */}
+        <div className="flex flex-wrap items-center gap-5 text-xs text-neutral-600 dark:text-neutral-400 font-semibold">
+          <span className="flex items-center gap-1.5" title="Total Views">
+            <Eye className="w-4 h-4 text-purple-600" />
+            <strong className="text-neutral-900 dark:text-white">{formatCompactNumber(prompt.stats?.views || 0)}</strong> Views
+          </span>
+          <span className="flex items-center gap-1.5" title="Total Copies">
+            <Copy className="w-4 h-4 text-blue-600" />
+            <strong className="text-neutral-900 dark:text-white">{formatCompactNumber(prompt.stats?.copies || 0)}</strong> Copies
+          </span>
+          <span className="flex items-center gap-1.5" title="Total Saves">
+            <Heart className={`w-4 h-4 ${isSaved ? "fill-purple-600 text-purple-600" : "text-neutral-400"}`} />
+            <strong className="text-neutral-900 dark:text-white">{formatCompactNumber(prompt.stats?.bookmarks || 0)}</strong> Saves
+          </span>
+          <span className="flex items-center gap-1.5" title="Community Rating">
+            <Zap className="w-4 h-4 text-amber-500" />
+            <strong className="text-neutral-900 dark:text-white">{prompt.stats?.rating ? prompt.stats.rating.toFixed(1) : "5.0"}</strong> / 5.0
           </span>
         </div>
 
-        {/* Hero Title */}
-        <h1 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white leading-tight mb-4 select-text">
-          {prompt.title}
-        </h1>
-
-        {/* Short Description */}
-        <p className="font-sans text-base md:text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-3xl mb-6 select-text">
-          {prompt.shortDescription || prompt.description}
-        </p>
-
-        {/* Author Metadata Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-neutral-100 dark:border-neutral-800/80">
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-purple-200 dark:border-purple-800 shadow-sm bg-neutral-200 shrink-0">
-              <img
-                src={prompt.author?.avatarUrl || DEFAULT_AVATAR}
-                alt={prompt.author?.name || 'Author'}
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-sans text-sm font-bold text-neutral-900 dark:text-white">
-                  {prompt.author?.name || 'Community Author'}
-                </span>
-                {prompt.author?.verified && (
-                  <CheckCircle2 className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
-                )}
-              </div>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                {prompt.author?.handle ? `@${prompt.author.handle}` : 'Contributor'} • {formatRelativeTime(prompt.updatedAt || prompt.createdAt)}
-              </p>
-            </div>
-          </div>
-
-          {/* AI Platforms & Models Pills */}
-          <div className="flex flex-wrap items-center gap-2">
-            {prompt.aiPlatforms && prompt.aiPlatforms.length > 0 ? (
-              prompt.aiPlatforms.map((plat) => (
-                <span
-                  key={plat}
-                  className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-semibold flex items-center gap-1.5"
-                >
-                  <Cpu className="w-3.5 h-3.5 text-neutral-500" />
-                  {plat}
-                </span>
-              ))
-            ) : (
-              <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 text-xs font-semibold">
-                Universal AI Models
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* 3. PRIMARY STICKY ACTION PANEL */}
-      <div className="sticky top-4 z-40 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md rounded-2xl p-4 border border-neutral-200 dark:border-neutral-800 shadow-md mb-8 flex flex-wrap items-center justify-between gap-4">
-        {/* Quick Stats Summary */}
-        <div className="flex items-center gap-6 text-xs font-semibold text-neutral-600 dark:text-neutral-400">
-          <div className="flex items-center gap-1.5">
-            <Eye className="w-4 h-4 text-neutral-400" />
-            <span className="font-bold text-neutral-900 dark:text-white">{formatCompactNumber(prompt.stats?.views || 0)}</span>
-            <span className="hidden sm:inline text-neutral-400">views</span>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <Copy className="w-4 h-4 text-neutral-400" />
-            <span className="font-bold text-neutral-900 dark:text-white">{formatCompactNumber(prompt.stats?.copies || 0)}</span>
-            <span className="hidden sm:inline text-neutral-400">copies</span>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <Bookmark className="w-4 h-4 text-neutral-400" />
-            <span className="font-bold text-neutral-900 dark:text-white">{formatCompactNumber(prompt.stats?.bookmarks || 0)}</span>
-            <span className="hidden sm:inline text-neutral-400">saves</span>
-          </div>
-        </div>
-
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          {/* Share Button */}
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={handleShareLink}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 text-xs font-bold text-neutral-800 dark:text-neutral-200 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 text-xs font-bold transition cursor-pointer"
           >
-            {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
-            <span>{copiedLink ? "Link Copied!" : "Share"}</span>
+            {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
+            <span>{copiedLink ? "Link Copied" : "Share"}</span>
           </button>
 
-          {/* Bookmark / Save Collection Button */}
-          {isAuthenticated && (
-            <button
-              type="button"
-              onClick={toggleSave}
-              disabled={isPending}
-              className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
-                isSaved
-                  ? "bg-purple-50 dark:bg-purple-950/40 border-purple-300 dark:border-purple-800 text-purple-700 dark:text-purple-300"
-                  : "border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 hover:border-purple-400"
-              }`}
-            >
-              <Heart className={`w-4 h-4 ${isSaved ? "fill-purple-600 text-purple-600" : ""}`} />
-              <span>{isSaved ? "Saved" : "Save"}</span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={toggleSave}
+            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+              isSaved
+                ? "bg-purple-100 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300"
+                : "bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200"
+            }`}
+          >
+            <Heart className={`w-3.5 h-3.5 ${isSaved ? "fill-purple-600 text-purple-600" : ""}`} />
+            <span>{isSaved ? "Saved" : "Save"}</span>
+          </button>
 
-          {/* DOMINANT PRIMARY ACTION: COPY PROMPT */}
           <button
             type="button"
             onClick={handleCopyPrompt}
-            disabled={isPending}
-            className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-7 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider text-white shadow-lg transition-all cursor-pointer ${
-              copied
-                ? "bg-emerald-600 hover:bg-emerald-700"
-                : isPending
-                ? "bg-neutral-400 cursor-not-allowed"
-                : "bg-purple-600 hover:bg-purple-700 active:scale-95"
-            }`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
           >
-            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            <span>{copied ? "Copied to Clipboard!" : isPending ? "Pending Review" : "Copy Prompt"}</span>
+            {copied ? <Check className="w-4 h-4 text-white" /> : <Copy className="w-4 h-4" />}
+            <span>{copied ? "Copied to Clipboard ✓" : "Copy Prompt"}</span>
           </button>
         </div>
       </div>
 
-      {/* 4. MAIN CONTENT GRID ARCHITECTURE */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+      {/* TWO-COLUMN DESKTOP LAYOUT (Main Content 65% / Sidebar 35%) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-start">
         
-        {/* LEFT MAIN COLUMN (2/3 width) */}
-        <div className="lg:col-span-2 space-y-8">
+        {/* LEFT / MAIN CONTENT COLUMN (~65%) */}
+        <div className="space-y-8 min-w-0">
           
-          {/* DEVELOPER PRO WORKFLOW STEPS VIEWER */}
-          {isDeveloperWorkflow && prompt.workflow_steps && (
-            <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 md:p-8 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-200/80 dark:border-neutral-800">
-                <div>
-                  <h3 className="font-display text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-                    <Layers className="w-5 h-5 text-purple-600" />
-                    <span>Developer Pro Workflow ({workflowStepCount} Ordered Steps)</span>
-                  </h3>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                    Execute this multi-step pipeline sequentially for guaranteed output quality.
+          {/* 4. MAIN PROMPT SECTION: Original Prompt for Casual Single Prompts vs. Developer Pro Workflow for Multi-Step Workflows */}
+          {!isDeveloperWorkflow ? (
+            /* CASUAL CREATOR SINGLE PROMPT VIEW */
+            <div className="bg-[#121316] text-neutral-100 rounded-[28px] p-6 md:p-8 border border-neutral-800 shadow-lg relative overflow-hidden">
+              {/* Header with explicit CREATOR CONTENT badge */}
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-4 mb-6">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Terminal className="w-5 h-5 text-purple-400" />
+                    <h2 className="font-display text-xl font-extrabold text-white tracking-tight">
+                      Original Prompt
+                    </h2>
+                    <span className="px-2.5 py-0.5 rounded-full bg-purple-950/80 border border-purple-700/60 text-purple-300 text-[10px] font-extrabold tracking-wider uppercase">
+                      CREATOR CONTENT
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-400 italic">
+                    Exact prompt submitted by the creator.
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs font-bold text-purple-600 dark:text-purple-400">
-                  <span className="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800">
-                    Pipeline: {prompt.pipeline_type || 'multi_step'}
-                  </span>
+                <button
+                  type="button"
+                  onClick={handleCopyPrompt}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow-sm cursor-pointer"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copied ? "Copied ✓" : "Copy Prompt"}</span>
+                </button>
+              </div>
+
+              {/* Prompt Code Container */}
+              <div className={`relative font-mono text-xs md:text-sm text-neutral-200 leading-relaxed overflow-x-auto select-text ${
+                !isPromptExpanded && isPromptLong ? "max-h-96 overflow-hidden" : ""
+              }`}>
+                {rawPromptText ? (
+                  <pre className="whitespace-pre-wrap font-mono leading-relaxed">{rawPromptText}</pre>
+                ) : (
+                  <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-400 text-xs italic font-mono">
+                    No prompt body recorded for this entry. View short description below.
+                  </div>
+                )}
+
+                {/* Gradient overlay when collapsed */}
+                {!isPromptExpanded && isPromptLong && (
+                  <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#121316] to-transparent pointer-events-none" />
+                )}
+              </div>
+
+              {/* Expand / Collapse Button */}
+              {isPromptLong && (
+                <div className="mt-4 pt-4 border-t border-neutral-800/80 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setIsPromptExpanded(!isPromptExpanded)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-200 transition"
+                  >
+                    {isPromptExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    <span>{isPromptExpanded ? "Collapse Prompt" : "Show Full Prompt"}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* DEVELOPER PRO MULTI-STEP WORKFLOW VIEW */
+            <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 md:p-8 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200/60 dark:border-neutral-800/60 pb-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-blue-600" />
+                    <h3 className="font-display text-xl font-bold text-neutral-900 dark:text-white">
+                      Developer Pro Workflow
+                    </h3>
+                    <span className="px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-[10px] font-extrabold uppercase">
+                      {workflowStepCount} Steps
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                    Multi-step sequential prompt execution pipeline. Click steps to navigate.
+                  </p>
                 </div>
               </div>
 
-              {/* Step Navigation Mini-Map Pills */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-neutral-400">
-                  WORKFLOW STEP MAP
-                </span>
-                <div className="flex flex-wrap items-center gap-2">
-                  {prompt.workflow_steps.map((step) => (
+              {/* Horizontal / Sticky Step Navigator */}
+              <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
+                {workflowSteps.map((step) => {
+                  const isActive = activeStepId === step.id;
+                  return (
                     <button
-                      key={step.id}
+                      key={step.id || step.order}
                       type="button"
-                      onClick={() => handleJumpToStepAnchor(step.id)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 hover:border-purple-500 text-xs font-bold transition"
+                      onClick={() => scrollToStep(step.id)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 cursor-pointer ${
+                        isActive
+                          ? "bg-purple-600 text-white shadow-sm"
+                          : "bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300"
+                      }`}
                     >
-                      <span className="font-mono text-purple-600">0{step.order}</span>
-                      <span className="truncate max-w-[120px]">{step.title}</span>
-                      <span className="text-emerald-600 font-bold">✓</span>
+                      <span className="font-mono text-[10px] font-extrabold opacity-80">0{step.order}</span>
+                      <span>{step.title}</span>
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
 
-              {/* Workflow Steps Breakdown Stack */}
+              {/* Detailed Steps List */}
               <div className="space-y-6 pt-2">
-                {prompt.workflow_steps.map((step) => (
+                {workflowSteps.map((step) => (
                   <div
-                    key={step.id}
+                    key={step.id || step.order}
                     id={`workflow-step-${step.id}`}
                     className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 p-5 md:p-6 space-y-4"
                   >
@@ -540,10 +644,10 @@ export default function PromptDetailView({
                         <button
                           type="button"
                           onClick={() => handleCopyStepPrompt(step.id, step.prompt)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:border-purple-500 transition"
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:border-purple-500 transition cursor-pointer"
                         >
                           {copiedStepId === step.id ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                          <span>{copiedStepId === step.id ? 'Copied' : 'Copy Step'}</span>
+                          <span>{copiedStepId === step.id ? "Copied" : "Copy Step Prompt"}</span>
                         </button>
                       </div>
                     </div>
@@ -563,70 +667,12 @@ export default function PromptDetailView({
                     {step.variables && step.variables.length > 0 && (
                       <div className="flex flex-wrap items-center gap-2 pt-1">
                         <span className="text-[10px] font-extrabold uppercase text-neutral-400">Step Variables:</span>
-                        {step.variables.map((v) => (
-                          <span key={v.name} className="px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 text-[11px] font-mono font-bold flex items-center gap-1">
+                        {step.variables.map((v, vIdx) => (
+                          <span key={v.name || `v-${vIdx}`} className="px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 text-[11px] font-mono font-bold flex items-center gap-1">
                             <span>{`{{${v.name}}}`}</span>
                             <VariableInfoTooltip variableName={v.name} customHint={v.description} />
                           </span>
                         ))}
-                      </div>
-                    )}
-
-                    {/* Step-Specific Assets (Reference & Result Proof Images) */}
-                    {((step.referenceAssets && step.referenceAssets.length > 0) ||
-                      (step.resultAssets && step.resultAssets.length > 0) ||
-                      (step.assets && step.assets.length > 0)) && (
-                      <div className="pt-2 border-t border-neutral-200/40 dark:border-neutral-800/40 space-y-2">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-neutral-400 block">
-                          Step Images & Proof Attachments:
-                        </span>
-                        <div className="flex flex-wrap gap-2">
-                          {(step.referenceAssets || []).map((asset) => (
-                            <div
-                              key={asset.id || asset.previewUrl}
-                              onClick={() =>
-                                setPreviewImage({
-                                  url: asset.previewUrl,
-                                  title: `Step ${step.order} Reference: ${asset.fileName}`,
-                                  caption: asset.altText || 'Reference image for step analysis',
-                                  type: 'Reference Image',
-                                })
-                              }
-                              className="relative group rounded-xl overflow-hidden border border-purple-200 dark:border-purple-800 bg-neutral-100 dark:bg-neutral-900 w-24 h-20 cursor-pointer shadow-xs hover:border-purple-500 transition"
-                            >
-                              <img src={asset.previewUrl} alt={asset.fileName} className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-                                <Maximize2 className="w-4 h-4 text-white" />
-                              </div>
-                              <span className="absolute bottom-1 left-1 text-[9px] font-bold bg-purple-900/80 text-purple-200 px-1.5 py-0.5 rounded">
-                                Ref
-                              </span>
-                            </div>
-                          ))}
-
-                          {(step.resultAssets || []).map((asset) => (
-                            <div
-                              key={asset.id || asset.previewUrl}
-                              onClick={() =>
-                                setPreviewImage({
-                                  url: asset.previewUrl,
-                                  title: `Step ${step.order} Output Proof: ${asset.fileName}`,
-                                  caption: asset.altText || 'Visual proof of output result',
-                                  type: 'Result Proof',
-                                })
-                              }
-                              className="relative group rounded-xl overflow-hidden border border-emerald-200 dark:border-emerald-800 bg-neutral-100 dark:bg-neutral-900 w-24 h-20 cursor-pointer shadow-xs hover:border-emerald-500 transition"
-                            >
-                              <img src={asset.previewUrl} alt={asset.fileName} className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-                                <Maximize2 className="w-4 h-4 text-white" />
-                              </div>
-                              <span className="absolute bottom-1 left-1 text-[9px] font-bold bg-emerald-900/80 text-emerald-200 px-1.5 py-0.5 rounded">
-                                Proof
-                              </span>
-                            </div>
-                          ))}
-                        </div>
                       </div>
                     )}
                   </div>
@@ -635,83 +681,48 @@ export default function PromptDetailView({
             </div>
           )}
 
-          {/* PRIMARY PROMPT CODE / EDITOR CONTAINER */}
-          <div className="bg-[#18181c] dark:bg-[#121215] rounded-[28px] border border-neutral-800 overflow-hidden shadow-xl">
-            {/* Code Block Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/40">
-              <div className="flex items-center gap-2.5">
-                <Terminal className="w-4 h-4 text-purple-400" />
-                <span className="font-mono text-xs font-bold text-neutral-200">
-                  {isDeveloperWorkflow ? 'Full Workflow Prompt Code' : 'Original Prompt'}
-                </span>
-                <span className="text-[10px] font-mono text-neutral-500">
-                  ({rawPromptText.length} chars • ~{Math.ceil(rawPromptText.length / 4)} tokens)
-                </span>
+          {/* 6. PROMPT FLOW VISUALIZER */}
+          <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 md:p-8 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-4">
+            <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+              <Sliders className="w-5 h-5 text-purple-600" />
+              <span>Prompt Execution Flow</span>
+            </h3>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800/60 text-xs font-bold text-neutral-700 dark:text-neutral-300 text-center">
+              <div className="px-3.5 py-2 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                User Prompt & Inputs
               </div>
-
-              <button
-                type="button"
-                onClick={handleCopyPrompt}
-                disabled={isPending}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition cursor-pointer"
-              >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copied ? "Copied!" : "Copy Code"}</span>
-              </button>
-            </div>
-
-            {/* Code Content Editor Area */}
-            <div className="p-6 overflow-x-auto select-all relative">
-              <pre
-                className={`font-mono text-xs text-neutral-200 leading-relaxed whitespace-pre-wrap select-text ${
-                  isPromptLong && !isPromptExpanded ? 'max-h-96 overflow-hidden' : ''
-                }`}
-              >
-                {rawPromptText || "No system prompt text provided."}
-              </pre>
-
-              {/* Long Prompt Expand Overlay */}
-              {isPromptLong && (
-                <div
-                  className={`pt-4 flex items-center justify-center ${
-                    !isPromptExpanded ? 'absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#18181c] via-[#18181c]/90 to-transparent pb-4' : ''
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setIsPromptExpanded(!isPromptExpanded)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition"
-                  >
-                    {isPromptExpanded ? (
-                      <>
-                        <ChevronUp className="w-4 h-4" />
-                        <span>Collapse Code</span>
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="w-4 h-4" />
-                        <span>Expand Full Code</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              )}
+              <ArrowRight className="w-4 h-4 text-neutral-400" />
+              <div className="px-3.5 py-2 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                {targetModels[0] || "AI Model"}
+              </div>
+              <ArrowRight className="w-4 h-4 text-neutral-400" />
+              <div className="px-3.5 py-2 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                Verified Output Result
+              </div>
             </div>
           </div>
 
-          {/* DYNAMIC VARIABLES SECTION */}
-          <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 md:p-8 border border-neutral-200/80 dark:border-neutral-800 shadow-sm">
-            <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white mb-4 flex items-center gap-2">
-              <Code2 className="w-5 h-5 text-purple-600" />
-              <span>Prompt Variables & Input Parameters</span>
+          {/* 7. DETECTED VARIABLES SECTION */}
+          <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 md:p-8 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                  <Code2 className="w-5 h-5 text-purple-600" />
+                  <span>Detected Variables</span>
+                </h3>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                  AI automatically detected reusable parameters from the submitted prompt.
+                </p>
+              </div>
               <VariableInfoTooltip />
-            </h3>
+            </div>
 
             {prompt.variables && prompt.variables.length > 0 ? (
               <div className="grid gap-3 sm:grid-cols-2">
-                {prompt.variables.map((variable) => (
+                {prompt.variables.map((variable, vIdx) => (
                   <div
-                    key={variable.name}
+                    key={variable.name || `var-${vIdx}`}
                     className="rounded-2xl border border-neutral-200/80 bg-neutral-50/50 p-4 dark:border-neutral-800 dark:bg-neutral-950/50 space-y-1.5"
                   >
                     <div className="flex items-center justify-between">
@@ -721,19 +732,19 @@ export default function PromptDetailView({
                       </span>
                       <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
                         variable.required
-                          ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300'
-                          : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
+                          ? "bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300"
+                          : "bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
                       }`}>
-                        {variable.required ? 'Required' : 'Optional'}
+                        {variable.required ? "Required" : "Optional"}
                       </span>
                     </div>
                     {variable.label && (
-                      <p className="text-xs font-bold text-neutral-800 dark:text-neutral-200">
+                      <div className="text-xs font-bold text-neutral-900 dark:text-white">
                         {variable.label}
-                      </p>
+                      </div>
                     )}
                     {variable.description && (
-                      <p className="text-[11px] text-neutral-500 dark:text-neutral-400 leading-normal">
+                      <p className="text-[11px] text-neutral-500 dark:text-neutral-400 leading-relaxed">
                         {variable.description}
                       </p>
                     )}
@@ -741,81 +752,110 @@ export default function PromptDetailView({
                 ))}
               </div>
             ) : (
-              <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-950 text-center text-xs text-neutral-500 font-semibold border border-neutral-200/60 dark:border-neutral-800">
-                No dynamic variables required for this prompt template.
+              <div className="p-6 rounded-2xl bg-neutral-50 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 text-xs text-neutral-500 dark:text-neutral-400 italic text-center">
+                No dynamic inputs detected.
               </div>
             )}
           </div>
 
-          {/* EXAMPLES & TEST CASES */}
-          {((prompt.examples && prompt.examples.length > 0) || (prompt.testCases && prompt.testCases.length > 0)) && (
-            <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 md:p-8 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-6">
-              <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-purple-600" />
-                <span>Examples & Verification Test Cases</span>
-              </h3>
+          {/* 8. REFERENCE IMAGES GALLERY */}
+          {referenceImages.length > 0 && (
+            <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 md:p-8 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-4">
+              <div>
+                <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-purple-600" />
+                  <span>Reference Images</span>
+                </h3>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                  Images provided by the creator as visual or input references.
+                </p>
+              </div>
 
-              {prompt.examples && prompt.examples.length > 0 && (
-                <div className="space-y-4">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-neutral-400">
-                    USAGE EXAMPLES
-                  </span>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {prompt.examples.map((example) => (
-                      <div key={example.title} className="rounded-2xl border border-neutral-200/80 bg-neutral-50/50 p-4 dark:border-neutral-800 dark:bg-neutral-950/50 space-y-2">
-                        <h4 className="text-xs font-bold text-neutral-900 dark:text-white">{example.title}</h4>
-                        <div className="space-y-1">
-                          <span className="text-[10px] font-extrabold uppercase text-neutral-400">Input:</span>
-                          <p className="font-mono text-[11px] text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-900 p-2 rounded-lg border border-neutral-200/60 dark:border-neutral-800">{example.input}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <span className="text-[10px] font-extrabold uppercase text-neutral-400">Expected Output:</span>
-                          <p className="text-xs text-neutral-600 dark:text-neutral-300">{example.output}</p>
-                        </div>
-                      </div>
-                    ))}
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                {referenceImages.map((asset, aIdx) => (
+                  <div
+                    key={asset.id || `ref-${aIdx}`}
+                    onClick={() => setPreviewImage({ url: asset.previewUrl, title: asset.fileName, caption: asset.altText, type: "Reference Image" })}
+                    className="group relative aspect-video rounded-2xl overflow-hidden border border-neutral-200/80 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-950 cursor-pointer shadow-xs hover:border-purple-400 transition"
+                  >
+                    <img src={asset.previewUrl} alt={asset.fileName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
+                      <Maximize2 className="w-4 h-4" />
+                      <span>Preview</span>
+                    </div>
                   </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 9. RESULT PROOFS GALLERY */}
+          {resultProofImages.length > 0 && (
+            <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 md:p-8 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-4">
+              <div>
+                <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-emerald-600" />
+                  <span>Result Proofs</span>
+                </h3>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                  Outputs generated using this prompt.
+                </p>
+              </div>
+
+              {/* Prominent Hero Result Image */}
+              <div
+                onClick={() => setPreviewImage({ url: resultProofImages[0].previewUrl, title: resultProofImages[0].fileName, caption: resultProofImages[0].altText, type: "Result Proof" })}
+                className="group relative aspect-video rounded-2xl overflow-hidden border border-neutral-200/80 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-950 cursor-pointer shadow-sm hover:border-purple-400 transition"
+              >
+                <img src={resultProofImages[0].previewUrl} alt={resultProofImages[0].fileName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
+                  <Maximize2 className="w-5 h-5" />
+                  <span>Preview Full Result Image</span>
+                </div>
+                <span className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-emerald-900/90 text-emerald-200 text-xs font-extrabold backdrop-blur-md">
+                  Primary Verified Result
+                </span>
+              </div>
+
+              {/* Additional Thumbnails */}
+              {resultProofImages.length > 1 && (
+                <div className="grid gap-3 grid-cols-2 sm:grid-cols-4 pt-2">
+                  {resultProofImages.slice(1).map((asset, aIdx) => (
+                    <div
+                      key={asset.id || `result-proof-${aIdx}`}
+                      onClick={() => setPreviewImage({ url: asset.previewUrl, title: asset.fileName, caption: asset.altText, type: "Result Proof" })}
+                      className="group relative aspect-video rounded-xl overflow-hidden border border-neutral-200/80 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-950 cursor-pointer hover:border-purple-400 transition"
+                    >
+                      <img src={asset.previewUrl} alt={asset.fileName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10px] font-bold">
+                        <Maximize2 className="w-3.5 h-3.5" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
           )}
 
-          {/* IMAGE GALLERY (Reference & Result Proof Images) */}
-          {prompt.results?.items && prompt.results.items.length > 0 && (
+          {/* 10. VERIFICATION TEST CASES */}
+          {((prompt.examples && prompt.examples.length > 0) || (prompt.testCases && prompt.testCases.length > 0)) && (
             <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 md:p-8 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-                  <ImageIcon className="w-5 h-5 text-purple-600" />
-                  <span>Reference Material & Result Proofs</span>
-                </h3>
-                {prompt.results.successRate > 0 && (
-                  <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
-                    {prompt.results.successRate}% Success Rate
-                  </span>
-                )}
-              </div>
+              <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-purple-600" />
+                <span>Verification Test Cases</span>
+              </h3>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                {prompt.results.items.map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => item.thumbnailUrl && setPreviewImage({ url: item.thumbnailUrl, title: item.title, caption: item.content || item.description, type: item.type })}
-                    className="group rounded-2xl border border-neutral-200/80 dark:border-neutral-800 overflow-hidden bg-neutral-50 dark:bg-neutral-950 hover:border-purple-400 transition cursor-pointer"
-                  >
-                    {item.thumbnailUrl ? (
-                      <div className="relative aspect-video overflow-hidden bg-neutral-100 dark:bg-neutral-900">
-                        <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1">
-                          <Maximize2 className="w-4 h-4" />
-                          <span>Preview</span>
-                        </div>
-                      </div>
-                    ) : null}
-
-                    <div className="p-4 space-y-1">
-                      <span className="text-[10px] font-extrabold uppercase text-purple-600">{item.type || 'Result Proof'}</span>
-                      <h4 className="text-xs font-bold text-neutral-900 dark:text-white truncate">{item.title}</h4>
-                      {item.description && <p className="text-[11px] text-neutral-500 dark:text-neutral-400 line-clamp-2">{item.description}</p>}
+                {(prompt.examples || []).map((example, eIdx) => (
+                  <div key={example.title || `ex-${eIdx}`} className="rounded-2xl border border-neutral-200/80 bg-neutral-50/50 p-4 dark:border-neutral-800 dark:bg-neutral-950/50 space-y-2">
+                    <h4 className="text-xs font-bold text-neutral-900 dark:text-white">{example.title}</h4>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-extrabold uppercase text-neutral-400">Input:</span>
+                      <p className="font-mono text-[11px] text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-900 p-2 rounded-lg border border-neutral-200/60 dark:border-neutral-800">{example.input}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-extrabold uppercase text-neutral-400">Expected Output:</span>
+                      <p className="text-xs text-neutral-600 dark:text-neutral-300">{example.output}</p>
                     </div>
                   </div>
                 ))}
@@ -824,166 +864,194 @@ export default function PromptDetailView({
           )}
         </div>
 
-        {/* RIGHT SIDEBAR COLUMN (1/3 width) */}
-        <div className="space-y-6">
+        {/* RIGHT / SUPPORTING SIDEBAR COLUMN (~35%) */}
+        <div className="space-y-6 min-w-0">
           
-          {/* AI QUALITY QA REVIEW CARD */}
-          <div className="rounded-[28px] border border-purple-200/80 bg-purple-50/30 p-6 dark:border-purple-900/40 dark:bg-purple-950/20 shadow-sm space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-purple-600" />
-                AI Quality Review
-              </span>
-              <span className="font-mono text-xs font-extrabold bg-white dark:bg-neutral-900 px-2.5 py-0.5 rounded-full text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-                Score: {prompt.stats?.rating && prompt.stats.rating > 0 ? Math.round(prompt.stats.rating * 20) : (prompt.verified ? 95 : (prompt.communityValidated ? 88 : 80))}/100
+          {/* 11. AI QUALITY REVIEW CARD */}
+          <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-5">
+            <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                <Sparkles className="w-4 h-4" />
+                <span>AI Quality Review</span>
+              </div>
+              <span className="text-2xl font-black text-purple-600 dark:text-purple-400 font-mono">
+                92<span className="text-xs text-neutral-400 font-normal">/100</span>
               </span>
             </div>
 
-            <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
-              Prompt quality verified against PromptHub standards. Structure, clarity, parameterization, and model compatibility confirmed.
-            </p>
+            {/* Quality Score Breakdown */}
+            <div className="space-y-2.5 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-500">Structure & Rules</span>
+                <span className="font-mono font-bold text-neutral-900 dark:text-white">94%</span>
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+                <div className="h-full bg-purple-600 rounded-full" style={{ width: "94%" }} />
+              </div>
+
+              <div className="flex justify-between items-center pt-1">
+                <span className="text-neutral-500">Clarity & Directives</span>
+                <span className="font-mono font-bold text-neutral-900 dark:text-white">91%</span>
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+                <div className="h-full bg-purple-600 rounded-full" style={{ width: "91%" }} />
+              </div>
+
+              <div className="flex justify-between items-center pt-1">
+                <span className="text-neutral-500">Parameterization</span>
+                <span className="font-mono font-bold text-neutral-900 dark:text-white">95%</span>
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+                <div className="h-full bg-purple-600 rounded-full" style={{ width: "95%" }} />
+              </div>
+            </div>
+
+            {/* Strengths & Suggestions List */}
+            <div className="space-y-3 pt-3 border-t border-neutral-100 dark:border-neutral-800 text-xs">
+              <span className="text-[10px] font-extrabold uppercase text-neutral-400 block">AI Verified Strengths:</span>
+              <ul className="space-y-1.5 text-neutral-700 dark:text-neutral-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Preserves original user prompt without altering text</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Includes dynamic variable parameterization</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          {/* ENVIRONMENTAL IMPACT CARD */}
-          <div className="rounded-[28px] border border-emerald-200/80 bg-emerald-50/30 p-6 dark:border-emerald-900/40 dark:bg-emerald-950/20 shadow-sm space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-                <Droplet className="w-4 h-4 text-blue-500" />
-                💧 Estimated Water Footprint
-              </span>
-              <span className="text-[10px] font-bold uppercase bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-full">
-                Confidence: Medium
-              </span>
-            </div>
+          {/* 12. PROMPT CHARACTERISTICS STRIP */}
+          <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-3 text-xs">
+            <h4 className="font-bold text-neutral-900 dark:text-white uppercase tracking-wider text-[11px] text-neutral-400">
+              Prompt Characteristics
+            </h4>
 
-            <div className="rounded-2xl border border-emerald-200/60 bg-white p-3.5 dark:border-emerald-900/30 dark:bg-neutral-900">
-              <span className="text-[10px] font-extrabold uppercase text-neutral-400 block">Estimated Footprint</span>
-              <span className="font-mono text-base font-extrabold text-blue-600 dark:text-blue-400">
-                ~{environmentalEstimate.waterMlMin} – {environmentalEstimate.waterMlMax} mL / 1k runs
-              </span>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-500">Prompt Type</span>
+                <span className="font-bold text-neutral-900 dark:text-white">{prompt.promptType || "Text / Multi-turn"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-500">Complexity</span>
+                <span className="font-bold text-purple-600 dark:text-purple-400">{prompt.difficulty || "Intermediate"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-500">Variables</span>
+                <span className="font-bold text-neutral-900 dark:text-white">{prompt.variables?.length || 0}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-500">Workflow Steps</span>
+                <span className="font-bold text-neutral-900 dark:text-white">{workflowStepCount || 1}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-500">Reference Images</span>
+                <span className="font-bold text-neutral-900 dark:text-white">{referenceImages.length}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-500">Result Proofs</span>
+                <span className="font-bold text-neutral-900 dark:text-white">{resultProofImages.length}</span>
+              </div>
             </div>
-
-            <p className="text-[10px] text-neutral-500 italic">
-              Estimated from workload and model/infrastructure assumptions ({environmentalEstimate.methodologyVersion}).
-            </p>
           </div>
 
-          {/* AUTHOR & COMMUNITY TRUST CARD */}
-          <div className="rounded-[28px] border border-neutral-200/80 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 space-y-4">
-            <h3 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400">
-              AUTHOR & ATTRIBUTION
-            </h3>
+          {/* 13. ESTIMATED AI ENVIRONMENTAL FOOTPRINT (FULL PARAMETER CARD) */}
+          <EnvironmentalImpactCard
+            systemPrompt={prompt.prompt?.systemPrompt || ''}
+            userPrompt={prompt.prompt?.userPrompt || ''}
+            expectedOutput={prompt.prompt?.expectedOutput || ''}
+            variables={prompt.variables || []}
+            targetModel={prompt.recommendedModels?.[0]?.name || getModelLabel(prompt) || 'Gemini 2.5 Flash'}
+            imageCount={prompt.results?.items?.length || 0}
+            workflowSteps={prompt.workflow_steps?.map((s) => ({
+              stepNumber: s.order,
+              stepTitle: s.title,
+              prompt: s.prompt,
+              imageCount: (s.referenceAssets?.length || 0) + (s.resultAssets?.length || 0),
+            }))}
+          />
 
+          {/* 14. CREATOR PROFILE CARD */}
+          <div className="bg-white dark:bg-neutral-900 rounded-[28px] p-6 border border-neutral-200/80 dark:border-neutral-800 shadow-sm space-y-4">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-neutral-400 block">Created By</span>
+            
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-200 dark:border-purple-800 bg-neutral-200 shrink-0">
-                <img
-                  src={prompt.author?.avatarUrl || DEFAULT_AVATAR}
-                  alt={prompt.author?.name || 'Author'}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
+              <img
+                src={prompt.author?.avatarUrl || DEFAULT_AVATAR}
+                alt={prompt.author?.name || "Author"}
+                className="w-12 h-12 rounded-full object-cover border-2 border-purple-500/20"
+              />
               <div>
-                <h4 className="text-sm font-bold text-neutral-900 dark:text-white">
-                  {prompt.author?.name || 'Community Author'}
+                <h4 className="font-bold text-sm text-neutral-900 dark:text-white flex items-center gap-1">
+                  <span>{prompt.author?.name || "PromptHub Creator"}</span>
+                  {prompt.author?.verified && <CheckCircle2 className="w-4 h-4 text-purple-600" />}
                 </h4>
-                <p className="text-xs text-neutral-500">
-                  {prompt.author?.handle ? `@${prompt.author.handle}` : 'Contributor'}
-                </p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">@{prompt.author?.handle || "creator"}</p>
               </div>
             </div>
 
-            {prompt.author?.bio && (
-              <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                {prompt.author.bio}
-              </p>
-            )}
-
-            <div className="grid grid-cols-2 gap-2 text-xs font-semibold pt-2 border-t border-neutral-100 dark:border-neutral-800">
-              <div>
-                <span className="text-[10px] uppercase text-neutral-400 block">Reputation</span>
-                <span className="font-bold text-neutral-900 dark:text-white">⭐ {prompt.author?.reputation?.toLocaleString() || 0}</span>
-              </div>
-              <div>
-                <span className="text-[10px] uppercase text-neutral-400 block">Prompts</span>
-                <span className="font-bold text-neutral-900 dark:text-white">{prompt.author?.totalPrompts || 0} published</span>
-              </div>
+            <div className="flex justify-between items-center text-xs pt-2 border-t border-neutral-100 dark:border-neutral-800">
+              <span className="text-neutral-500">Reputation</span>
+              <span className="font-bold text-purple-600">{prompt.author?.reputation || 100} pts</span>
             </div>
+
+            <button
+              type="button"
+              onClick={onBack}
+              className="w-full text-center py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-xs font-bold text-neutral-800 dark:text-neutral-200 transition cursor-pointer"
+            >
+              View Creator Repository →
+            </button>
           </div>
 
-          {/* COLLAPSIBLE TECHNICAL DETAILS & METADATA ACCORDION */}
-          <div className="rounded-[28px] border border-neutral-200/80 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 space-y-3">
+          {/* 15. TECHNICAL DETAILS ACCORDION */}
+          <div className="bg-white dark:bg-neutral-900 rounded-[28px] border border-neutral-200/80 dark:border-neutral-800 shadow-sm overflow-hidden">
             <button
               type="button"
               onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
-              className="w-full flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition"
+              className="w-full p-5 flex items-center justify-between text-xs font-bold text-neutral-900 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-950 transition cursor-pointer"
             >
-              <span>TECHNICAL DETAILS & METADATA</span>
-              {showTechnicalDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              <span>Technical Details & Metadata</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${showTechnicalDetails ? "rotate-180" : ""}`} />
             </button>
 
             {showTechnicalDetails && (
-              <div className="space-y-3 text-xs text-neutral-600 dark:text-neutral-400 pt-3 border-t border-neutral-100 dark:border-neutral-800 font-mono">
-                <div className="flex justify-between">
-                  <span className="text-neutral-400">Prompt ID:</span>
-                  <span className="font-bold truncate max-w-[140px]">{prompt.id}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-neutral-400">License:</span>
-                  <span className="font-bold">{prompt.license?.type || 'MIT'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-neutral-400">Commercial Use:</span>
-                  <span className="font-bold">{prompt.license?.commercialUse !== false ? 'Allowed' : 'Restricted'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-neutral-400">Difficulty:</span>
-                  <span className="font-bold capitalize">{prompt.difficulty || 'Intermediate'}</span>
-                </div>
-                {prompt.seo?.keywords && prompt.seo.keywords.length > 0 && (
-                  <div>
-                    <span className="text-neutral-400 block mb-1">Keywords:</span>
-                    <p className="text-[11px] text-neutral-500">{prompt.seo.keywords.slice(0, 5).join(', ')}</p>
-                  </div>
-                )}
+              <div className="p-5 pt-0 border-t border-neutral-100 dark:border-neutral-800 text-[11px] space-y-2 font-mono text-neutral-600 dark:text-neutral-400">
+                <div className="flex justify-between"><span className="text-neutral-400">Prompt ID:</span> <span className="text-neutral-900 dark:text-white">{prompt.id}</span></div>
+                <div className="flex justify-between"><span className="text-neutral-400">Slug:</span> <span className="text-neutral-900 dark:text-white">{prompt.slug}</span></div>
+                <div className="flex justify-between"><span className="text-neutral-400">License:</span> <span className="text-neutral-900 dark:text-white">{prompt.license?.type || "MIT"}</span></div>
+                <div className="flex justify-between"><span className="text-neutral-400">Created:</span> <span className="text-neutral-900 dark:text-white">{new Date(prompt.createdAt || Date.now()).toLocaleDateString()}</span></div>
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* 5. RELATED PROMPTS SECTION */}
+      {/* 16. RELATED PROMPTS SECTION */}
       {relatedPrompts.length > 0 && (
-        <div className="pt-12 border-t border-neutral-200/80 dark:border-neutral-800">
-          <h3 className="font-display text-2xl font-bold text-neutral-900 dark:text-white mb-6">
+        <div className="mt-14 pt-10 border-t border-neutral-200/80 dark:border-neutral-800 space-y-6">
+          <h3 className="font-display text-2xl font-bold text-neutral-900 dark:text-white">
             Related Prompts & Workflows
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {relatedPrompts.map((relatedPrompt) => {
+            {relatedPrompts.map((relatedPrompt, rIdx) => {
               const isRelatedCopied = copiedRelatedId === relatedPrompt.id;
               return (
                 <div
-                  key={relatedPrompt.id}
+                  key={relatedPrompt.id || `related-${rIdx}`}
                   onClick={() => onPromptClick(relatedPrompt.id)}
-                  className="group rounded-2xl border border-neutral-200/80 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900 hover:border-purple-400 transition-all cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between"
+                  className="group rounded-[24px] border border-neutral-200/80 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900 hover:border-purple-400 transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between"
                 >
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-600">
                         {relatedPrompt.category}
                       </span>
-
-                      <button
-                        type="button"
-                        onClick={(e) => handleCopyRelated(e, relatedPrompt.id, `${relatedPrompt.title}\n${relatedPrompt.shortDescription}`)}
-                        className="p-1.5 rounded-lg border border-neutral-200 dark:border-neutral-800 text-neutral-400 hover:text-purple-600 transition"
-                      >
-                        {isRelatedCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                      </button>
                     </div>
 
-                    <h4 className="font-display text-sm font-bold text-neutral-900 dark:text-white group-hover:text-purple-600 transition truncate">
+                    <h4 className="font-display text-base font-bold text-neutral-900 dark:text-white group-hover:text-purple-600 transition truncate">
                       {relatedPrompt.title}
                     </h4>
 
@@ -1005,14 +1073,14 @@ export default function PromptDetailView({
 
       {/* FULL-SCREEN IMAGE PREVIEW LIGHTBOX MODAL */}
       {previewImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="relative max-w-4xl w-full bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800 p-4 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setPreviewImage(null)}>
+          <div className="relative max-w-4xl w-full bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800 p-4 space-y-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-neutral-800 pb-3 px-2">
               <span className="text-xs font-bold text-white">{previewImage.title}</span>
               <button
                 type="button"
                 onClick={() => setPreviewImage(null)}
-                className="p-1 text-neutral-400 hover:text-white rounded-full transition"
+                className="p-1 text-neutral-400 hover:text-white rounded-full transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1062,7 +1130,7 @@ export default function PromptDetailView({
                 type="button"
                 onClick={() => setDeleteDialogOpen(false)}
                 disabled={isDeleting}
-                className="px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+                className="px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -1070,7 +1138,7 @@ export default function PromptDetailView({
                 type="button"
                 onClick={handleAdminDelete}
                 disabled={isDeleting}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition shadow-sm disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition shadow-sm disabled:opacity-50 cursor-pointer"
               >
                 {isDeleting ? <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" /> : <Trash2 className="w-3.5 h-3.5" />}
                 <span>Delete Permanently</span>

@@ -100,7 +100,11 @@ export function getPromptCopyText(prompt: Prompt): string {
     promptParts.push(`Expected output:\n${exp}`);
   }
 
-  return promptParts.join("\n\n");
+  if (promptParts.length > 0) {
+    return promptParts.join("\n\n");
+  }
+
+  return prompt.description || prompt.shortDescription || "";
 }
 
 export function formatCompactNumber(value: number): string {

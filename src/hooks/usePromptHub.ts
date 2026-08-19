@@ -43,6 +43,7 @@ import {
   onAuthStateChange,
   type AuthorProfile,
 } from '../lib/authService';
+import { validatePromptSubmission } from '../lib/validation';
 import { supabase } from '../lib/supabase';
 import {
   getUserSavedPromptIds,
@@ -584,6 +585,13 @@ export function usePromptHub(): { state: PromptHubState; actions: PromptHubActio
   }, []);
 
   const publishPrompt = useCallback(async (newPrompt: PromptSubmissionPayload): Promise<string> => {
+    const errors = validatePromptSubmission(newPrompt);
+    if (errors.length > 0) {
+      const errorMsg = errors.map((e) => e.message).join(' ');
+      console.error('[publishPrompt] Submission aborted due to validation errors:', errors);
+      setDbError(`Cannot publish prompt: ${errorMsg}`);
+      throw new Error(`Validation Error: ${errorMsg}`);
+    }
     try {
       const createdId = await createPromptFromPayload(newPrompt);
       const detail = await fetchPromptDetail(createdId);

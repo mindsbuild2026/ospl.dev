@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS public.prompt_environmental_metrics (
   estimated_input_tokens INTEGER NOT NULL DEFAULT 0,
   estimated_output_tokens INTEGER NOT NULL DEFAULT 0,
   image_count INTEGER NOT NULL DEFAULT 0,
-  target_model TEXT NOT NULL DEFAULT 'gemini-2.5-flash',
+  target_model TEXT NOT NULL DEFAULT 'gemini-3.6-flash',
   target_provider TEXT NOT NULL DEFAULT 'Google',
   energy_kwh NUMERIC(10, 6) NOT NULL DEFAULT 0.000000,
   water_ml_min NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS public.prompt_ai_validations (
   suggestions JSONB NOT NULL DEFAULT '[]'::jsonb,
   flags JSONB NOT NULL DEFAULT '{}'::jsonb,
   raw_response JSONB,
-  model_version TEXT NOT NULL DEFAULT 'gemini-2.5-flash',
+  model_version TEXT NOT NULL DEFAULT 'gemini-3.6-flash',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

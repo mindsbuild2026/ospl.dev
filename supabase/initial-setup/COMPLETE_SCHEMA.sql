@@ -1021,7 +1021,11 @@ BEGIN
     CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN row_to_json(NEW) ELSE NULL END,
     auth.uid(),
     inet_client_addr(),
-    current_setting('request.headers')::json->>'user-agent'
+    CASE 
+      WHEN current_setting('request.headers', true) IS NOT NULL AND current_setting('request.headers', true) != '' 
+      THEN current_setting('request.headers', true)::json->>'user-agent'
+      ELSE NULL
+    END
   );
   RETURN COALESCE(NEW, OLD);
 END;

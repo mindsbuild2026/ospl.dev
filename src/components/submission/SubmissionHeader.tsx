@@ -39,7 +39,7 @@ export function SubmissionHeader({ creatorMode, onModeChange, onCancel }: Submis
       {/* Main Title & Subtitle */}
       <div className="space-y-3 max-w-2xl mx-auto">
         <h1 className="font-display text-3xl md:text-4xl lg:text-[42px] font-extrabold text-neutral-900 dark:text-white tracking-tight leading-tight">
-          Inspire the Community with Your Prompt
+          Inspire the Community with Your Prompt Ideas
         </h1>
         <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed font-sans">
           Submit high-performance templates. Choose a creator mode tailored to your implementation style.

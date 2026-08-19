@@ -13,6 +13,7 @@ import { PromptSubmissionLookups } from '../../lib/promptRepository';
 import { ImageProofUploader } from './ImageProofUploader';
 import { EnvironmentalImpactCard } from './EnvironmentalImpactCard';
 import { VariableInfoTooltip } from './VariableInfoTooltip';
+import { UnifiedClassificationForm } from './UnifiedClassificationForm';
 
 export interface CasualCreatorViewProps {
   submission: PromptSubmissionPayload;
@@ -285,128 +286,17 @@ export function CasualCreatorView({
           </div>
         </div>
 
-        {/* Card 2: CLASSIFICATION */}
-        <div className="rounded-[28px] border border-neutral-200/80 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-          <h3 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-4">
-            CLASSIFICATION
-          </h3>
-
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-neutral-800 dark:text-neutral-200">Category</label>
-                <div className="relative">
-                  <select
-                    value={submission.category_id}
-                    onChange={(e) => {
-                      const catId = e.target.value;
-                      const sub = lookupData?.subcategories.find((s) => s.categoryId === catId);
-                      onUpdateField({
-                        category_id: catId,
-                        subcategory_id: sub?.id || null,
-                      });
-                    }}
-                    className="w-full appearance-none rounded-xl border border-neutral-200 bg-neutral-50/50 px-3.5 py-2.5 pr-8 text-xs text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900/50 dark:text-white outline-none"
-                  >
-                    {categoryOptions.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-neutral-800 dark:text-neutral-200">Subcategory</label>
-                <div className="relative">
-                  <select
-                    value={submission.subcategory_id || ''}
-                    onChange={(e) => onUpdateField({ subcategory_id: e.target.value || null })}
-                    disabled={availableSubcategories.length === 0}
-                    className="w-full appearance-none rounded-xl border border-neutral-200 bg-neutral-50/50 px-3.5 py-2.5 pr-8 text-xs text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900/50 dark:text-white outline-none disabled:opacity-50"
-                  >
-                    <option value="">Select Subcategory</option>
-                    {availableSubcategories.map((sub) => (
-                      <option key={sub.id} value={sub.id}>
-                        {sub.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
-                </div>
-              </div>
-            </div>
-
-            {/* AI Platforms Selection */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-neutral-800 dark:text-neutral-200 block">AI Platforms</label>
-              <div className="flex flex-wrap gap-2">
-                {aiPlatforms.slice(0, 6).map((platform) => {
-                  const isSelected = submission.ai_platform_ids.includes(platform.id);
-                  return (
-                    <button
-                      key={platform.id}
-                      type="button"
-                      onClick={() => handleTogglePlatform(platform.id)}
-                      className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
-                        isSelected
-                          ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 shadow-sm'
-                          : 'border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300'
-                      }`}
-                    >
-                      {platform.name}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Tags Input & Chips */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-neutral-800 dark:text-neutral-200 block">Tags</label>
-              <input
-                type="text"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddTag(tagInput);
-                  }
-                }}
-                placeholder="Add tags + enter"
-                className="w-full rounded-xl border border-neutral-200 bg-neutral-50/50 px-4 py-2.5 text-xs text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900/50 dark:text-white outline-none"
-              />
-
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {submission.tag_ids.map((tagId) => {
-                  const tagObj = allTags.find((t) => t.id === tagId);
-                  const label = tagObj ? tagObj.name : tagId;
-                  return (
-                    <span
-                      key={tagId}
-                      className="inline-flex items-center gap-1 rounded-md bg-neutral-100 dark:bg-neutral-850 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-neutral-600 dark:text-neutral-300"
-                    >
-                      {label}
-                      <button
-                        type="button"
-                        onClick={() => onUpdateField({ tag_ids: submission.tag_ids.filter((id) => id !== tagId) })}
-                        className="hover:text-red-500 text-[10px]"
-                      >
-                        ✕
-                      </button>
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Card 2: CLASSIFICATION (Shared Backend Classification Form) */}
+        <UnifiedClassificationForm
+          sectionTitle="Classification"
+          submission={submission}
+          lookupData={lookupData}
+          fieldErrors={fieldErrors}
+          onUpdateField={onUpdateField}
+        />
 
         {/* Card 3: AI OPTIMIZATION */}
-        <div className="rounded-[28px] border border-neutral-200/80 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+        {/* <div className="rounded-[28px] border border-neutral-200/80 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
           <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-purple-600 dark:text-purple-400 mb-4">
             <Sparkles className="h-3.5 w-3.5" />
             <span>AI OPTIMIZATION</span>
@@ -431,7 +321,7 @@ export function CasualCreatorView({
               <span>Check Clarity</span>
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

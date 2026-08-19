@@ -92,6 +92,8 @@ export async function getPendingPrompts(
       created_at,
       submitted_at,
       moderation_status,
+      prompt_mode,
+      creator_mode,
       authors:authors!prompts_author_id_fkey (
         id,
         name,
@@ -99,7 +101,7 @@ export async function getPendingPrompts(
         avatar_url,
         verified
       )
-    `, // 👈 "tags", "views", "likes", "bookmarks", "rating", "rating_count" removed
+    `,
       { count: "exact" }
     )
     .eq("moderation_status", "pending");
@@ -143,17 +145,18 @@ export async function getPendingPrompts(
     shortDescription: row.short_description || "",
     category: row.category_id || "",
     subCategory: "",
-    tags: [], // 👈 Local fallback
+    tags: [],
     aiPlatforms: [],
     featured: row.featured || false,
     verified: row.verified || false,
     communityValidated: row.community_validated || false,
+    prompt_mode: row.prompt_mode || (row.creator_mode === 'developer' ? 'developer_pro' : 'casual'),
     stats: {
-      views: 0, // 👈 Local fallback
+      views: 0,
       copies: 0,
-      bookmarks: 0, // 👈 Local fallback
-      rating: 0, // 👈 Local fallback
-      ratingCount: 0, // 👈 Local fallback
+      bookmarks: 0,
+      rating: 0,
+      ratingCount: 0,
       updated: row.updated_at || "",
     },
     results: {
@@ -203,6 +206,8 @@ export async function getApprovedPrompts(
       submitted_at,
       approved_at,
       moderation_status,
+      prompt_mode,
+      creator_mode,
       authors:authors!prompts_author_id_fkey (
         id,
         name,
@@ -210,7 +215,7 @@ export async function getApprovedPrompts(
         avatar_url,
         verified
       )
-    `, // 👈 "tags", "views", "likes", "bookmarks", "rating", "rating_count" removed
+    `,
       { count: "exact" }
     )
     .eq("moderation_status", "approved");
@@ -257,17 +262,18 @@ export async function getApprovedPrompts(
     shortDescription: row.short_description || "",
     category: row.category_id || "",
     subCategory: "",
-    tags: [], // 👈 Local fallback
+    tags: [],
     aiPlatforms: [],
     featured: row.featured || false,
     verified: row.verified || false,
     communityValidated: row.community_validated || false,
+    prompt_mode: row.prompt_mode || (row.creator_mode === 'developer' ? 'developer_pro' : 'casual'),
     stats: {
-      views: 0, // 👈 Local fallback
+      views: 0,
       copies: 0,
-      bookmarks: 0, // 👈 Local fallback
-      rating: 0, // 👈 Local fallback
-      ratingCount: 0, // 👈 Local fallback
+      bookmarks: 0,
+      rating: 0,
+      ratingCount: 0,
       updated: row.updated_at || "",
     },
     results: {

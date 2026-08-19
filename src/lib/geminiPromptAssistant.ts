@@ -31,9 +31,9 @@ export interface PromptAiGenerationResult {
 }
 
 const GEMINI_MODELS = [
-  import.meta.env.VITE_GEMINI_MODEL || process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+  import.meta.env.VITE_GEMINI_MODEL || process.env.GEMINI_MODEL || 'gemini-3.6-flash',
   'gemini-2.0-flash',
-  'gemini-1.5-flash',
+  'gemini-1.5-flash-latest',
 ];
 
 const responseSchema = {
@@ -355,9 +355,9 @@ export async function generatePromptDetailsWithGemini(
   } else if (input && typeof input === 'object') {
     rawPromptText = input.user_prompt || input.system_prompt || input.title || '';
     
-    // Include Developer Pro pipeline context if available
-    if (input.creator_mode === 'developer') {
+    if (input.prompt_mode === 'developer_pro' || input.creator_mode === 'developer') {
       developerContext = {
+        prompt_mode: 'developer_pro',
         creator_mode: 'developer',
         pipeline_type: input.pipeline_type,
         temperature: input.temperature,
@@ -444,6 +444,10 @@ export async function generatePromptDetailsWithGemini(
         if (errStr.includes('429') || errStr.includes('RESOURCE_EXHAUSTED')) {
           console.warn(`[GeminiPromptAssistant] Quota limit reached for ${modelName} (429). Trying fallback model or local heuristic.`);
           continue; // Try next model in candidate list
+        }
+        if (errStr.includes('404') || errStr.includes('NOT_FOUND')) {
+          console.warn(`[GeminiPromptAssistant] Model ${modelName} not found (404). Trying next model candidate.`);
+          continue; // Try next model candidate
         }
         console.warn(`[GeminiPromptAssistant] Model ${modelName} failed:`, apiErr);
       }
@@ -607,6 +611,10 @@ export async function analyzeWorkflowStepWithGemini(
       const errStr = String(err);
       if (errStr.includes('429') || errStr.includes('RESOURCE_EXHAUSTED')) {
         console.warn(`[Gemini] Step analysis quota reached for ${modelName} (429). Trying fallback model or local heuristic.`);
+        continue;
+      }
+      if (errStr.includes('404') || errStr.includes('NOT_FOUND')) {
+        console.warn(`[Gemini] Model ${modelName} not found (404). Trying next model candidate.`);
         continue;
       }
       console.warn(`[Gemini] Model ${modelName} step analysis failed:`, err);

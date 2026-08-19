@@ -170,6 +170,8 @@ export interface PromptContent {
   expectedOutput: string;
 }
 
+export type PromptMode = 'casual' | 'developer_pro';
+
 export interface PromptCard {
   id: string;
   slug: string;
@@ -186,9 +188,15 @@ export interface PromptCard {
   results: Pick<PromptResults, 'hasProof' | 'successRate'>;
   author: Pick<PromptAuthor, 'name' | 'handle' | 'avatarUrl' | 'verified'>;
   engagement: Pick<PromptEngagement, 'trendingScore' | 'weeklyGrowth'>;
+  prompt_mode?: PromptMode;
+  systemPrompt?: string;
+  resultImageUrl?: string;
+  workflowStepCount?: number;
+  creatorMode?: 'casual' | 'developer';
 }
 
 export interface Prompt extends PromptCard {
+  prompt_mode: PromptMode;
   description: string;
   difficulty: string;
   promptType: string;
@@ -316,21 +324,24 @@ export interface PromptSubmissionProofItem {
 
 export interface PromptSubmissionAsset {
   id: string;
+  promptId?: string;
+  assetType?: string;
+  createdAt?: string;
   file?: File;
   previewUrl: string;
   storagePath?: string;
   fileName: string;
-  mimeType: string;
-  fileSizeBytes: number;
+  mimeType?: string;
+  fileSizeBytes?: number;
   width?: number;
   height?: number;
   altText?: string;
-  uploadState: 'idle' | 'uploading' | 'success' | 'error';
-  progress: number;
+  uploadState?: 'idle' | 'uploading' | 'success' | 'error';
+  progress?: number;
   error?: string;
 }
 
-export type StepAnalysisState = 'idle' | 'loading' | 'valid' | 'invalid' | 'error' | 'stale';
+export type StepAnalysisState = 'idle' | 'loading' | 'valid' | 'invalid' | 'error' | 'stale' | 'warning';
 
 export interface PromptWorkflowStep {
   id: string; // Stable step ID
@@ -366,6 +377,7 @@ export interface EnvironmentalEstimate {
   confidenceScore: number;
   methodologyVersion: string;
   calculatedAt: string;
+  stepBreakdown?: any[];
 }
 
 export interface PromptSubmissionPayload {
@@ -407,7 +419,8 @@ export interface PromptSubmissionPayload {
     released_at: string;
     changes: string[];
   }[];
-  // Developer Pro & Submission Enhancement Additions (Optional)
+  // Prompt Mode & Creator Mode Configuration
+  prompt_mode: PromptMode;
   creator_mode?: 'casual' | 'developer';
   workflow_steps?: PromptWorkflowStep[];
   pipeline_type?: 'single_shot' | 'multi_prompt_chain';
@@ -417,6 +430,8 @@ export interface PromptSubmissionPayload {
   structured_output_schema?: string;
   ai_validation_status?: 'pass' | 'warning' | 'fail';
   ai_quality_score?: number;
+  last_analyzed_text?: string;
+  ai_has_analyzed?: boolean;
   assets?: PromptSubmissionAsset[];
   environmental_estimate?: EnvironmentalEstimate;
 }

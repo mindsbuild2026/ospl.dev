@@ -90,15 +90,15 @@ export function validatePromptSubmission(payload: PromptSubmissionPayload): Vali
     });
   }
 
-  // Variables validation
-  if (
-    !payload.variables?.length ||
-    !payload.variables.some((variable) => variable.name?.trim() && variable.label?.trim())
-  ) {
-    errors.push({
-      field: 'variables',
-      message: 'Provide at least one prompt variable with a name and label.',
-    });
+  // Variables validation (Variables are optional. Only validate entries if present)
+  if (payload.variables && payload.variables.length > 0) {
+    const invalidVar = payload.variables.find((variable) => !variable.name?.trim() || !variable.label?.trim());
+    if (invalidVar) {
+      errors.push({
+        field: 'variables',
+        message: 'All prompt variables must have a name and label.',
+      });
+    }
   }
 
   // Usage instructions validation

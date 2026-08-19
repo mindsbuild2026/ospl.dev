@@ -115,8 +115,10 @@ export function SubmissionReviewModal({
               </div>
 
               <div className="rounded-xl border border-neutral-200/80 bg-neutral-50/50 p-3.5 dark:border-neutral-800 dark:bg-neutral-900/50">
-                <span className="text-[10px] font-extrabold uppercase text-neutral-400">Creator Mode</span>
-                <p className="mt-0.5 text-xs font-bold text-purple-600 dark:text-purple-400 uppercase">{creatorMode}</p>
+                <span className="text-[10px] font-extrabold uppercase text-neutral-400">Creation Mode</span>
+                <p className="mt-0.5 text-xs font-bold text-purple-600 dark:text-purple-400 uppercase">
+                  {submission.prompt_mode === 'developer_pro' ? 'Developer Pro Workflow' : 'Casual Creator Prompt'}
+                </p>
               </div>
 
               <div className="rounded-xl border border-neutral-200/80 bg-neutral-50/50 p-3.5 dark:border-neutral-800 dark:bg-neutral-900/50">
@@ -136,8 +138,33 @@ export function SubmissionReviewModal({
             </div>
           </div>
 
-          {/* Section 2: Developer Configuration (When Developer Pro Mode is Active) */}
-          {creatorMode === 'developer' && (
+          {/* Section 2a: Casual Prompt Details */}
+          {submission.prompt_mode === 'casual' && (
+            <div className="space-y-3">
+              <h3 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                ORIGINAL PROMPT
+              </h3>
+              <div className="rounded-2xl border border-neutral-200/80 bg-neutral-50/50 p-4 dark:border-neutral-800 dark:bg-neutral-900/50 font-mono text-xs text-neutral-800 dark:text-neutral-200 whitespace-pre-wrap max-h-48 overflow-y-auto">
+                {submission.user_prompt || submission.system_prompt || '—'}
+              </div>
+
+              {submission.variables.length > 0 && (
+                <div className="rounded-2xl border border-neutral-200/80 bg-neutral-50/50 p-4 dark:border-neutral-800 dark:bg-neutral-900/50">
+                  <span className="text-[10px] font-extrabold uppercase text-neutral-400 block mb-2">Variables ({submission.variables.length})</span>
+                  <div className="flex flex-wrap gap-2">
+                    {submission.variables.map((v, i) => (
+                      <span key={i} className="inline-flex items-center gap-1.5 rounded-lg bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 px-3 py-1 text-xs font-mono font-bold text-neutral-800 dark:text-neutral-200">
+                        {`{{${v.name}}}`}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Section 2b: Developer Configuration (When Developer Pro Mode is Active) */}
+          {submission.prompt_mode === 'developer_pro' && (
             <div className="space-y-3">
               <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-purple-600 dark:text-purple-400">
                 <Sliders className="h-3.5 w-3.5" />

@@ -6,7 +6,7 @@
  * Dedicated, deterministic, non-blocking environmental workload estimation service.
  */
 
-import { EnvironmentalEstimate, PromptSubmissionVariable } from '../types';
+import { PromptSubmissionVariable } from '../types';
 
 export interface WorkflowStepWorkload {
   stepNumber: number;
