@@ -22,6 +22,8 @@ import {
   Settings,
   PlusCircle,
   ExternalLink,
+  Clock,
+  X,
 } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { LookupAuthor, PromptCard } from '../types';
@@ -30,6 +32,7 @@ interface DashboardViewProps {
   user: SupabaseUser | null;
   author: LookupAuthor | null;
   prompts: PromptCard[];
+  userSubmissions?: PromptCard[];
   savedPrompts: PromptCard[];
   savedPromptIds: string[];
   toggleSavePrompt: (id: string) => void;
@@ -43,6 +46,7 @@ export default function DashboardView({
   user,
   author,
   prompts,
+  userSubmissions,
   savedPrompts,
   savedPromptIds,
   toggleSavePrompt,
@@ -73,13 +77,15 @@ export default function DashboardView({
     );
   }
 
-  // Filter user's own prompts. Author handles are prefixed with @, normalize handles to match securely
+  // Filter user's own prompts or use userSubmissions from context
   const normalizeHandle = (h: string) => h.toLowerCase().replace(/^@/, '');
-  const userSubmissions = prompts.filter(
-    (prompt) =>
-      prompt.author &&
-      normalizeHandle(prompt.author.handle) === normalizeHandle(author.handle)
-  );
+  const submissionsList = (userSubmissions && userSubmissions.length > 0)
+    ? userSubmissions
+    : prompts.filter(
+        (prompt) =>
+          prompt.author &&
+          normalizeHandle(prompt.author.handle) === normalizeHandle(author.handle)
+      );
 
   // Handle clipboard copy
   const handleCopy = async (e: React.MouseEvent, id: string, text: string) => {
@@ -183,30 +189,23 @@ export default function DashboardView({
                   </span>
                 )}
               </div>
-              <p className="font-mono text-xs text-brand-accent select-all">{author.handle || '@creator'}</p>
-
-              {author.bio ? (
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2 max-w-xl italic">
+              <p className="font-mono text-xs text-neutral-400 mt-0.5">@{author.handle}</p>
+              {author.bio && (
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2 max-w-md italic">
                   "{author.bio}"
-                </p>
-              ) : (
-                <p className="text-xs text-neutral-400 dark:text-neutral-600 mt-2">
-                  No bio description added yet. Edit your profile to share details about your craft.
                 </p>
               )}
 
-              {/* Social profile links */}
-              <div className="flex gap-4 pt-3 text-neutral-400 dark:text-neutral-550 select-none">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-4">
                 {author.website && (
                   <a
                     href={author.website}
                     target="_blank"
                     rel="noreferrer"
-                    className="hover:text-brand-accent transition-colors flex items-center gap-1.5 text-xs font-semibold"
+                    className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-brand-accent transition-colors"
                   >
                     <Globe className="w-3.5 h-3.5" />
-                    <span>Portfolio</span>
-                    <ExternalLink className="w-2.5 h-2.5" />
+                    <span>Website</span>
                   </a>
                 )}
                 {author.github && (
@@ -214,52 +213,48 @@ export default function DashboardView({
                     href={author.github}
                     target="_blank"
                     rel="noreferrer"
-                    className="hover:text-brand-accent transition-colors flex items-center gap-1.5 text-xs font-semibold"
+                    className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-brand-accent transition-colors"
                   >
                     <Github className="w-3.5 h-3.5" />
                     <span>GitHub</span>
-                    <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Quick CTA Actions */}
-          <div className="flex flex-wrap sm:flex-nowrap gap-3 shrink-0 select-none">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
             <button
               onClick={onEditProfile}
-              className="flex items-center justify-center gap-2 rounded-xl border border-neutral-250 bg-transparent text-neutral-700 hover:bg-neutral-50 hover:text-black dark:border-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-900/60 dark:hover:text-white px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-bold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
             >
-              <Settings className="w-3.5 h-3.5" />
-              Settings
+              Edit Profile
             </button>
-
             <button
               onClick={onSubmitPromptClick}
-              className="flex items-center justify-center gap-2 rounded-xl bg-black dark:bg-white text-white dark:text-black hover:bg-brand-accent dark:hover:bg-brand-accent dark:hover:text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-sm transform active:scale-[0.98]"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-accent text-white text-xs font-bold hover:bg-purple-700 transition-colors shadow-md hover:shadow-lg cursor-pointer"
             >
-              <PlusCircle className="w-3.5 h-3.5" />
-              Submit Blueprint
+              <Plus className="w-4 h-4" />
+              <span>Publish Prompt</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Grid containing Quick Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10 select-none">
+      {/* Creator Analytics Quick Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10 select-none">
         <div className="rounded-2xl border border-neutral-200/50 bg-white/60 p-5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900/20 backdrop-blur-sm">
-          <span className="block text-[10px] uppercase font-bold tracking-wider text-neutral-450 dark:text-neutral-500">Reputation Points</span>
+          <span className="block text-[10px] uppercase font-bold tracking-wider text-neutral-450 dark:text-neutral-500">Reputation Score</span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-neutral-900 dark:text-white">{author.reputation || 0}</span>
-            <Award className="w-4 h-4 text-amber-500 shrink-0" />
+            <span className="text-2xl font-black text-brand-text dark:text-white">{author.reputation}</span>
+            <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
           </div>
         </div>
 
         <div className="rounded-2xl border border-neutral-200/50 bg-white/60 p-5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900/20 backdrop-blur-sm">
           <span className="block text-[10px] uppercase font-bold tracking-wider text-neutral-450 dark:text-neutral-500">Submitted Blueprints</span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-neutral-900 dark:text-white">{userSubmissions.length}</span>
+            <span className="text-2xl font-black text-neutral-900 dark:text-white">{submissionsList.length}</span>
             <BookOpen className="w-4 h-4 text-blue-500 shrink-0" />
           </div>
         </div>
@@ -291,7 +286,7 @@ export default function DashboardView({
             }`}
         >
           <BookOpen className="w-4 h-4" />
-          <span>My Blueprints ({userSubmissions.length})</span>
+          <span>My Blueprints ({submissionsList.length})</span>
           {activeTab === 'submissions' && (
             <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-accent rounded-full" />
           )}
@@ -314,7 +309,7 @@ export default function DashboardView({
 
       {/* Grid of prompts */}
       {activeTab === 'submissions' ? (
-        userSubmissions.length === 0 ? (
+        submissionsList.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-neutral-300 dark:border-neutral-800 py-16 px-6 text-center select-none">
             <BookOpen className="w-12 h-12 text-neutral-450 dark:text-neutral-650 mx-auto mb-4" />
             <h4 className="font-display text-lg font-bold text-neutral-900 dark:text-white">No prompt templates published</h4>
@@ -331,10 +326,10 @@ export default function DashboardView({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {userSubmissions.map((prompt) => {
+            {submissionsList.map((prompt) => {
               const isSaved = savedPromptIds.includes(prompt.id);
               const isCopied = copiedId === prompt.id;
-              console.log(prompt, "MY PROMPTS");
+              const modStatus = (prompt as any).moderation?.status || (prompt as any).moderation_status || 'approved';
               
               return (
                 <div
@@ -344,9 +339,31 @@ export default function DashboardView({
                 >
                   <div className="flex flex-col flex-1">
                     <div className="flex justify-between items-center mb-4" onClick={(e) => e.stopPropagation()}>
-                      <span className={`px-3.5 py-1 rounded-full font-sans text-xs font-bold uppercase tracking-wider ${getCategoryTheme(prompt.category)}`}>
-                        {prompt.category}
-                      </span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-3 py-1 rounded-full font-sans text-xs font-bold uppercase tracking-wider ${getCategoryTheme(prompt.category)}`}>
+                          {prompt.category}
+                        </span>
+
+                        {/* Status Badge: Pending, Published, or Rejected */}
+                        {modStatus === 'pending' && (
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            Pending Review
+                          </span>
+                        )}
+                        {modStatus === 'rejected' && (
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-center gap-1">
+                            <X className="w-3 h-3" />
+                            Rejected
+                          </span>
+                        )}
+                        {modStatus === 'approved' && (
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
+                            <Check className="w-3 h-3" />
+                            Published
+                          </span>
+                        )}
+                      </div>
 
                       <div className="flex gap-2">
                         <button

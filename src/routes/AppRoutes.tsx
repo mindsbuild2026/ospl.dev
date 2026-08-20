@@ -23,6 +23,7 @@ const CollectionDetailPage = lazy(() => import('../pages/CollectionDetailPage'))
 const CommunityPage = lazy(() => import('../pages/CommunityPage'));
 const CategoryPage = lazy(() => import('../pages/CategoryPage'));
 const AdminModerationPage = lazy(() => import('../pages/AdminModerationPage'));
+const SubmissionSuccessPage = lazy(() => import('../pages/SubmissionSuccessPage'));
 
 export default function AppRoutes() {
   return (
@@ -98,6 +99,14 @@ export default function AppRoutes() {
             element={
               <ProtectedRoute>
                 <SubmitPromptPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="submission-success/:id"
+            element={
+              <ProtectedRoute>
+                <SubmissionSuccessPage />
               </ProtectedRoute>
             }
           />

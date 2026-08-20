@@ -1426,3 +1426,38 @@ export async function fetchAuthorReputationHistory(userId: string): Promise<Repu
     events,
   };
 }
+
+export async function fetchUserSubmissions(
+  authorId: string
+): Promise<PromptCard[]> {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from("prompt_details")
+    .select("*")
+    .eq("author_id", authorId)
+    .order("created_at", { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    // Fallback: Query prompts table directly if view is empty or returns error
+    const { data: baseData } = await client
+      .from("prompts")
+      .select("*, categories(name), authors(id, name, handle, avatar_url, verified)")
+      .eq("author_id", authorId)
+      .order("created_at", { ascending: false });
+
+    if (!baseData) return [];
+    return baseData.map((p: any) =>
+      mapPromptCard({
+        ...p,
+        category_name: p.categories?.name || "General",
+        author_name: p.authors?.name,
+        author_handle: p.authors?.handle,
+        author_avatar_url: p.authors?.avatar_url,
+        author_verified: p.authors?.verified,
+        moderation_status: p.moderation_status,
+      })
+    );
+  }
+
+  return data.map(mapPromptCard);
+}

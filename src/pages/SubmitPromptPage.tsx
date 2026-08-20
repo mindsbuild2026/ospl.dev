@@ -6,6 +6,8 @@ export default function SubmitPromptPage() {
   const { state, actions, openAuthModal } = usePromptHubContext();
   const navigate = useNavigate();
 
+  const isAdmin = state.author?.is_admin === true;
+
   return (
     <SubmitPromptView
       onCancel={() => {
@@ -14,7 +16,11 @@ export default function SubmitPromptPage() {
       }}
       onSubmitPrompt={async (payload) => {
         const createdId = await actions.publishPrompt(payload);
-        navigate(`/prompt/${createdId}`);
+        if (isAdmin) {
+          navigate(`/prompt/${createdId}`);
+        } else {
+          navigate(`/submission-success/${createdId}`);
+        }
         return createdId;
       }}
       user={state.user}

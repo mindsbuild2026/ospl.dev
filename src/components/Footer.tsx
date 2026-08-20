@@ -36,7 +36,7 @@ export default function Footer({
   }));
 
   return (
-    <footer className="w-full mt-auto bg-white dark:bg-[#09090b] border-t border-neutral-100 dark:border-neutral-900 py-12 px-4 md:px-8 relative z-10 transition-colors duration-300">
+    <footer className="w-full mt-auto bg-white dark:bg-[#09090b] border-t border-neutral-100 dark:border-neutral-900 py-12 px-4 md:px-8 relative z-10 transition-colors duration-300 pb-24">
       <div className="max-w-7xl mx-auto space-y-10">
         <div className="border-b border-neutral-100 dark:border-neutral-900/60 pb-8 select-none">
           <span className="font-sans text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider block mb-4 text-center md:text-left">
@@ -106,8 +106,19 @@ export default function Footer({
             </button>
           </nav>
 
-          <div className="text-[11px] text-neutral-400 dark:text-neutral-500 font-mono tracking-wide md:text-right">
-            © {new Date().getFullYear()} PROMPTHUB. ALL RIGHTS RESERVED.
+          <div className="text-[11px] text-neutral-400 dark:text-neutral-500 font-mono tracking-wide md:text-right flex flex-col md:items-end gap-1">
+            <span>© {new Date().getFullYear()} PROMPTHUB. ALL RIGHTS RESERVED.</span>
+            <span className="font-sans text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+              Built by{' '}
+              <a
+                href="https://www.mindsbuild.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-neutral-700 dark:text-neutral-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+              >
+                MindsBuild
+              </a>
+            </span>
           </div>
         </div>
       </div>

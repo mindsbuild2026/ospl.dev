@@ -31,6 +31,7 @@ export default function DashboardPage() {
       user={state.user}
       author={state.author}
       prompts={state.promptCards}
+      userSubmissions={state.userSubmissions}
       savedPrompts={state.savedPrompts}
       savedPromptIds={savedPromptIds}
       toggleSavePrompt={actions.toggleSavePrompt}

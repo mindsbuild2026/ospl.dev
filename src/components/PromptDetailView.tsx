@@ -363,7 +363,41 @@ export default function PromptDetailView({
         </div>
       </div>
 
-      {/* 2. HERO / PROMPT HEADER CARD */}
+      {/* 2. PRIVATE OWNER SUBMISSION BANNER */}
+      {moderationStatus !== "approved" && (
+        <div className="mb-6 p-5 sm:p-6 rounded-[28px] bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/90 dark:border-amber-800/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 select-none">
+          <div className="flex items-start gap-3.5">
+            <div className="p-2.5 rounded-2xl bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 mt-0.5 sm:mt-0 shrink-0">
+              <Clock className="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-display font-extrabold text-base text-amber-950 dark:text-amber-100">
+                  Private Owner Submission View
+                </span>
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold uppercase tracking-wider ${
+                  moderationStatus === "pending"
+                    ? "bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700"
+                    : "bg-rose-200 text-rose-900 dark:bg-rose-950 dark:text-rose-200 border border-rose-300 dark:border-rose-800"
+                }`}>
+                  {moderationStatus === "pending" ? "⏳ Pending Admin Review" : "✕ Submission Rejected"}
+                </span>
+              </div>
+              <p className="text-xs text-amber-800 dark:text-amber-300 mt-1 leading-relaxed font-medium">
+                {moderationStatus === "pending"
+                  ? "This submission is private to you and waiting for Admin review. Once approved, it will be published and available to everyone on PromptHub."
+                  : "This submission was rejected by Admin. It is private to you and not visible on PromptHub."}
+              </p>
+            </div>
+          </div>
+
+          <div className="text-xs text-amber-800 dark:text-amber-300 font-semibold shrink-0 bg-white/60 dark:bg-neutral-900/60 px-3 py-1.5 rounded-xl border border-amber-200/60 dark:border-amber-800/60">
+            Submitted: {prompt.createdAt ? new Date(prompt.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recently"}
+          </div>
+        </div>
+      )}
+
+      {/* 3. HERO / PROMPT HEADER CARD */}
       <div className="bg-white dark:bg-neutral-900 rounded-[32px] p-6 md:p-10 border border-neutral-200/80 dark:border-neutral-800 shadow-sm mb-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 

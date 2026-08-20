@@ -25,6 +25,7 @@ import {
   fetchPromptCardsByIds,
   fetchPromptsByCollectionId,
   fetchPromptDetail,
+  fetchUserSubmissions,
   fetchTopContributors,
   incrementPromptView,
   updatePromptBookmark,
@@ -65,6 +66,7 @@ export interface PromptHubState {
   selectedCollection: CollectionDetail | null;
   collectionPrompts: PromptCard[];
   savedPrompts: PromptCard[];
+  userSubmissions: PromptCard[];
   selectedPromptId: string | null;
   selectedCollectionId: string | null;
   selectedCategoryFilter: string | null;
@@ -135,6 +137,7 @@ export function usePromptHub(): { state: PromptHubState; actions: PromptHubActio
   const [isDbErrorDismissed, setIsDbErrorDismissed] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [author, setAuthor] = useState<AuthorProfile | null>(null);
+  const [userSubmissions, setUserSubmissions] = useState<PromptCard[]>([]);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -377,6 +380,30 @@ export function usePromptHub(): { state: PromptHubState; actions: PromptHubActio
   }, [user?.id]);
 
   useEffect(() => {
+    let cancelled = false;
+    const loadUserSubmissions = async () => {
+      if (!author?.id) {
+        setUserSubmissions([]);
+        return;
+      }
+      try {
+        const submissions = await fetchUserSubmissions(author.id);
+        if (!cancelled) {
+          setUserSubmissions(submissions);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.warn('[usePromptHub] Error loading user submissions:', err);
+        }
+      }
+    };
+    loadUserSubmissions();
+    return () => {
+      cancelled = true;
+    };
+  }, [author?.id]);
+
+  useEffect(() => {
     const root = window.document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');
@@ -602,12 +629,15 @@ export function usePromptHub(): { state: PromptHubState; actions: PromptHubActio
       setPromptCards(refreshed);
       setSelectedPrompt(detail);
       setSelectedPromptId(createdId);
+      if (author?.id) {
+        fetchUserSubmissions(author.id).then(setUserSubmissions).catch(() => {});
+      }
       return createdId;
     } catch (error) {
       setDbError(getUserFriendlyMessage(error) || ERROR_MESSAGES.UNABLE_TO_PUBLISH);
       throw error;
     }
-  }, [setSelectedPromptId]);
+  }, [author?.id, setSelectedPromptId]);
 
   const dismissError = useCallback(() => {
     setIsDbErrorDismissed(true);
@@ -700,6 +730,7 @@ export function usePromptHub(): { state: PromptHubState; actions: PromptHubActio
       selectedCollection,
       collectionPrompts,
       savedPrompts,
+      userSubmissions,
       selectedPromptId,
       selectedCollectionId,
       selectedCategoryFilter,
@@ -726,6 +757,7 @@ export function usePromptHub(): { state: PromptHubState; actions: PromptHubActio
       selectedCollection,
       collectionPrompts,
       savedPrompts,
+      userSubmissions,
       selectedPromptId,
       selectedCollectionId,
       selectedCategoryFilter,
