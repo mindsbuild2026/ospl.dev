@@ -107,7 +107,7 @@ export default function Footer({
           </nav>
 
           <div className="text-[11px] text-neutral-400 dark:text-neutral-500 font-mono tracking-wide md:text-right">
-            c {new Date().getFullYear()} PROMPTHUB. ALL RIGHTS RESERVED.
+            © {new Date().getFullYear()} PROMPTHUB. ALL RIGHTS RESERVED.
           </div>
         </div>
       </div>

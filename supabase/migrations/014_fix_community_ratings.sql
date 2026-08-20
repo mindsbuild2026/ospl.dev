@@ -27,12 +27,12 @@ create unique index if not exists prompt_ratings_prompt_user_unique
   on public.ratings(prompt_id, user_id)
   where user_id is not null;
 
--- 2. Ensure prompt_metrics initializes rating_count = 0 and rating_average = null
+-- 2. Ensure prompt_metrics initializes rating_count = 0 and rating_average = 0
 create or replace function public.initialize_prompt_metrics()
 returns trigger as $$
 begin
   insert into public.prompt_metrics (prompt_id, views, copies, bookmarks, rating_count, rating_average)
-  values (NEW.id, 0, 0, 0, 0, null)
+  values (NEW.id, 0, 0, 0, 0, 0)
   on conflict (prompt_id) do nothing;
   return NEW;
 end;

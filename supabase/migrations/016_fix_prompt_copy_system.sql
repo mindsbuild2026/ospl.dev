@@ -85,7 +85,7 @@ begin
 
   -- Ensure prompt_metrics row exists and update copies atomically
   insert into public.prompt_metrics (prompt_id, views, copies, bookmarks, rating_count, rating_average, updated_at)
-  values (prompt_id_input, 0, 1, 0, 0, null, now())
+  values (prompt_id_input, 0, 1, 0, 0, 0, now())
   on conflict (prompt_id) do update
   set copies = coalesce(prompt_metrics.copies, 0) + 1,
       updated_at = now();

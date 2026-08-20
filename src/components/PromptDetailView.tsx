@@ -1015,7 +1015,7 @@ export default function PromptDetailView({
 
             <div className="flex justify-between items-center text-xs pt-2 border-t border-neutral-100 dark:border-neutral-800">
               <span className="text-neutral-500">Reputation</span>
-              <span className="font-bold text-purple-600">{prompt.author?.reputation || 100} pts</span>
+              <span className="font-bold text-purple-600">{prompt.author?.reputation || 0} pts</span>
             </div>
 
             <button

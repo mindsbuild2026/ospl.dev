@@ -1200,7 +1200,7 @@ export async function ratePrompt(promptId: string, rating: number) {
       .upsert({
         prompt_id: promptId,
         rating_count: count,
-        rating_average: avg,
+        rating_average: avg ?? 0,
       });
   } catch {}
 
