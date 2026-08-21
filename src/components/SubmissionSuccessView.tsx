@@ -62,7 +62,7 @@ export default function SubmissionSuccessView({
             <div className="text-xs sm:text-sm text-amber-900 dark:text-amber-200 leading-relaxed font-medium">
               <span className="font-bold">Your prompt is now waiting for admin review.</span>
               <p className="mt-0.5 text-amber-800/90 dark:text-amber-300/90">
-                Once approved, it will be published and available to everyone on PromptHub.
+                Once approved, it will be published and available to everyone on OSPL.
               </p>
             </div>
           </div>

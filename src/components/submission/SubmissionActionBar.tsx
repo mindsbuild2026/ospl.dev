@@ -49,7 +49,7 @@ export function SubmissionActionBar({
 
         {/* Center Copyright Notice */}
         {/* <div className="hidden md:block text-[11px] font-bold text-neutral-400 dark:text-neutral-550 uppercase tracking-wider">
-          © 2026 PROMPTHUB. ALL RIGHTS RESERVED.
+          © 2026 OSPL. ALL RIGHTS RESERVED.
         </div> */}
 
         {/* Right Primary Action */}

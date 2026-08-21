@@ -15,6 +15,7 @@ import {
   Sparkles,
   ArrowRight
 } from 'lucide-react';
+import OsplLogo from './OsplLogo';
 
 export default function WhyPromptHub() {
   const features = [
@@ -74,7 +75,7 @@ export default function WhyPromptHub() {
               Basic prompts are no longer enough. Businesses and creators need verified, multi-step prompt sequences that actually work across the latest models without hallucinating or wasting API costs.
             </p>
             <p>
-              PromptHub is a curated ecosystem designed for professionals. Discover tightly engineered workflows, track model compatibility, and swap variables effortlessly.
+              OSPL is a curated ecosystem designed for professionals. Discover tightly engineered workflows, track model compatibility, and swap variables effortlessly.
             </p>
           </div>
         </div>
@@ -120,17 +121,17 @@ export default function WhyPromptHub() {
                 <Quote className="w-4 h-4 fill-current" />
               </div>
               <blockquote className="font-display text-base sm:text-lg lg:text-xl italic font-medium text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                "The value of AI is no longer in basic prompts—it’s in vetted, reliable, and complex system instructions. PromptHub curates the signal from the noise."
+                "The value of AI is no longer in basic prompts—it’s in vetted, reliable, and complex system instructions. OSPL curates the signal from the noise."
               </blockquote>
             </div>
             
             <div className="pt-8 flex items-center gap-4">
-              <div className="w-11 h-11 rounded-full bg-brand-accent text-white flex items-center justify-center font-bold text-sm font-mono shadow-md">
-                PH
+              <div className="w-11 h-11 rounded-full bg-brand-accent text-white flex items-center justify-center p-2 shadow-md">
+                <OsplLogo className="w-6 h-6 text-white" />
               </div>
               <div>
                 <p className="font-sans text-sm font-bold text-brand-text dark:text-white uppercase tracking-wide">
-                  PromptHub Architecture
+                  OSPL Architecture
                 </p>
                 <p className="font-sans text-[12px] text-neutral-500 dark:text-neutral-400 font-medium">
                   Built for Professional Use Cases
@@ -154,7 +155,15 @@ export default function WhyPromptHub() {
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6 leading-relaxed">
               Discover powerful workflows, utilize interactive playgrounds to test logic before copying, and deploy production-ready instructions instantly.
             </p>
-            <button className="flex items-center gap-2 text-sm font-bold text-brand-accent hover:text-brand-accent-light transition-colors w-max group">
+            <button
+              onClick={() => {
+                const exploreEl = document.getElementById('explore_list');
+                if (exploreEl) {
+                  exploreEl.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="flex items-center gap-2 text-sm font-bold text-brand-accent hover:text-brand-accent-light transition-colors w-max group cursor-pointer"
+            >
               Explore Verified Workflows 
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>

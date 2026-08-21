@@ -65,7 +65,8 @@ export function useSearchURLSync({
       params.set('category', categorySlug || selectedCategory);
     }
 
-    const newUrl = params.toString() ? `/explore?${params.toString()}` : '/explore';
+    const basePath = location.pathname.startsWith('/search') ? '/search' : '/explore';
+    const newUrl = params.toString() ? `${basePath}?${params.toString()}` : basePath;
     const currentUrl = location.pathname + location.search;
 
     // Only navigate if URL actually changed

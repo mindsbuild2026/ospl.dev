@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Search,
@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
 import { LookupAuthor } from '../types';
+import OsplLogo from './OsplLogo';
 
 interface HeaderProps {
   setSelectedCategoryFilter: (category: string | null) => void;
@@ -35,6 +36,8 @@ interface HeaderProps {
   author: LookupAuthor | null;
   onSignInClick: () => void;
   onSignOutClick: () => Promise<void>;
+  searchQuery?: string;
+  isVisible?: boolean;
 }
 
 export default function Header({
@@ -51,12 +54,21 @@ export default function Header({
   author,
   onSignInClick,
   onSignOutClick,
+  searchQuery = '',
+  isVisible = true,
 }: HeaderProps) {
   const [localSearch, setLocalSearch] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Sync Header search input when URL query param or context searchQuery changes
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const qFromUrl = searchParams.get('q');
+    setLocalSearch(qFromUrl !== null ? qFromUrl : searchQuery);
+  }, [location.search, searchQuery]);
 
   const isAdmin = author?.is_admin === true;
 
@@ -85,6 +97,12 @@ export default function Header({
     setIsMobileMenuOpen(false);
     if (trimmedQuery) {
       navigate(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+      setTimeout(() => {
+        const el = document.getElementById('explore_list');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
     } else {
       navigate('/explore');
     }
@@ -96,18 +114,18 @@ export default function Header({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-20 z-50 bg-white/90 dark:bg-[#09090b]/90 backdrop-blur-md border-b border-neutral-100 dark:border-neutral-800/80 transition-colors duration-300">
+    <header className={`fixed top-0 left-0 right-0 h-20 z-50 bg-white/90 dark:bg-[#09090b]/90 backdrop-blur-md border-b border-neutral-100 dark:border-neutral-800/80 transition-all duration-300 ease-in-out ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
       <div className="max-w-7xl mx-auto px-4 md:px-8 h-full flex items-center justify-between">
         <div
           onClick={() => navigateTo('/explore')}
           className="flex items-center gap-3 cursor-pointer group shrink-0"
         >
-          <div className="w-9 h-9 bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-display font-black text-base rounded-xl transition-all group-hover:bg-brand-accent dark:group-hover:bg-brand-accent dark:group-hover:text-white shadow-sm">
-            P
+          <div className="w-9 h-9 bg-black dark:bg-white text-white dark:text-black flex items-center justify-center p-1.5 rounded-xl transition-all group-hover:bg-brand-accent dark:group-hover:bg-brand-accent dark:group-hover:text-white shadow-sm">
+            <OsplLogo className="w-5 h-5 text-current" />
           </div>
           <div className="flex flex-col">
             <h1 className="font-display font-bold tracking-tight text-base text-brand-text dark:text-brand-text-dark leading-none">
-              PromptHub
+              OSPL
             </h1>
             <span className="text-[10px] text-brand-muted dark:text-brand-muted-dark font-medium mt-0.5">
               Open-Source Library

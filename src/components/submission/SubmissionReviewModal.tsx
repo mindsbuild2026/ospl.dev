@@ -65,7 +65,7 @@ export function SubmissionReviewModal({
                 Final Submission Review
               </h2>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Verify template configuration before publishing to PromptHub community catalog.
+                Verify template configuration before publishing to OSPL community catalog.
               </p>
             </div>
           </div>
@@ -294,7 +294,7 @@ export function SubmissionReviewModal({
               </span>
             </div>
             <p className="text-xs text-neutral-600 dark:text-neutral-400">
-              Prompt quality verified against PromptHub standards. Structure, clarity, and safety checks passed.
+              Prompt quality verified against OSPL standards. Structure, clarity, and safety checks passed.
             </p>
           </div>
 

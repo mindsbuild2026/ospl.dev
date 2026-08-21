@@ -5,6 +5,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { Category } from '../types';
+import OsplLogo from './OsplLogo';
 
 interface FooterProps {
   categories: Category[];
@@ -66,10 +67,10 @@ export default function Footer({
             onClick={handleLogoClick}
             className="font-display text-xl font-extrabold text-brand-text dark:text-brand-text-dark tracking-tight cursor-pointer transition-colors hover:text-brand-accent flex items-center gap-2"
           >
-            <div className="w-7 h-7 bg-brand-accent rounded-full flex items-center justify-center text-white text-xs font-black">
-              P
+            <div className="w-7 h-7 bg-brand-accent rounded-full flex items-center justify-center p-1 text-white">
+              <OsplLogo className="w-4 h-4 text-white" />
             </div>
-            <span>PromptHub</span>
+            <span>OSPL</span>
           </div>
 
           <nav className="flex flex-wrap justify-center gap-6 text-xs font-sans font-bold tracking-wider text-neutral-500 dark:text-neutral-400">
@@ -107,7 +108,7 @@ export default function Footer({
           </nav>
 
           <div className="text-[11px] text-neutral-400 dark:text-neutral-500 font-mono tracking-wide md:text-right flex flex-col md:items-end gap-1">
-            <span>© {new Date().getFullYear()} PROMPTHUB. ALL RIGHTS RESERVED.</span>
+            <span>© {new Date().getFullYear()} OSPL. ALL RIGHTS RESERVED.</span>
             <span className="font-sans text-xs text-neutral-500 dark:text-neutral-400 font-medium">
               Built by{' '}
               <a

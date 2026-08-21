@@ -315,7 +315,7 @@ export default function ProfileView({
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit} className="overflow-hidden rounded-[32px] border border-neutral-200/50 bg-white/80 p-6 md:p-8 shadow-[0_4px_30px_rgba(0,0,0,0.02)] dark:border-neutral-800/80 dark:bg-neutral-900/40 backdrop-blur-md">
             <h3 className="font-display text-2xl font-black text-neutral-900 dark:text-white tracking-tight mb-1">Creator Settings</h3>
-            <p className="text-xs text-neutral-500 dark:text-neutral-450 mb-6">Customize how you appear across the PromptHub library ecosystem.</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-450 mb-6">Customize how you appear across the OSPL library ecosystem.</p>
 
             {/* Save Status Banners */}
             {status === 'success' && (

@@ -68,12 +68,12 @@ export default function CommunityView({
           </span>
           {/* Main Title */}
           <h2 className="font-display text-5xl md:text-7xl font-bold text-brand-text dark:text-brand-text-dark tracking-tight leading-[1] mb-6 max-w-2xl mx-auto">
-            The home for prompt engineers
+            The home for Prompt Creators
           </h2>
           {/* Subtext */}
           <p className="font-sans text-base md:text-[17px] text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
             Contribute, share ideas, and build the ultimate open-source prompt library together. <br className="hidden md:block"/>
-            PromptHub is powered by the community, hosted on GitHub.
+            OSPL is powered by the community, hosted on GitHub.
           </p>
 
           {/* Call-to-action buttons per Image 2 */}
@@ -127,7 +127,7 @@ export default function CommunityView({
           {/* Guide Steps Box Column */}
           <div className="bg-white dark:bg-neutral-900/80 p-10 rounded-[32px] md:col-span-2 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-shadow flex flex-col justify-between">
             <h3 className="font-display text-[28px] font-bold text-brand-text dark:text-white tracking-tight mb-8">
-              Contribute to PromptHub
+              Contribute to OSPL
             </h3>
 
             <div className="space-y-8 pl-2">

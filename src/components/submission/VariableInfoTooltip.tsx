@@ -53,7 +53,7 @@ export function VariableInfoTooltip({
           </span>
 
           <span className="text-[11px] text-neutral-600 dark:text-neutral-300 leading-relaxed block">
-            {customHint || `Wrap variable names in double curly braces {{${cleanName}}} inside your prompt text. PromptHub automatically detects them and creates input fields for end users.`}
+            {customHint || `Wrap variable names in double curly braces {{${cleanName}}} inside your prompt text. OSPL automatically detects them and creates input fields for end users.`}
           </span>
 
           <span className="rounded-xl border border-purple-100 dark:border-purple-900/50 bg-purple-50/50 dark:bg-neutral-950 p-3 space-y-1.5 block">

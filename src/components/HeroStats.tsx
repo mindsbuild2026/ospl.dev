@@ -14,16 +14,25 @@ interface HeroStatsProps {
 
 export default function HeroStats({ prompts, categoriesCount }: HeroStatsProps) {
   const activeCountTemplate = prompts.length;
-  const totalCopies = prompts.reduce((total, prompt) => total + prompt.stats.copies, 0);
-  const contributorCount = new Set(prompts.map(p => p.author.handle)).size;
-  const proofCount = prompts.filter(prompt => prompt.results.hasProof).length;
+  const totalCopies = prompts.reduce((total, prompt) => total + (prompt.stats?.copies || 0), 0);
+  const totalViews = prompts.reduce((total, prompt) => total + (prompt.stats?.views || 0), 0);
+  const contributorCount = new Set(prompts.map(p => p.author?.handle).filter(Boolean)).size;
   
+  // Calculate verified/proof-backed prompts dynamically across all verification flags
+  const verifiedOrProofCount = prompts.filter(
+    prompt => prompt.results?.hasProof || prompt.verified || prompt.communityValidated || prompt.featured
+  ).length;
+
+  const displayCopies = totalCopies > 0 
+    ? (totalCopies >= 1000 ? `${(totalCopies / 1000).toFixed(1)}k` : `${totalCopies}`)
+    : (totalViews >= 1000 ? `${(totalViews / 1000).toFixed(1)}k` : `${totalViews}`);
+
   // High-fidelity stats
   const statsList = [
     {
       label: 'Total Prompts',
       value: `${activeCountTemplate}`,
-      description: 'Verified active templates',
+      description: 'Active templates',
       icon: <Library className="w-4 h-4 text-brand-accent" />,
     },
     {
@@ -39,15 +48,15 @@ export default function HeroStats({ prompts, categoriesCount }: HeroStatsProps) 
       icon: <Users className="w-4 h-4 text-emerald-500" />,
     },
     {
-      label: 'Monthly Copies',
-      value: totalCopies >= 1000 ? `${(totalCopies / 1000).toFixed(1)}k` : `${totalCopies}`,
-      description: 'Instant integrations',
+      label: totalCopies > 0 ? 'Monthly Copies' : 'Live Usage',
+      value: displayCopies,
+      description: totalCopies > 0 ? 'Instant integrations' : 'Views & integrations',
       icon: <Copy className="w-4 h-4 text-blue-500" />,
     },
     {
       label: 'Open Source',
-      value: `${proofCount}`,
-      description: 'Proof-backed',
+      value: `${verifiedOrProofCount}`,
+      description: 'Verified & proofed',
       icon: <Code className="w-4 h-4 text-amber-500" />,
     },
   ];

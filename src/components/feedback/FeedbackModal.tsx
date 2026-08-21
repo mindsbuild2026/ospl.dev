@@ -137,7 +137,7 @@ export default function FeedbackModal({ isOpen, onClose, user, authorName }: Fee
                 Send Feedback
               </h2>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Help us improve PromptHub with your input
+                Help us improve OSPL with your input
               </p>
             </div>
           </div>

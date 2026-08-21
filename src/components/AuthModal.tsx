@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Sparkles, Loader2, AlertCircle } from 'lucide-react';
+import OsplLogo from './OsplLogo';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -79,10 +80,10 @@ export default function AuthModal({
         {/* Logo and Header */}
         <div className="mb-6 flex flex-col items-center text-center">
           <div className="flex items-center gap-2 bg-brand-accent/10 px-3 py-1.5 rounded-full border border-brand-accent/20 mb-3.5">
-            <Sparkles className="w-3.5 h-3.5 text-brand-accent animate-pulse" />
-            <span className="text-[9px] font-extrabold uppercase tracking-widest text-brand-accent">PromptHub Creator Auth</span>
+            <OsplLogo className="w-3.5 h-3.5 text-brand-accent shrink-0" />
+            <span className="text-[9px] font-extrabold uppercase tracking-widest text-brand-accent">OSPL Creator Auth</span>
           </div>
-          <h2 className="font-display text-2xl font-black text-neutral-900 dark:text-white tracking-tight">Welcome to PromptHub</h2>
+          <h2 className="font-display text-2xl font-black text-neutral-900 dark:text-white tracking-tight">Welcome to OSPL</h2>
           <p className="mt-1.5 text-xs text-neutral-500 dark:text-neutral-450 max-w-[280px]">
             Sign in with GitHub to submit prompt templates, manage your creator profile, and sync settings.
           </p>

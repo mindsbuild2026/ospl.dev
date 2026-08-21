@@ -6,9 +6,15 @@
 import React, { useState } from 'react';
 import { Mail, Check, Bell, Sparkles, Send } from 'lucide-react';
 
-export default function NewsletterSubscribe() {
+interface NewsletterSubscribeProps {
+  totalCopies?: number;
+}
+
+export default function NewsletterSubscribe({ totalCopies = 0 }: NewsletterSubscribeProps) {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+
+  const practitionerCount = totalCopies > 0 ? (totalCopies * 3 + 250).toLocaleString() : '500+';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +47,7 @@ export default function NewsletterSubscribe() {
               </h3>
 
               <p className="font-sans text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl">
-                Join 18,000+ AI practitioners and prompt engineers getting curated weekly reports, alerts for new categories, and direct copyable system prompts.
+                Join {practitionerCount}+ AI practitioners and prompt engineers getting curated weekly reports, alerts for new categories, and direct copyable system prompts.
               </p>
 
               <div className="space-y-3.5 pt-2">

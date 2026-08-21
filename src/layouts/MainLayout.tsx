@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { usePromptHubContext } from '../hooks/PromptHubContext';
 import { useScrollToTop } from '../hooks/useScrollToTop';
@@ -22,6 +23,50 @@ export default function MainLayout() {
   } = usePromptHubContext();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [showFloatingWidgets, setShowFloatingWidgets] = useState(false);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const updateScrollState = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDiff = currentScrollY - lastScrollY;
+
+      // 1. Header auto-hide: Hide when scrolling down past 80px, reappear when scrolling up or at top
+      if (currentScrollY <= 20) {
+        setIsHeaderVisible(true);
+      } else if (scrollDiff > 4 && currentScrollY > 80) {
+        setIsHeaderVisible(false); // Scrolling down -> hide header
+      } else if (scrollDiff < -4) {
+        setIsHeaderVisible(true); // Scrolling up -> show header
+      }
+
+      // 2. Bottom corner floating widget: Appear ONLY if scrolling down / scrolled past top threshold
+      if (currentScrollY > 150) {
+        if (scrollDiff > 2) {
+          setShowFloatingWidgets(true);
+        }
+      } else {
+        setShowFloatingWidgets(false);
+      }
+
+      lastScrollY = currentScrollY;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollState);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Scroll to top when pathname changes (but not on search/filter query string changes)
   useScrollToTop();
@@ -53,6 +98,8 @@ export default function MainLayout() {
         author={state.author}
         onSignInClick={() => openAuthModal()}
         onSignOutClick={actions.signOut}
+        searchQuery={state.searchQuery}
+        isVisible={isHeaderVisible}
       />
 
       {state.dbError && !state.isDbErrorDismissed && (
@@ -83,8 +130,12 @@ export default function MainLayout() {
               actions.onSubmitClick();
               navigate('/submit');
             }}
+            isVisible={showFloatingWidgets}
           />
-          <FeedbackButton onClick={openFeedbackModal} />
+          <FeedbackButton
+            onClick={openFeedbackModal}
+            isVisible={showFloatingWidgets}
+          />
         </>
       )}
 

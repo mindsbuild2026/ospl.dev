@@ -27,10 +27,10 @@ export default function PrivacyPolicyView() {
         <section>
           <h2 className="font-display text-2xl font-bold mb-4">Introduction</h2>
           <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-            PromptHub ("we," "us," "our," or "Company") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services, including our prompt library, collections, ratings, and AI analysis features.
+            OSPL ("we," "us," "our," or "Company") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services, including our prompt library, collections, ratings, and AI analysis features.
           </p>
           <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-            Please read this Privacy Policy carefully. If you do not agree with our policies and practices, please do not use our services. Your continued use of PromptHub following the posting of revised Privacy Policy means that you accept and agree to the changes.
+            Please read this Privacy Policy carefully. If you do not agree with our policies and practices, please do not use our services. Your continued use of OSPL following the posting of revised Privacy Policy means that you accept and agree to the changes.
           </p>
         </section>
 
@@ -84,7 +84,7 @@ export default function PrivacyPolicyView() {
             <div>
               <h3 className="text-lg font-semibold mb-2 text-neutral-900 dark:text-neutral-50">4. AI-Generated Metadata</h3>
               <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-3">
-                PromptHub uses Google Gemini API to automatically analyze your prompts and generate metadata including:
+                OSPL uses Google Gemini API to automatically analyze your prompts and generate metadata including:
               </p>
               <ul className="list-disc list-inside text-neutral-700 dark:text-neutral-300 space-y-1 ml-2">
                 <li>Estimated token counts and character/word counts</li>
@@ -113,7 +113,7 @@ export default function PrivacyPolicyView() {
             <div>
               <h3 className="text-lg font-semibold mb-2 text-neutral-900 dark:text-neutral-50">6. Usage Analytics</h3>
               <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-3">
-                We collect analytics data about your interactions with PromptHub including:
+                We collect analytics data about your interactions with OSPL including:
               </p>
               <ul className="list-disc list-inside text-neutral-700 dark:text-neutral-300 space-y-1 ml-2">
                 <li>Pages viewed and prompts clicked</li>
@@ -122,7 +122,7 @@ export default function PrivacyPolicyView() {
                 <li>Time spent on specific prompts</li>
                 <li>Devices and browsers used</li>
                 <li>IP address and general location (country/city level)</li>
-                <li>Referral source (how you arrived at PromptHub)</li>
+                <li>Referral source (how you arrived at OSPL)</li>
               </ul>
             </div>
 
@@ -146,7 +146,7 @@ export default function PrivacyPolicyView() {
         <section>
           <h2 className="font-display text-2xl font-bold mb-6">How We Use Your Information</h2>
           <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-            PromptHub uses collected information for the following purposes:
+            OSPL uses collected information for the following purposes:
           </p>
           <ul className="list-disc list-inside text-neutral-700 dark:text-neutral-300 space-y-2 ml-2">
             <li><strong>Service Provision:</strong> To create and maintain your account, authenticate your identity, and provide access to prompts, collections, and search features.</li>
@@ -166,7 +166,7 @@ export default function PrivacyPolicyView() {
         <section>
           <h2 className="font-display text-2xl font-bold mb-6">Third-Party Services</h2>
           <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-            PromptHub integrates with the following third-party services, which may collect and process your data:
+            OSPL integrates with the following third-party services, which may collect and process your data:
           </p>
           
           <div className="space-y-4">
@@ -194,7 +194,7 @@ export default function PrivacyPolicyView() {
             <div className="bg-neutral-50 dark:bg-neutral-900 p-4 rounded-lg border border-neutral-200 dark:border-neutral-800">
               <h3 className="font-semibold mb-2">Vercel (Hosting & Deployment)</h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                PromptHub is deployed on Vercel's infrastructure. Vercel may collect analytics and infrastructure logs. See Vercel's privacy policy at vercel.com/privacy.
+                OSPL is deployed on Vercel's infrastructure. Vercel may collect analytics and infrastructure logs. See Vercel's privacy policy at vercel.com/privacy.
               </p>
             </div>
           </div>
@@ -244,7 +244,7 @@ export default function PrivacyPolicyView() {
             <li><strong>Opt-Out:</strong> You can disable analytics tracking through your account preferences.</li>
           </ul>
           <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-            To exercise these rights, contact us at privacy@prompthub.dev with your request and account details.
+            To exercise these rights, contact us at privacy@ospl.dev with your request and account details.
           </p>
         </section>
 
@@ -252,7 +252,7 @@ export default function PrivacyPolicyView() {
         <section>
           <h2 className="font-display text-2xl font-bold mb-6">Children's Privacy</h2>
           <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-            PromptHub is not intended for users under 13 years of age. We do not knowingly collect personal information from children under 13. If we become aware that a child under 13 has provided us with personal information, we will promptly delete such information and terminate the child's account. If you believe we have collected information from a child under 13, please contact us immediately at privacy@prompthub.dev.
+            OSPL is not intended for users under 13 years of age. We do not knowingly collect personal information from children under 13. If we become aware that a child under 13 has provided us with personal information, we will promptly delete such information and terminate the child's account. If you believe we have collected information from a child under 13, please contact us immediately at privacy@ospl.dev.
           </p>
         </section>
 
@@ -260,7 +260,7 @@ export default function PrivacyPolicyView() {
         <section>
           <h2 className="font-display text-2xl font-bold mb-6">International Data Transfers</h2>
           <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-            PromptHub operates globally. Your personal information may be transferred to, stored in, and processed in countries other than your country of residence, including the United States. These countries may have different data protection laws than your home country. By using PromptHub, you consent to the transfer of your information to countries outside your country of residence, which may provide a different level of data protection.
+            OSPL operates globally. Your personal information may be transferred to, stored in, and processed in countries other than your country of residence, including the United States. These countries may have different data protection laws than your home country. By using OSPL, you consent to the transfer of your information to countries outside your country of residence, which may provide a different level of data protection.
           </p>
         </section>
 
@@ -268,7 +268,7 @@ export default function PrivacyPolicyView() {
         <section>
           <h2 className="font-display text-2xl font-bold mb-6">Changes to This Privacy Policy</h2>
           <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-            We may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal requirements, or other factors. We will notify you of any material changes by posting the new Privacy Policy on this page with an updated "Last Updated" date. Your continued use of PromptHub following the posting of a revised Privacy Policy means you accept and agree to the changes. We encourage you to review this Privacy Policy periodically to stay informed about how we protect your information.
+            We may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal requirements, or other factors. We will notify you of any material changes by posting the new Privacy Policy on this page with an updated "Last Updated" date. Your continued use of OSPL following the posting of a revised Privacy Policy means you accept and agree to the changes. We encourage you to review this Privacy Policy periodically to stay informed about how we protect your information.
           </p>
         </section>
 
@@ -279,8 +279,8 @@ export default function PrivacyPolicyView() {
             If you have any questions, concerns, or requests regarding this Privacy Policy or our privacy practices, please contact us:
           </p>
           <div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg border border-neutral-200 dark:border-neutral-800 space-y-2 text-neutral-700 dark:text-neutral-300">
-            <p><strong>Email:</strong> privacy@prompthub.dev</p>
-            <p><strong>Website:</strong> prompthub.dev</p>
+            <p><strong>Email:</strong> privacy@ospl.dev</p>
+            <p><strong>Website:</strong> ospl.dev</p>
             <p className="text-sm mt-4">Response time: We will respond to privacy inquiries within 30 days.</p>
           </div>
         </section>

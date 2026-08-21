@@ -69,7 +69,7 @@ export default function LeaderboardPromo({
             Ecosystem Leaderboard
           </h3>
           <p className="font-sans text-sm text-neutral-550 dark:text-neutral-400 mt-1">
-            Celebrating the top-performing recipes, authors, and contributions shaping PromptHub.
+            Celebrating the top-performing recipes, authors, and contributions shaping OSPL.
           </p>
         </div>
 
@@ -167,13 +167,6 @@ export default function LeaderboardPromo({
               </div>
             </div>
 
-            <button
-              onClick={onContributorClick}
-              className="w-full mt-6 py-2.5 bg-brand-accent hover:bg-brand-hover text-white rounded-xl font-sans font-bold text-xs uppercase tracking-wide transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <span>View Leaderboard</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
           </div>
 
         </div>

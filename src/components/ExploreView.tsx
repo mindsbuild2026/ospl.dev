@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { copyTextToClipboard } from "../lib/clipboardService";
 import {
   Category,
@@ -32,6 +33,7 @@ import {
   MousePointer,
   X,
   Heart,
+  Plus,
 } from "lucide-react";
 import { useDebouncedCallback } from "../hooks/useDebounce";
 
@@ -85,12 +87,27 @@ export default function ExploreView({
   onOpenCollection,
   loadMorePrompts,
 }: ExploreViewProps) {
-  const [localSearch, setLocalSearch] = useState("");
+  const navigate = useNavigate();
+  const [localSearch, setLocalSearch] = useState(searchQuery || "");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const scrollToResults = useCallback(() => {
+    setTimeout(() => {
+      const el = document.getElementById("explore_list");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100);
+  }, []);
+
+  // Sync local input state when searchQuery prop changes (e.g. from Header or URL sync)
+  useEffect(() => {
+    setLocalSearch(searchQuery || "");
+  }, [searchQuery]);
 
   // Debounce search query update to prevent excessive API calls and flickering
   const debouncedSetSearchQuery = useDebouncedCallback((query: string) => {
@@ -141,6 +158,7 @@ export default function ExploreView({
     e.preventDefault();
     setSearchQuery(localSearch);
     setIsSearchFocused(false);
+    scrollToResults();
   };
 
   const handleCopy = async (e: React.MouseEvent, id: string, text: string) => {
@@ -298,28 +316,54 @@ export default function ExploreView({
         {/* Hero Content */}
         <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center gap-6 md:gap-8 mt-2 w-full px-2">
           {/* Glowing Pill Tag */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/20 dark:border-indigo-400/20 bg-indigo-50/50 dark:bg-indigo-950/20 backdrop-blur-md shadow-[0_4px_20px_rgba(99,102,241,0.08)] animate-pulse">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-300">
-              Open-Source Prompt Library
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/20 dark:border-emerald-400/20 bg-emerald-50/60 dark:bg-emerald-950/20 backdrop-blur-md shadow-[0_4px_20px_rgba(16,185,129,0.08)]">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-700 dark:text-emerald-300">
+              Community Driven & Free Forever
             </span>
           </div>
 
           {/* Heading with Elegant Multi-gradient Typography */}
           <div className="space-y-4 md:space-y-6">
             <h2 className="font-display text-4xl sm:text-6xl md:text-7.5xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-[1.05]">
-              Discover{" "}
+              The Free,{" "}
               <span className="bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-rose-500 bg-clip-text text-transparent drop-shadow-sm">
-                Powerful AI Prompts
+                Open-Source
               </span>{" "}
               <br />
               <span className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-700 dark:from-neutral-50 dark:via-neutral-100 dark:to-neutral-300 bg-clip-text text-transparent">
-                Curated for Production
+                Prompt Library for Everyone.
               </span>
             </h2>
             <p className="font-sans text-sm sm:text-base md:text-lg text-neutral-500 dark:text-neutral-400 max-w-2.5xl mx-auto leading-relaxed mt-4 px-2">
-              Access community-tested prompts, workflows, and output examples across AI platforms.
+              Access community-tested prompts, workflows, and production blueprints across leading AI models.
             </p>
+
+            {/* Primary CTAs */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('explore_list');
+                  if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="bg-brand-accent hover:bg-brand-accent-hover text-white px-7 py-3.5 rounded-full font-sans font-bold text-sm tracking-wide transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer border-0"
+              >
+                <Search className="w-4 h-4" />
+                <span>Browse Prompts</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigate('/submit')}
+                className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-neutral-100 px-7 py-3.5 rounded-full font-sans font-bold text-sm tracking-wide transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer border-0"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Submit a Prompt</span>
+              </button>
+            </div>
           </div>
 
           {/* Search Field Box Stadium Capsule shape with Suggestion Dropdowns */}
@@ -398,6 +442,7 @@ export default function ExploreView({
                               setLocalSearch(q);
                               setSearchQuery(q);
                               setIsSearchFocused(false);
+                              scrollToResults();
                             }}
                             className="text-xs sm:text-[13px] font-sans font-medium text-neutral-600 dark:text-neutral-350 hover:text-indigo-600 dark:hover:text-indigo-400 p-2.5 hover:bg-neutral-50/80 dark:hover:bg-neutral-900/30 rounded-xl cursor-pointer flex items-center gap-2 transition-all"
                           >
@@ -422,6 +467,7 @@ export default function ExploreView({
                               setLocalSearch(kw);
                               setSearchQuery(kw);
                               setIsSearchFocused(false);
+                              scrollToResults();
                             }}
                             className="px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-brand-accent hover:text-white dark:bg-neutral-850 dark:text-neutral-300 dark:hover:bg-indigo-500 dark:hover:text-white font-sans text-xs font-semibold cursor-pointer transition-all border-0 shadow-sm active:scale-95"
                           >
@@ -476,7 +522,7 @@ export default function ExploreView({
           </div>
 
           {/* Call To Action Button Hierarchy */}
-          <div className="flex items-center gap-3.5 mt-2 z-10 flex-wrap justify-center">
+          {/* <div className="flex items-center gap-3.5 mt-2 z-10 flex-wrap justify-center">
             <button
               onClick={() => {
                 const exploreEl = document.getElementById("explore_list");
@@ -494,7 +540,7 @@ export default function ExploreView({
             >
               Reset Filters
             </button>
-          </div>
+          </div> */}
 
           {/* Trending Searches Row */}
           <div className="flex flex-wrap items-center justify-center gap-2 mt-4 px-4 z-10">
@@ -543,12 +589,12 @@ export default function ExploreView({
             />
           </section>
 
-          {/* C. Trending lists tabs container */}
+          {/* C. Trending lists tabs container with dynamically sorted prompts */}
           <TrendingToday
-            mostCopiedPrompts={prompts.slice(0, 3)}
-            fastestGrowingPrompts={prompts.slice(0, 3)}
-            highestRatedPrompts={prompts.slice(0, 3)}
-            newestPrompts={prompts.slice(0, 3)}
+            mostCopiedPrompts={[...prompts].sort((a, b) => b.stats.copies - a.stats.copies).slice(0, 6)}
+            fastestGrowingPrompts={[...prompts].sort((a, b) => (b.engagement?.trendingScore || 0) - (a.engagement?.trendingScore || 0) || b.stats.views - a.stats.views).slice(0, 6)}
+            highestRatedPrompts={[...prompts].sort((a, b) => (b.stats.ratingCount > 0 ? b.stats.rating : 0) - (a.stats.ratingCount > 0 ? a.stats.rating : 0) || b.stats.copies - a.stats.copies).slice(0, 6)}
+            newestPrompts={[...prompts].sort((a, b) => new Date(b.stats.updated).getTime() - new Date(a.stats.updated).getTime()).slice(0, 6)}
             onPromptClick={onPromptClick}
           />
 
@@ -566,7 +612,7 @@ export default function ExploreView({
           />
 
           {/* F. GitHub integration repository status indicators */}
-          <OpenSourcePromo />
+          <OpenSourcePromo prompts={prompts} contributors={contributors} />
         </>
       )}
 
@@ -671,7 +717,11 @@ export default function ExploreView({
       </section>
 
       {/* G. Weekly newsletter subscribe card */}
-      {isBrowsingNormalHome && <NewsletterSubscribe />}
+      {isBrowsingNormalHome && (
+        <NewsletterSubscribe
+          totalCopies={prompts.reduce((total, p) => total + p.stats.copies, 0)}
+        />
+      )}
     </div>
   );
 }

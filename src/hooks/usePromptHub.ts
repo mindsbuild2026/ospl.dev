@@ -32,6 +32,7 @@ import {
   incrementPromptCopy,
   ratePrompt,
   createPromptFromPayload,
+  clearCollectionsCache,
 } from '../lib/promptRepository';
 import {
   signInWithGithub,
@@ -624,9 +625,16 @@ export function usePromptHub(): { state: PromptHubState; actions: PromptHubActio
     }
     try {
       const createdId = await createPromptFromPayload(newPrompt);
-      const detail = await fetchPromptDetail(createdId);
-      const refreshed = await fetchPromptCards({ limit: DEFAULT_PAGINATION_LIMIT, sortBy: 'Newest' });
+      clearCollectionsCache();
+      const [detail, refreshed, refreshedCollections] = await Promise.all([
+        fetchPromptDetail(createdId),
+        fetchPromptCards({ limit: DEFAULT_PAGINATION_LIMIT, sortBy: 'Newest' }),
+        fetchCollections().catch(() => []),
+      ]);
       setPromptCards(refreshed);
+      if (refreshedCollections.length > 0) {
+        setCollections(refreshedCollections);
+      }
       setSelectedPrompt(detail);
       setSelectedPromptId(createdId);
       if (author?.id) {

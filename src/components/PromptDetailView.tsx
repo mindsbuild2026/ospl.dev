@@ -385,8 +385,8 @@ export default function PromptDetailView({
               </div>
               <p className="text-xs text-amber-800 dark:text-amber-300 mt-1 leading-relaxed font-medium">
                 {moderationStatus === "pending"
-                  ? "This submission is private to you and waiting for Admin review. Once approved, it will be published and available to everyone on PromptHub."
-                  : "This submission was rejected by Admin. It is private to you and not visible on PromptHub."}
+                  ? "This submission is private to you and waiting for Admin review. Once approved, it will be published and available to everyone on OSPL."
+                  : "This submission was rejected by Admin. It is private to you and not visible on OSPL."}
               </p>
             </div>
           </div>
@@ -474,7 +474,7 @@ export default function PromptDetailView({
                 {prompt.author?.verified && <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />}
               </div>
               <div className="text-[11px] text-neutral-400">
-                @{prompt.author?.handle || "creator"} • Submitted {formatRelativeTime(prompt.createdAt || prompt.stats?.updated)}
+                {prompt.author?.handle || "creator"} • Submitted {formatRelativeTime(prompt.createdAt || prompt.stats?.updated)}
               </div>
             </div>
           </div>
@@ -1040,7 +1040,7 @@ export default function PromptDetailView({
               />
               <div>
                 <h4 className="font-bold text-sm text-neutral-900 dark:text-white flex items-center gap-1">
-                  <span>{prompt.author?.name || "PromptHub Creator"}</span>
+                  <span>{prompt.author?.name || "OSPL Creator"}</span>
                   {prompt.author?.verified && <CheckCircle2 className="w-4 h-4 text-purple-600" />}
                 </h4>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">@{prompt.author?.handle || "creator"}</p>

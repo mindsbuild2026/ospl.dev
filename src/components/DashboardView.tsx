@@ -314,7 +314,7 @@ export default function DashboardView({
             <BookOpen className="w-12 h-12 text-neutral-450 dark:text-neutral-650 mx-auto mb-4" />
             <h4 className="font-display text-lg font-bold text-neutral-900 dark:text-white">No prompt templates published</h4>
             <p className="text-xs text-neutral-500 mt-2 max-w-sm mx-auto">
-              You haven't submitted any prompts to PromptHub yet. Share your expert prompt engineering templates with the community.
+              You haven't submitted any prompts to OSPL yet. Share your expert prompt engineering templates with the community.
             </p>
             <button
               onClick={onSubmitPromptClick}
@@ -413,7 +413,7 @@ export default function DashboardView({
             <Heart className="w-12 h-12 text-neutral-450 dark:text-neutral-650 mx-auto mb-4" />
             <h4 className="font-display text-lg font-bold text-neutral-900 dark:text-white">No saved prompts yet</h4>
             <p className="text-xs text-neutral-500 mt-2 max-w-sm mx-auto">
-              Explore PromptHub's vast library of blueprints and save your favorite prompt templates for quick access.
+              Explore OSPL's vast library of blueprints and save your favorite prompt templates for quick access.
             </p>
             <button
               onClick={onExploreClick}

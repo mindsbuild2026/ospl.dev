@@ -11,14 +11,19 @@ import { MessageSquareHeart } from 'lucide-react';
 
 interface FeedbackButtonProps {
   onClick: () => void;
+  isVisible?: boolean;
 }
 
-export default function FeedbackButton({ onClick }: FeedbackButtonProps) {
+export default function FeedbackButton({ onClick, isVisible = true }: FeedbackButtonProps) {
   return (
     <button
       id="floating-feedback-btn"
       onClick={onClick}
-      className="fixed bottom-6 left-6 z-40 flex items-center gap-2 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 hover:text-purple-600 dark:hover:text-purple-400 px-4 py-2.5 rounded-full text-xs font-sans font-semibold border border-neutral-200 dark:border-neutral-700 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200 cursor-pointer"
+      className={`fixed bottom-6 left-6 z-40 flex items-center gap-2 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 hover:text-purple-600 dark:hover:text-purple-400 px-4 py-2.5 rounded-full text-xs font-sans font-semibold border border-neutral-200 dark:border-neutral-700 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 cursor-pointer ${
+        isVisible
+          ? 'opacity-100 translate-y-0 pointer-events-auto scale-100'
+          : 'opacity-0 translate-y-10 pointer-events-none scale-90'
+      }`}
       aria-label="Give Feedback"
     >
       <MessageSquareHeart className="w-4 h-4 text-purple-600 dark:text-purple-400" />

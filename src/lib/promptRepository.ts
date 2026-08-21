@@ -203,6 +203,10 @@ export async function fetchCategories(): Promise<Category[]> {
   return result;
 }
 
+export function clearCollectionsCache(): void {
+  apiCache.delete('collections');
+}
+
 export async function fetchCollections(): Promise<CollectionSummary[]> {
   const cacheKey = 'collections';
   const cached = apiCache.get<CollectionSummary[]>(cacheKey);
@@ -212,21 +216,56 @@ export async function fetchCollections(): Promise<CollectionSummary[]> {
   }
 
   const client = requireSupabase();
-  const { data, error } = await client
-    .from("collection_summaries")
-    .select("*")
-    .order("prompt_count", { ascending: false });
+  
+  // 1. Fetch base collections
+  const { data: colsData, error: colsError } = await client
+    .from("collections")
+    .select("id, slug, name, description, icon_name, category_id");
 
-  assertNoError(error, "Unable to load collections.");
-  const result = (data || []).map((row: any) => ({
-    id: row.id,
-    slug: row.slug,
-    name: row.name,
-    description: row.description || "",
-    iconName: row.icon_name,
-    promptCount: Number(row.prompt_count || 0),
-    categoryId: row.category_id,
-  }));
+  // 2. Fetch all prompt-collection junction entries from BOTH junction tables
+  const [{ data: cpData }, { data: pcData }] = await Promise.all([
+    client.from("collection_prompts").select("collection_id, prompt_id"),
+    client.from("prompt_collections").select("collection_id, prompt_id"),
+  ]);
+
+  const collectionPromptMap = new Map<string, Set<string>>();
+  const addMapping = (cid: string, pid: string) => {
+    if (!cid || !pid) return;
+    if (!collectionPromptMap.has(cid)) {
+      collectionPromptMap.set(cid, new Set());
+    }
+    collectionPromptMap.get(cid)!.add(pid);
+  };
+
+  (cpData || []).forEach((row: any) => addMapping(row.collection_id, row.prompt_id));
+  (pcData || []).forEach((row: any) => addMapping(row.collection_id, row.prompt_id));
+
+  // 3. Fallback to collection_summaries view if direct collections table fails
+  let rawCollections = colsData;
+  if (colsError || !rawCollections || rawCollections.length === 0) {
+    const { data: sumData } = await client
+      .from("collection_summaries")
+      .select("*");
+    rawCollections = sumData || [];
+  }
+
+  // 4. Build complete CollectionSummary list with accurate prompt count
+  const result: CollectionSummary[] = (rawCollections || []).map((row: any) => {
+    const promptSet = collectionPromptMap.get(row.id);
+    const calculatedCount = promptSet ? promptSet.size : 0;
+    const viewCount = Number(row.prompt_count || 0);
+    return {
+      id: row.id,
+      slug: row.slug,
+      name: row.name,
+      description: row.description || "",
+      iconName: row.icon_name,
+      promptCount: Math.max(calculatedCount, viewCount),
+      categoryId: row.category_id,
+    };
+  });
+
+  result.sort((a, b) => b.promptCount - a.promptCount);
 
   apiCache.set(cacheKey, result, 600); // Cache for 10 minutes
   return result;
@@ -249,6 +288,17 @@ export async function fetchCollectionById(
     return null;
   }
 
+  // Calculate actual prompt count across junction tables
+  const [{ data: cpData }, { data: pcData }] = await Promise.all([
+    client.from("collection_prompts").select("prompt_id").eq("collection_id", collectionId),
+    client.from("prompt_collections").select("prompt_id").eq("collection_id", collectionId),
+  ]);
+
+  const uniquePromptIds = new Set([
+    ...(cpData || []).map((r: any) => r.prompt_id),
+    ...(pcData || []).map((r: any) => r.prompt_id),
+  ]);
+
   return {
     id: data.id,
     slug: data.slug,
@@ -256,7 +306,7 @@ export async function fetchCollectionById(
     description: data.description || "",
     iconName: data.icon_name,
     imageUrl: data.image_url || null,
-    promptCount: 0,
+    promptCount: uniquePromptIds.size,
     categoryId: data.category_id,
     featured: Boolean(data.featured),
     createdAt: data.created_at || undefined,
@@ -268,16 +318,16 @@ export async function fetchPromptsByCollectionId(
   collectionId: string,
 ): Promise<PromptCard[]> {
   const client = requireSupabase();
-  const { data: promptIds, error: idError } = await client
-    .from("collection_prompts")
-    .select("prompt_id")
-    .eq("collection_id", collectionId);
+  const [{ data: cpData }, { data: pcData }] = await Promise.all([
+    client.from("collection_prompts").select("prompt_id").eq("collection_id", collectionId),
+    client.from("prompt_collections").select("prompt_id").eq("collection_id", collectionId),
+  ]);
 
-  assertNoError(idError, "Unable to load collection prompts.");
+  const ids = Array.from(new Set([
+    ...(cpData || []).map((row: any) => row.prompt_id),
+    ...(pcData || []).map((row: any) => row.prompt_id),
+  ])).filter(Boolean);
 
-  const ids = (promptIds || [])
-    .map((row: any) => row.prompt_id)
-    .filter(Boolean);
   if (ids.length === 0) {
     return [];
   }
@@ -658,13 +708,16 @@ export async function createPromptFromPayload(
       ai_platform_id,
     })),
   );
-  await insertPairs(
-    "prompt_collections",
-    prompt.collection_ids.map((collection_id) => ({
+  const uniqueCollectionIds = Array.from(new Set(prompt.collection_ids || [])).filter(Boolean);
+  if (uniqueCollectionIds.length > 0) {
+    const collectionRows = uniqueCollectionIds.map((collection_id) => ({
       prompt_id: promptId,
       collection_id,
-    })),
-  );
+    }));
+    await insertPairs("collection_prompts", collectionRows);
+    await insertPairs("prompt_collections", collectionRows);
+  }
+  clearCollectionsCache();
   await insertPairs(
     "prompt_industries",
     prompt.industry_ids.map((industry_id) => ({

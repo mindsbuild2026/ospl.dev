@@ -4,9 +4,21 @@
  */
 
 import React from 'react';
-import { Github, Star, GitBranch, GitFork, Users, ExternalLink } from 'lucide-react';
+import { Contributor, PromptCard } from '../types';
+import { formatCompactNumber } from '../lib/promptSchema';
+import { Github, Star, GitFork } from 'lucide-react';
 
-export default function OpenSourcePromo() {
+interface OpenSourcePromoProps {
+  prompts?: PromptCard[];
+  contributors?: Contributor[];
+}
+
+export default function OpenSourcePromo({ prompts = [], contributors = [] }: OpenSourcePromoProps) {
+  const totalContributors = Math.max(contributors.length, new Set(prompts.map((p) => p.author.handle)).size);
+  const proofCount = prompts.filter((p) => p.results.hasProof).length;
+  const totalCopies = prompts.reduce((acc, p) => acc + p.stats.copies, 0);
+  const totalViews = prompts.reduce((acc, p) => acc + p.stats.views, 0);
+
   return (
     <section className="py-12 border-b border-neutral-100 dark:border-neutral-900/60 select-none">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -27,26 +39,32 @@ export default function OpenSourcePromo() {
             </h3>
 
             <p className="font-sans text-sm sm:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Every system prompt in PromptHub exists in the public domain. We celebrate collaboration, review requests, and contributions that establish rigorous blueprints for LLMs.
+              Every system prompt in OSPL exists in the public domain. We celebrate collaboration, review requests, and contributions that establish rigorous blueprints for LLMs.
             </p>
 
             {/* Growth statistics row */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-4 divide-x divide-neutral-200/55 dark:divide-neutral-800">
               <div className="space-y-1">
                 <span className="text-[10px] font-sans font-bold text-neutral-400 dark:text-neutral-500 uppercase">CONTRIBUTORS</span>
-                <p className="font-display text-xl font-extrabold text-brand-text dark:text-white">1,450+ members</p>
+                <p className="font-display text-xl font-extrabold text-brand-text dark:text-white">
+                  {totalContributors > 0 ? `${totalContributors} active` : 'Community'}
+                </p>
               </div>
               <div className="space-y-1 pl-4">
-                <span className="text-[10px] font-sans font-bold text-neutral-400 dark:text-neutral-500 uppercase">MONTHLY PRs</span>
-                <p className="font-display text-xl font-extrabold text-brand-text dark:text-white">120+ merged</p>
+                <span className="text-[10px] font-sans font-bold text-neutral-400 dark:text-neutral-500 uppercase">PROOF BACKED</span>
+                <p className="font-display text-xl font-extrabold text-brand-text dark:text-white">
+                  {proofCount > 0 ? `${proofCount} verified` : `${prompts.length} templates`}
+                </p>
               </div>
               <div className="space-y-1 pl-4">
-                <span className="text-[10px] font-sans font-bold text-neutral-400 dark:text-neutral-500 uppercase">STARS ACCRETION</span>
-                <p className="font-display text-xl font-extrabold text-brand-text dark:text-white">+850 / week</p>
+                <span className="text-[10px] font-sans font-bold text-neutral-400 dark:text-neutral-500 uppercase">TOTAL COPIES</span>
+                <p className="font-display text-xl font-extrabold text-brand-text dark:text-white">
+                  {formatCompactNumber(totalCopies)} copies
+                </p>
               </div>
               <div className="space-y-1 pl-4">
                 <span className="text-[10px] font-sans font-bold text-neutral-400 dark:text-neutral-500 uppercase">STATUS</span>
-                <p className="font-display text-xl font-extrabold text-brand-accent">100% MIT Public</p>
+                <p className="font-display text-xl font-extrabold text-brand-accent">100% Open Access</p>
               </div>
             </div>
           </div>
@@ -54,9 +72,9 @@ export default function OpenSourcePromo() {
           {/* Call to action boxes Column */}
           <div className="shrink-0 flex flex-col gap-3.5 w-full md:w-[260px] relative z-10">
             <a
-              href="https://github.com"
+              href="https://github.com/mindsbuild2026/prompthub"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="w-full py-4 px-6 bg-black hover:bg-neutral-850 dark:bg-white dark:text-black dark:hover:bg-neutral-100 text-white rounded-2xl font-sans font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2.5 shadow-sm active:scale-95 cursor-pointer"
             >
               <Github className="w-5 h-5 fill-current" />
@@ -66,11 +84,11 @@ export default function OpenSourcePromo() {
             <div className="bg-white dark:bg-neutral-950 p-4 border border-neutral-200/50 dark:border-neutral-800/80 rounded-2xl flex justify-between items-center text-xs text-neutral-400 font-sans font-medium select-none">
               <span className="flex items-center gap-1.5 font-bold text-neutral-500">
                 <Star className="w-4 h-4 text-amber-500 fill-amber-500 animate-pulse" />
-                <span>12.4k Stars</span>
+                <span>{formatCompactNumber(totalViews)} Views</span>
               </span>
               <span className="flex items-center gap-1.5 font-bold text-neutral-500">
                 <GitFork className="w-4 h-4 text-indigo-500" />
-                <span>3.2k Forks</span>
+                <span>{prompts.length} Prompts</span>
               </span>
             </div>
           </div>
