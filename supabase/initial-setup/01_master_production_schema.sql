@@ -1,9 +1,14 @@
 -- ============================================================================
--- PROMPTHUB COMPLETE PRODUCTION DATABASE SCHEMA
+-- PROMPTHUB MASTER PRODUCTION DATABASE SCHEMA
 -- ============================================================================
--- Single-file consolidated production database schema for Supabase / PostgreSQL.
--- Includes all core tables, child entities, junction maps, partitioned event tables,
--- storage bucket policies, automated triggers, views, and RPC functions.
+-- Consolidated production-ready database schema for Supabase / PostgreSQL.
+-- Executable on fresh Supabase projects or existing instances.
+-- Includes:
+--   1. Extensions & Custom ENUM Types
+--   2. All 37+ Relational & Junction Tables with Indexes & Constraints
+--   3. Row Level Security (RLS) Policies & Storage Bucket Setup
+--   4. Triggers, Auditing & Automation Functions
+--   5. Materialized Views, Barrier Views & Full-Featured RPC Functions
 -- ============================================================================
 
 BEGIN;

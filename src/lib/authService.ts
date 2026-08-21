@@ -97,7 +97,7 @@ export async function signInWithGithub(): Promise<void> {
     provider: 'github',
     options: {
       redirectTo: redirectUrl,
-      scopes: 'user:email',
+      // scopes: 'user:email',
     },
   });
 
