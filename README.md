@@ -85,7 +85,7 @@ Built for AI engineers, prompt designers, developers, and creators, OSPL provide
 ## 📁 Repository Structure
 
 ```
-prompthub-main/
+ospl/
 ├── assets/                  # Brand SVG logos (ospl.svg) & favicon sources
 ├── docs/                    # Database schemas & SQL setup documentation
 ├── public/                  # Favicon suite, site.webmanifest & static assets
@@ -133,8 +133,8 @@ prompthub-main/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/mindsbuild2026/prompthub.git
-cd prompthub-main
+git clone https://github.com/mindsbuild2026/ospl.dev.git
+cd ospl.dev
 ```
 
 ### 2. Install Dependencies
@@ -153,7 +153,7 @@ VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to view OSPL in your browser.
+Open [https://www.ospl.dev](https://www.ospl.dev) to view OSPL in your browser.
 
 ---
 
